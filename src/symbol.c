@@ -39,7 +39,17 @@ initSymbolTable returns a pointer to a new initialized hash table (of type
         SymbolTable)
 */
 SymbolTable *initSymbolTable() {
+
+    int i = 0;
     SymbolTable *table = Malloc(sizeof(SYMBOL) * HashSize);
+
+    while (i < HashSize) {
+        table->table[i] = Malloc(sizeof(struct SYMBOL));
+        table->table[i]->name = Malloc(sizeof(char)*64);
+        table->table[i]->value = 0;
+
+        i++;
+    }
     return table;
 }
 
@@ -48,7 +58,11 @@ SymbolTable *initSymbolTable() {
  * scopeSymbolTable takes a pointer to a hash table t as argument and returns
  * a new hash table with a pointer to t in its next field.
  */
-SymbolTable *scopeSymbolTable(SymbolTable *t);
+SymbolTable *scopeSymbolTable(SymbolTable *t) {
+    SymbolTable *newTable = initSymbolTable();
+    newTable->next = t;
+    return newTable;
+}
 
 
 //Should the new symbol be put in front or the end of the symbol list. also how do we react if the symbol list is full?
@@ -62,16 +76,24 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
     }
 
     int i = 0;
-    while( t->table[i]->next != NULL && i < HashSize) {
-        printf("$i\n", i);
+    while( i < HashSize ) {
+        if( t->table[i]->next == NULL ) {
+
+            // Allocate memory
+            t->table[i]->next = Malloc(sizeof(SYMBOL));
+
+            // Assign values
+            t->table[i]->next->name = name;
+            t->table[i]->next->value = value;
+            t->table[i]->next->next = NULL;
+
+            // Return the SYMBOL
+            return t->table[i]->next;
+        }
         ++i;
     }
 
-    t->table[i]->next->name = name;
-    t->table[i]->next->value = value;
-    t->table[i]->next->next = NULL;
-
-    return t->table[i]->next;
+    return NULL;
 }
 
 
