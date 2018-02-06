@@ -42,11 +42,12 @@ SymbolTable *initSymbolTable() {
 
     int i = 0;
     SymbolTable *table = Malloc(sizeof(SYMBOL) * HashSize);
-
+    table->next = NULL;
     while (i < HashSize) {
         table->table[i] = Malloc(sizeof(struct SYMBOL));
         table->table[i]->name = Malloc(sizeof(char)*64);
         table->table[i]->value = 0;
+        table->table[i]->next = NULL;
 
         i++;
     }
@@ -117,8 +118,8 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
 
     int i = 0;
     while (i < HashSize) {
-        if (name == t->table[1]->name) {
-            return t->table[1];
+        if (name == t->table[i]->name) {
+            return t->table[i];
         }
         i++;
     }
