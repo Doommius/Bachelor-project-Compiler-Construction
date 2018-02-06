@@ -7,6 +7,7 @@ typedef struct SYMBOL {
     int value;
     struct SYMBOL *next;
 } SYMBOL;
+
 typedef struct SymbolTable {
     SYMBOL *table[HashSize];
     struct SymbolTable *next;

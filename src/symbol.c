@@ -57,11 +57,21 @@ putSymbol takes a hash table and a string, name, as arguments and inserts
         name into the hash table together with the associated value value. A pointer
 to the SYMBOL value which stores name is returned.
 */
-
-
-
 SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
+    if( t == NULL ) {
+        return NULL;
+    }
 
+    int i = 0;
+    while( t->table[i]->next != NULL && i < HashSize) {
+        ++i;
+    }
+
+    t->table[i]->next->name = name;
+    t->table[i]->next->value = value;
+    t->table[i]->next->next = NULL;
+
+    return t->table[i]->next;
 }
 
 
