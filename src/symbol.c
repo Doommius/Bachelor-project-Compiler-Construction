@@ -47,6 +47,7 @@ SymbolTable *initSymbolTable() {
         table->table[i] = Malloc(sizeof(struct SYMBOL));
         table->table[i]->name = Malloc(sizeof(char)*64);
         table->table[i]->value = 0;
+        table->table[i]->next = NULL;
 
         i++;
     }
