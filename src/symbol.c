@@ -1,4 +1,8 @@
+#include <stddef.h>
+#include <stdio.h>
 #include "../include/symbol.h"
+#include "../include/memory.h"
+#include "../include/struct.h"
 
 
 /*
@@ -10,11 +14,12 @@ int Hash(char *str) {
     int k = (int) str;
     int i;
     //TODO is this the correct way to loop over the whole string? as we're not given a length.
-    while (str != null) {
+    while (str != NULL) {
         k = k >> 1;
         str++;
         i = (int) str;
         k = i + k;
+        printf(k);
     }
     return k;
 
@@ -25,7 +30,7 @@ initSymbolTable returns a pointer to a new initialized hash table (of type
         SymbolTable)
 */
 SymbolTable *initSymbolTable() {
-    SymbolTable *table = malloc(sizeof(SYMBOL) * HashSize);
+    SymbolTable *table = Malloc(sizeof(SYMBOL) * HashSize);
     return table;
 }
 /*
@@ -61,21 +66,21 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
     */
 SYMBOL *getSymbol(SymbolTable *t, char *name) {
 //    First check if t is null
-    if (t == nullptr) {
-        return null;
+    if (t == NULL) {
+        return NULL;
     }
 
+
     //Loop over current table.
-    SYMBOL *table = SymbolTable;
-    i = 0;
+
+    int i = 0;
     while (i < HashSize) {
-        if (table->name == name) {
-            return table;
+        if (name == t->table[1]->name) {
+            return t->table[1];
         }
-        table->next;
         i++;
     }
-    return *getSymbol(t->next, name)
+    return getSymbol(t->next, name);
 
 }
 
