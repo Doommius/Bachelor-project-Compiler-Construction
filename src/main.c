@@ -47,7 +47,7 @@ int main(int argc, char **argv){
     printf("Testing putsymbol function\n");
     totaltests++;
     SYMBOL *symbol = putSymbol(table, "kitty", Hash("kitty"));
-    if (symbol->value == Hash("kitty") && symbol->name == "kitty"){
+    if (symbol->value != NULL && symbol->value == Hash("kitty") && symbol->name == "kitty"){
         printf(ANSI_COLOR_GREEN     "Test 3 - Symbol correctly made.\n"     ANSI_COLOR_RESET "\n");
         testpassed++;
     }else{

@@ -63,6 +63,7 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
 
     int i = 0;
     while( t->table[i]->next != NULL && i < HashSize) {
+        printf("$i\n", i);
         ++i;
     }
 
