@@ -1,4 +1,9 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <memory.h>
 #include "../include/symbol.h"
+#include "../include/memory.h"
+#include "../include/struct.h"
 
 
 /*
@@ -6,18 +11,28 @@
  *
  */
 int Hash(char *str) {
+    unsigned int length;
+    length = (unsigned)strlen(str);
+//    printf("the lenght of the string is %i \n",length);
 
-    int k = (int) str;
+    int k = (int) str[0];
     int i;
-    //TODO is this the correct way to loop over the whole string? as we're not given a length.
-    while (str != null) {
-        k = k >> 1;
-        str++;
-        i = (int) str;
+    int pointer = 1;
+
+    while (pointer < length) {
+//        printf("shifting k from %i ", k);
+        k = k << 1;
+//        printf("to %i \n",k);
+        i = (int) str[pointer];
+//        printf("loaded value i %i \n",i);
+//        printf("adding i (%i) and k (%i) \n", i,k);
         k = i + k;
+//        printf("sum is %i \n", k);
+
+        pointer++;
     }
     return k;
-
+ return 2;
 
 }
 /*
@@ -25,7 +40,7 @@ initSymbolTable returns a pointer to a new initialized hash table (of type
         SymbolTable)
 */
 SymbolTable *initSymbolTable() {
-    SymbolTable *table = malloc(sizeof(SYMBOL) * HashSize);
+    SymbolTable *table = Malloc(sizeof(SYMBOL) * HashSize);
     return table;
 }
 /*
@@ -61,21 +76,21 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
     */
 SYMBOL *getSymbol(SymbolTable *t, char *name) {
 //    First check if t is null
-    if (t == nullptr) {
-        return null;
+    if (t == NULL) {
+        return NULL;
     }
 
+
     //Loop over current table.
-    SYMBOL *table = SymbolTable;
-    i = 0;
+
+    int i = 0;
     while (i < HashSize) {
-        if (table->name == name) {
-            return table;
+        if (name == t->table[1]->name) {
+            return t->table[1];
         }
-        table->next;
         i++;
     }
-    return *getSymbol(t->next, name)
+    return getSymbol(t->next, name);
 
 }
 

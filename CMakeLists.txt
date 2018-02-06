@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.9)
-project(Compiler)
+cmake_minimum_required(VERSION 3.6)   # CMake version check
+project(Compiler)               # Create project "simple_example"
+set(CMAKE_CXX_STANDARD 11)            # Enable c++11 standard
 
-set(CMAKE_CXX_STANDARD 11)
+
 
 include_directories(include)
 
