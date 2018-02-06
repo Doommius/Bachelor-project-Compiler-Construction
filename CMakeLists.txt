@@ -3,6 +3,8 @@ project(Compiler)
 
 set(CMAKE_CXX_STANDARD 11)
 
+include_directories(include)
+
 add_executable(Compiler
         include/memory.h
         include/struct.h
