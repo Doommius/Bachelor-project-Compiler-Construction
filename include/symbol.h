@@ -1,16 +1,12 @@
-
 #define HashSize 317
-
 /* SYMBOL will be extended later.
-   Function calls will take more parameters later.
+Function calls will take more parameters later.
 */
-
 typedef struct SYMBOL {
-  char *name;
-  int value;
-  struct SYMBOL *next;
+    char *name;
+    int value;
+    struct SYMBOL *next;
 } SYMBOL;
-
 typedef struct SymbolTable {
     SYMBOL *table[HashSize];
     struct SymbolTable *next;
