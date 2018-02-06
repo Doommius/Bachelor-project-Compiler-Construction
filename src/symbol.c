@@ -12,7 +12,7 @@
  */
 int Hash(char *str) {
     unsigned int length;
-    length = (unsigned)strlen(str);
+    length = (unsigned) strlen(str);
 //    printf("the lenght of the string is %i \n",length);
 
     int k = (int) str[0];
@@ -32,9 +32,8 @@ int Hash(char *str) {
         pointer++;
     }
     return k;
- return 2;
-
 }
+
 /*
 initSymbolTable returns a pointer to a new initialized hash table (of type
         SymbolTable)
@@ -43,6 +42,7 @@ SymbolTable *initSymbolTable() {
     SymbolTable *table = Malloc(sizeof(SYMBOL) * HashSize);
     return table;
 }
+
 /*
  *
  * scopeSymbolTable takes a pointer to a hash table t as argument and returns
@@ -53,8 +53,7 @@ SymbolTable *scopeSymbolTable(SymbolTable *t);
 
 //Should the new symbol be put in front or the end of the symbol list. also how do we react if the symbol list is full?
 /*
-putSymbol takes a hash table and a string, name, as arguments and inserts
-        name into the hash table together with the associated value value. A pointer
+putSymbol takes a hash table and a string, name, as arguments and inserts name into the hash table together with the associated value value. A pointer
 to the SYMBOL value which stores name is returned.
 */
 SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
@@ -111,4 +110,19 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
  * Hash tables are printed one at a time. The printing should be formatted in a nice
  * way and is intended to be used for debugging (of other parts of the compiler).
 */
-void dumpSymbolTable(SymbolTable *t);
+void dumpSymbolTable(SymbolTable *t) {
+
+
+    int i = 0;
+    while (i < HashSize) {
+        printf("%s, %i", t->table[i]->name, t->table[i]->value);
+        i++;
+    }
+
+
+    if (t->next == NULL) {
+        dumpSymbolTable(t->next);
+    }
+
+
+}
