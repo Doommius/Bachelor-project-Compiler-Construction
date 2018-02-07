@@ -74,28 +74,24 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
         return NULL;
     }
 
-    int i = 0;
-    while( i < HashSize ) {
-        if( t->table[i]->next == NULL ) {
+    int hashValue = value % HashSize;
+    SYMBOL *symbol = Malloc(sizeof(SYMBOL));
+    symbol->name = name;
+    symbol->value = value;
+    symbol->next = Malloc(sizeof(SYMBOL));
 
-            // Allocate memory
-            t->table[i]->next = Malloc(sizeof(SYMBOL));
-            t->table[i]->next->name = Malloc(sizeof(*name));
-
-            // Assign values
-            t->table[i]->next->name = name;
-            t->table[i]->next->value = value;
-            t->table[i]->next->next = NULL;
-
-            // Return the SYMBOL
-            return t->table[i]->next;
-        }
-        else if (t->table[i]->name == name){
-            SYMBOL *list[HashSize];
-
-        }
-        ++i;
+    SYMBOL *checker = getSymbol(t, name);
+    if (checker != NULL){
+        printf("Exists already\n");
+        checker->next = symbol;
+        return symbol;
     }
+    else {
+        printf("Does not exists\n");
+        t->table[hashValue] = symbol;
+        return symbol;
+    }
+
     return NULL;
 }
 
@@ -120,7 +116,7 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
 
     int i = 0;
     while (i < HashSize) {
-        if (name == t->table[i]->next->name) {
+        if (name == t->table[i]->name) {
             return t->table[i]->next;
         }
         i++;

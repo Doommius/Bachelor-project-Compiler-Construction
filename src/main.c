@@ -59,6 +59,20 @@ int main(int argc, char **argv) {
         returnvalue = -1;
     }
 
+    printf("\n");
+    printf("Testing getSymbol function\n");
+    totaltests++;
+    SYMBOL *symbol2 = getSymbol(table, "kitty");
+    if (symbol2 != NULL) {
+        if (symbol2->value == Hash("kitty") && symbol2->name == "kitty") {
+            printf(ANSI_COLOR_GREEN     "Test 4 - Symbol correctly made.\n"     ANSI_COLOR_RESET "\n");
+            testpassed++;
+        }
+    } else {
+        printf(ANSI_COLOR_RED     "Test 4 - Symbol creation FAILED\n"     ANSI_COLOR_RESET "\n");
+        returnvalue = -1;
+    }
+
 
     printf("\n \n");
 
@@ -66,6 +80,7 @@ int main(int argc, char **argv) {
     if (totaltests - testpassed != 0) {
         printf(ANSI_COLOR_RED     "test FAILED %i\n"     ANSI_COLOR_RESET "\n", totaltests - testpassed);
     }
+
 
 
     return returnvalue;
