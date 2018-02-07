@@ -1,9 +1,8 @@
 #include <stddef.h>
 #include <stdio.h>
-#include <memory.h>
-#include "../include/symbol.h"
-#include "../include/memory.h"
-#include "../include/struct.h"
+#include <string.h>
+#include "symbol.h"
+#include "memory.h"
 
 
 /*
@@ -91,6 +90,10 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
             // Return the SYMBOL
             return t->table[i]->next;
         }
+        else if (t->table[i]->name == name){
+            SYMBOL *list[HashSize];
+
+        }
         ++i;
     }
     return NULL;
@@ -117,8 +120,8 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
 
     int i = 0;
     while (i < HashSize) {
-        if (name == t->table[i]->name) {
-            return t->table[i];
+        if (name == t->table[i]->next->name) {
+            return t->table[i]->next;
         }
         i++;
     }
@@ -138,7 +141,7 @@ void dumpSymbolTable(SymbolTable *t) {
 
     int i = 0;
     while (i < HashSize) {
-        printf("%s, %i", t->table[i]->name, t->table[i]->value);
+        printf("%s, %i\n", t->table[i]->name, t->table[i]->value);
         i++;
     }
 

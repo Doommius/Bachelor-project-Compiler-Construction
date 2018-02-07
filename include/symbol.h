@@ -24,3 +24,5 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value);
 SYMBOL *getSymbol(SymbolTable *t, char *name);
 
 void dumpSymbolTable(SymbolTable *t);
+
+int checkList(SYMBOL *list[]);
