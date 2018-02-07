@@ -30,7 +30,7 @@ int Hash(char *str) {
 
         pointer++;
     }
-    return k;
+    return (k % HashSize);
 }
 
 /*
@@ -43,10 +43,7 @@ SymbolTable *initSymbolTable() {
     SymbolTable *table = Malloc(sizeof(SYMBOL) * HashSize);
     table->next = NULL;
     while (i < HashSize) {
-        table->table[i] = Malloc(sizeof(struct SYMBOL));
-        table->table[i]->value = 0;
-        table->table[i]->next = NULL;
-
+        table->table[i] = NULL;
         i++;
     }
     return table;
@@ -64,35 +61,33 @@ SymbolTable *scopeSymbolTable(SymbolTable *t) {
 }
 
 
-//Should the new symbol be put in front or the end of the symbol list. also how do we react if the symbol list is full?
+
 /*
-putSymbol takes a hash table and a string, name, as arguments and inserts name into the hash table together with the associated value value. A pointer
-to the SYMBOL value which stores name is returned.
+ * putSymbol takes a hash table and a string, name, as arguments and inserts name into the hash table together with the associated value value. A pointer
+ * to the SYMBOL value which stores name is returned.
 */
 SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
     if( t == NULL ) {
         return NULL;
     }
-
-    int hashValue = value % HashSize;
-    SYMBOL *symbol = Malloc(sizeof(SYMBOL));
-    symbol->name = name;
-    symbol->value = value;
-    symbol->next = Malloc(sizeof(SYMBOL));
-
-    SYMBOL *checker = getSymbol(t, name);
-    if (checker != NULL){
-        printf("Exists already\n");
-        checker->next = symbol;
-        return symbol;
+    SYMBOL *localCheck = checkLocal(t, name);
+    //Symbol already exists
+    if (localCheck != NULL){
+        return localCheck;
     }
     else {
-        printf("Does not exists\n");
-        t->table[hashValue] = symbol;
-        return symbol;
-    }
 
-    return NULL;
+        SYMBOL *symbol = Malloc(sizeof(SYMBOL));
+        symbol->name = name;
+        symbol->value = value;
+        symbol->next = Malloc(sizeof(SYMBOL));
+
+        //Placed in front of the list
+        symbol->next = t->table[value];
+        t->table[value] = symbol;
+        return symbol;
+
+    }
 }
 
 
@@ -111,18 +106,19 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
         return NULL;
     }
 
+    SYMBOL *localCheck = checkLocal(t, name);
 
-    //Loop over current table.
-
-    int i = 0;
-    while (i < HashSize) {
-        if (name == t->table[i]->name) {
-            return t->table[i]->next;
-        }
-        i++;
+    //Symbol in local table?
+    if (localCheck != NULL){
+        return localCheck;
     }
-    return getSymbol(t->next, name);
 
+    if (t->next != NULL){
+        getSymbol(t->next, name);
+    }
+
+    //Symbol does not exists, should be an error message or such, later in the project
+    return NULL;
 }
 
 
@@ -133,18 +129,50 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
  * way and is intended to be used for debugging (of other parts of the compiler).
 */
 void dumpSymbolTable(SymbolTable *t) {
-
-
-    int i = 0;
-    while (i < HashSize) {
-        printf("%s, %i\n", t->table[i]->name, t->table[i]->value);
-        i++;
+    if (t == NULL){
+        return;
     }
 
+    printf("\t\tPrinting symbol table:\n\n");
 
-    if (t->next == NULL) {
-        dumpSymbolTable(t->next);
+    for (int i = 0; i < HashSize; i++) {
+        SYMBOL *symbol = t->table[i];
+        if (symbol != NULL){
+            printf("Hash: \t%i ", i);
+            while (symbol != NULL){
+                printSymbol(symbol);
+                printf(" ");
+                symbol = symbol->next;
+            }
+            printf("\n");
+        }
+    }
+    printf("\n");
+
+    dumpSymbolTable(t->next);
+
+}
+
+/*
+ * Check the current table we are in for a value
+ */
+SYMBOL *checkLocal(SymbolTable *t, char *name){
+    int hashValue = Hash(name);
+    SYMBOL *symbol = t->table[hashValue];
+    if (symbol == NULL){
+        return NULL;
     }
 
+    else {
+        while (symbol != NULL){
+            if (strcmp(name, symbol->name) == 0){
+                return symbol;
+            }
+            symbol = symbol->next;
+        }
+    }
+}
 
+void printSymbol(SYMBOL *symbol){
+    printf("(%s, %i)", symbol->name, symbol->value);
 }

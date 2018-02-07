@@ -25,4 +25,6 @@ SYMBOL *getSymbol(SymbolTable *t, char *name);
 
 void dumpSymbolTable(SymbolTable *t);
 
-int checkList(SYMBOL *list[]);
+SYMBOL *checkLocal(SymbolTable *t, char *name);
+
+void printSymbol(SYMBOL *symbol);
