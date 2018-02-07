@@ -45,7 +45,6 @@ SymbolTable *initSymbolTable() {
     table->next = NULL;
     while (i < HashSize) {
         table->table[i] = Malloc(sizeof(struct SYMBOL));
-        table->table[i]->name = Malloc(sizeof(char)*64);
         table->table[i]->value = 0;
         table->table[i]->next = NULL;
 
@@ -82,6 +81,7 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
 
             // Allocate memory
             t->table[i]->next = Malloc(sizeof(SYMBOL));
+            t->table[i]->next->name = Malloc(sizeof(*name));
 
             // Assign values
             t->table[i]->next->name = name;
@@ -93,7 +93,6 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
         }
         ++i;
     }
-
     return NULL;
 }
 
