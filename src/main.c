@@ -69,11 +69,11 @@ int main(int argc, char **argv) {
     SYMBOL *symbol2 = getSymbol(table, testString);
     if (symbol2 != NULL) {
         if (symbol2->value == Hash(testString) && (strcmp(symbol2->name, testString) == 0)) {
-            printf(ANSI_COLOR_GREEN     "Test %i - Symbol correctly made.\n"     ANSI_COLOR_RESET "\n", totaltests);
+            printf(ANSI_COLOR_GREEN     "Test %i - Symbol correctly returned.\n"     ANSI_COLOR_RESET "\n", totaltests);
             testpassed++;
         }
     } else {
-        printf(ANSI_COLOR_RED     "Test %i - Symbol creation FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        printf(ANSI_COLOR_RED     "Test %i - Symbol return FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
         returnvalue = -1;
     }
 
@@ -96,9 +96,25 @@ int main(int argc, char **argv) {
     }
 
     printf("\n");
-    printf("Testing putSymbol with two strings that hash to the same, but are different\n");
+    printf("Testing searching for a symbol, that is not in the table, but the hash for the symbol exists.\n");
     totaltests++;
     SYMBOL *symbol3 = putSymbol(table, testString2, Hash(testString2));
+
+    symbol = getSymbol(table, testString3);
+
+    if (symbol3 != NULL) {
+        if (symbol == NULL) {
+            printf(ANSI_COLOR_GREEN     "Test %i - NULL successfully received.\n"     ANSI_COLOR_RESET "\n", totaltests);
+            testpassed++;
+        }
+    } else {
+        printf(ANSI_COLOR_RED     "Test %i - Symbol search failed\n"     ANSI_COLOR_RESET "\n", totaltests);
+        returnvalue = -1;
+    }
+
+
+    printf("Testing putSymbol function with a symbol which hash already is in the table\n");
+    totaltests++;
     SYMBOL *symbol4 = putSymbol(table, testString3, Hash(testString3));
 
     if (symbol3 != NULL && symbol4 != NULL) {
@@ -116,6 +132,7 @@ int main(int argc, char **argv) {
         printf(ANSI_COLOR_RED     "Test %i - Symbol creation FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
         returnvalue = -1;
     }
+
 
     printf("Testing scopeSymbolTable function\n");
     totaltests++;
@@ -149,7 +166,7 @@ int main(int argc, char **argv) {
 
     printf("\n \n");
 
-    printf("tests PASSED %i\n", testpassed);
+    printf("Tests PASSED %i\n", testpassed);
     printf("\n \n");
 
 
