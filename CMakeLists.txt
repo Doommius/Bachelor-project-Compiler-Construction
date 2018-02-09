@@ -21,7 +21,7 @@ add_executable(Compiler
         include/memory.h
         include/struct.h
         include/symbol.h
-        src/compiler.c
+        src/main.c
         src/memory.c
         src/symbol.c
 )
