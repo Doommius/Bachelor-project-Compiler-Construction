@@ -10,7 +10,7 @@ add_executable(tests
         include/memory.h
         include/struct.h
         include/symbol.h
-        src/main.c
+        src/tests.c
         src/memory.c
         src/symbol.c
 )

@@ -61,21 +61,19 @@ SymbolTable *scopeSymbolTable(SymbolTable *t) {
 }
 
 
-
 /*
  * putSymbol takes a hash table and a string, name, as arguments and inserts name into the hash table together with the associated value value. A pointer
  * to the SYMBOL value which stores name is returned.
 */
 SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
-    if( t == NULL ) {
+    if (t == NULL) {
         return NULL;
     }
     SYMBOL *localCheck = checkLocal(t, name);
     //Symbol already exists
-    if (localCheck != NULL){
+    if (localCheck != NULL) {
         return localCheck;
-    }
-    else {
+    } else {
 
         SYMBOL *symbol = Malloc(sizeof(SYMBOL));
         symbol->name = name;
@@ -109,11 +107,11 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
     SYMBOL *localCheck = checkLocal(t, name);
 
     //Symbol in local table?
-    if (localCheck != NULL){
+    if (localCheck != NULL) {
         return localCheck;
     }
 
-    if (t->next != NULL){
+    if (t->next != NULL) {
         getSymbol(t->next, name);
     }
 
@@ -129,23 +127,28 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
  * way and is intended to be used for debugging (of other parts of the compiler).
 */
 void dumpSymbolTable(SymbolTable *t) {
-    if (t == NULL){
+    if (t == NULL) {
         return;
     }
 
-    printf("\t\tPrinting symbol table:\n\n");
+    printf("Printing symbol table:\n\n");
 
     for (int i = 0; i < HashSize; i++) {
-        SYMBOL *symbol = t->table[i];
-        if (symbol != NULL){
-            printf("Hash: \t%i ", i);
-            while (symbol != NULL){
-                printSymbol(symbol);
-                printf(" ");
-                symbol = symbol->next;
-            }
+        if (t->table[i] != NULL) {
+            printSymbol(t->table[i]);
             printf("\n");
         }
+//        SYMBOL *symbol = t->table[i];
+//
+//        if (symbol != NULL){
+//            printf("Hash: \t%i ", i);
+//            while (symbol != NULL){
+//                printSymbol(symbol);
+//                printf(" ");
+//                symbol = symbol->next;
+//            }
+//            printf("\n");
+//        }
     }
     printf("\n");
 
@@ -156,18 +159,16 @@ void dumpSymbolTable(SymbolTable *t) {
 /*
  * Check the current table we are in for a value
  */
-SYMBOL *checkLocal(SymbolTable *t, char *name){
+SYMBOL *checkLocal(SymbolTable *t, char *name) {
     int hashValue = Hash(name);
 
 
     SYMBOL *symbol = t->table[hashValue];
-    if (symbol == NULL){
+    if (symbol == NULL) {
         return NULL;
-    }
-
-    else {
-        while (symbol != NULL){
-            if (strcmp(name, symbol->name) == 0){
+    } else {
+        while (symbol != NULL) {
+            if (strcmp(name, symbol->name) == 0) {
                 return symbol;
             }
             symbol = symbol->next;
@@ -178,6 +179,6 @@ SYMBOL *checkLocal(SymbolTable *t, char *name){
     return NULL;
 }
 
-void printSymbol(SYMBOL *symbol){
+void printSymbol(SYMBOL *symbol) {
     printf("(%s, %i)", symbol->name, symbol->value);
 }
