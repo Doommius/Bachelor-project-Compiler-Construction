@@ -7,8 +7,6 @@ set(CMAKE_CXX_STANDARD 11)            # Enable c++11 standard
 include_directories(include)
 
 
-
-
 add_executable(Compiler
         include/memory.h
         include/struct.h
