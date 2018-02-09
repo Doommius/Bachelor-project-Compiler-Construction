@@ -158,6 +158,8 @@ void dumpSymbolTable(SymbolTable *t) {
  */
 SYMBOL *checkLocal(SymbolTable *t, char *name){
     int hashValue = Hash(name);
+
+
     SYMBOL *symbol = t->table[hashValue];
     if (symbol == NULL){
         return NULL;
@@ -171,6 +173,9 @@ SYMBOL *checkLocal(SymbolTable *t, char *name){
             symbol = symbol->next;
         }
     }
+
+    //Hash value for the symbol exists, but the symbol is not in the table
+    return NULL;
 }
 
 void printSymbol(SYMBOL *symbol){

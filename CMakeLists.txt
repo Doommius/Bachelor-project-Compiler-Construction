@@ -6,14 +6,22 @@ set(CMAKE_CXX_STANDARD 11)            # Enable c++11 standard
 
 include_directories(include)
 
+add_executable(tests
+        include/memory.h
+        include/struct.h
+        include/symbol.h
+        src/main.c
+        src/memory.c
+        src/symbol.c
+)
+
+
+
 add_executable(Compiler
         include/memory.h
         include/struct.h
         include/symbol.h
-        lib/README.md
-        src/modules/README.md
-        src/main.c
+        src/compiler.c
         src/memory.c
         src/symbol.c
-        LICENSE
-        README.md)
+)
