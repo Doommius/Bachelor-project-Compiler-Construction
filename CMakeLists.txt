@@ -7,48 +7,17 @@ set(CMAKE_CXX_STANDARD 11)            # Enable c++11 standard
 include_directories(include)
 
 
-FIND_PACKAGE(BISON REQUIRED)
-SET(BisonOutput ${CMAKE_SOURCE_DIR}/Scanner_And_Parser/y.tab.c)
-IF(BISON_FOUND)
-    ADD_CUSTOM_COMMAND(
-      OUTPUT ${BisonOutput}
-      COMMAND ${BISON_EXECUTABLE}
-              --output=${BisonOutput}
-              ${CMAKE_SOURCE_DIR}/Scanner_And_Parser/bison/exp.y
-      COMMENT "Generating parser.cpp"
-    )
-ENDIF()
 
-FIND_PACKAGE(FLEX REQUIRED)
-SET(FlexOutput ${CMAKE_SOURCE_DIR}/Scanner_And_Parser/lex.yy.c)
-IF(FLEX_FOUND)
-    ADD_CUSTOM_COMMAND(
-      OUTPUT ${FlexOutput}
-      COMMAND ${FLEX_EXECUTABLE}
-              --outfile=${FlexOutput}
-              ${CMAKE_SOURCE_DIR}/Scanner_And_Parser/flex/exp.l
-      COMMENT "Generating scanner.cpp"
-    )
-ENDIF()
-
-
-
-
-ADD_LIBRARY(LibFlex ${FlexOutput})
-ADD_LIBRARY(LibBison ${BisonOutput})
-ADD_LIBRARY(LibAll ${BisonOutput} ${FlexOutput})
-
-
-add_executable(Compiler
+add_executable(symboltable
         include/memory.h
         include/struct.h
         include/symbol.h
         src/main.c
         src/memory.c
         src/symbol.c
-)
+        )
 
-add_executable(tests
+add_executable(symboltable_test
         include/memory.h
         include/struct.h
         include/symbol.h
@@ -57,15 +26,36 @@ add_executable(tests
         src/symbol.c
 )
 
+
+
+
+find_package(BISON)
+find_package(FLEX)
+
+
+FLEX_TARGET(Scanner Scanner_And_Parser/flex/exp.l ${CMAKE_CURRENT_BINARY_DIR}/../Scanner_And_Parser/lex.yy.c)
+BISON_TARGET(Parser Scanner_And_Parser/bison/exp.y ${CMAKE_CURRENT_BINARY_DIR}/../Scanner_And_Parser/y.tab.c)
+
+ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
+
+message( STATUS "--------------------------------------------------------------------------------------------------------------------------")
+message( STATUS "Debugging information")
+MESSAGE( STATUS "BISON:         " ${BISON_Parser_OUTPUTS} )
+MESSAGE( STATUS "FLEX :         " ${FLEX_Scanner_OUTPUTS} )
+message( STATUS "--------------------------------------------------------------------------------------------------------------------------")
+
+add_executable(Foo ${BISON_MyParser_OUTPUTS} maintest.cpp maintest.h)
+
+
 add_executable(Scanner_And_Parser
-    Scanner_And_Parser/main.c
-    Scanner_And_Parser/memory.c
-    Scanner_And_Parser/memory.h
-    Scanner_And_Parser/pretty.c
-    Scanner_And_Parser/pretty.h
-    Scanner_And_Parser/tree.c
-    Scanner_And_Parser/tree.h
+        ${BISON_Parser_OUTPUTS}
+        ${FLEX_Scanner_OUTPUTS}
+        Scanner_And_Parser/main.c
+        Scanner_And_Parser/memory.c
+        Scanner_And_Parser/memory.h
+        Scanner_And_Parser/pretty.c
+        Scanner_And_Parser/pretty.h
+        Scanner_And_Parser/tree.c
+        Scanner_And_Parser/tree.h
+
 )
-
-
-target_link_libraries(Scanner_And_Parser MyLib)

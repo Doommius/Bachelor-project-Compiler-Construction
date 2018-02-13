@@ -1,5 +1,8 @@
-include "tree.h"
+#include "tree.h"
 #include "pretty.h"
+#include "y.tab.h"
+#include "lex.yy.c"
+
 
 int lineno;
 
