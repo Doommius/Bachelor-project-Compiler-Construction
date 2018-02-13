@@ -9,6 +9,6 @@ main:             y.tab.o lex.yy.o main.o tree.h tree.o pretty.h pretty.o memory
 y.tab.c y.tab.h:  bison/exp.y
 	          bison -y -d bison/exp.y
 
-lex.yy.c:         flex/exp.l y.flex/tab.h
+lex.yy.c:         flex/exp.l y.tab.h
 	          flex flex/exp.l
 
