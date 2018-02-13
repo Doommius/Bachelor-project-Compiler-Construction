@@ -115,7 +115,7 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
         getSymbol(t->next, name);
     }
 
-    //Symbol does not exists, should be an error message or such, later in the project
+    //Symbol does not exists
     return NULL;
 }
 
@@ -138,22 +138,10 @@ void dumpSymbolTable(SymbolTable *t) {
             printSymbol(t->table[i]);
             printf("\n");
         }
-//        SYMBOL *symbol = t->table[i];
-//
-//        if (symbol != NULL){
-//            printf("Hash: \t%i ", i);
-//            while (symbol != NULL){
-//                printSymbol(symbol);
-//                printf(" ");
-//                symbol = symbol->next;
-//            }
-//            printf("\n");
-//        }
     }
     printf("\n");
 
     dumpSymbolTable(t->next);
-
 }
 
 /*
@@ -161,7 +149,6 @@ void dumpSymbolTable(SymbolTable *t) {
  */
 SYMBOL *checkLocal(SymbolTable *t, char *name) {
     int hashValue = Hash(name);
-
 
     SYMBOL *symbol = t->table[hashValue];
     if (symbol == NULL) {
