@@ -13,21 +13,20 @@ IF(BISON_FOUND)
     ADD_CUSTOM_COMMAND(
       OUTPUT ${BisonOutput}
       COMMAND ${BISON_EXECUTABLE}
-              --defines=${CMAKE_SOURCE_DIR}/Scanner_And_Parser/y.tab.h
               --output=${BisonOutput}
-              ${CMAKE_SOURCE_DIR}/Scanner_And_Parser/exp.y
+              ${CMAKE_SOURCE_DIR}/Scanner_And_Parser/bison/exp.y
       COMMENT "Generating parser.cpp"
     )
 ENDIF()
 
 FIND_PACKAGE(FLEX REQUIRED)
-SET(FlexOutput ${CMAKE_SOURCE_DIR}/Scanner_And_Parser//lex.yy.c)
+SET(FlexOutput ${CMAKE_SOURCE_DIR}/Scanner_And_Parser/lex.yy.c)
 IF(FLEX_FOUND)
     ADD_CUSTOM_COMMAND(
       OUTPUT ${FlexOutput}
       COMMAND ${FLEX_EXECUTABLE}
               --outfile=${FlexOutput}
-              ${CMAKE_SOURCE_DIR}/Scanner_And_Parser/exp.l
+              ${CMAKE_SOURCE_DIR}/Scanner_And_Parser/flex/exp.l
       COMMENT "Generating scanner.cpp"
     )
 ENDIF()
@@ -60,8 +59,6 @@ add_executable(tests
 
 add_executable(Scanner_And_Parser
     Scanner_And_Parser/main.c
-    Scanner_And_Parser/exp.y
-    Scanner_And_Parser/exp.l
     Scanner_And_Parser/memory.c
     Scanner_And_Parser/memory.h
     Scanner_And_Parser/pretty.c
