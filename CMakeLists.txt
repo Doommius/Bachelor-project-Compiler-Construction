@@ -44,8 +44,6 @@ MESSAGE( STATUS "BISON:         " ${BISON_Parser_OUTPUTS} )
 MESSAGE( STATUS "FLEX :         " ${FLEX_Scanner_OUTPUTS} )
 message( STATUS "--------------------------------------------------------------------------------------------------------------------------")
 
-add_executable(Foo ${BISON_MyParser_OUTPUTS} maintest.cpp maintest.h)
-
 
 add_executable(Scanner_And_Parser
         ${BISON_Parser_OUTPUTS}
