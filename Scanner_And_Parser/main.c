@@ -1,4 +1,4 @@
-include "tree.h"
+#include "tree.h"
 #include "pretty.h"
 
 int lineno;
