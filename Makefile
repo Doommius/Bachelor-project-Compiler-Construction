@@ -37,8 +37,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 clean:
 	$(RM) $(OBJ)
+	$(RM) $(TEST_OBJ)
 
 clean-all:
 	$(RM) $(OBJ)
+	$(RM) $(TEST_OBJ)
 	$(RM) $(EXE)
 	$(RM) $(TEST)
