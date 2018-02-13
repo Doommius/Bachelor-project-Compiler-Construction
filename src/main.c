@@ -23,11 +23,9 @@ int main(int argc, char **argv) {
             strcpy(str,buf);
             str[strlen(buf)-1] = 0;
             SYMBOL *symbol = putSymbol(table, str, Hash(str));
-//            printSymbol(symbol);
         } else {
         break;
         }
-//        dumpSymbolTable(table);
     } while (buf != "\0");
 
     dumpSymbolTable(table);

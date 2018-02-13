@@ -12,21 +12,15 @@
 int Hash(char *str) {
     unsigned int length;
     length = (unsigned) strlen(str);
-//    printf("the lenght of the string is %i \n",length);
 
     int k = (int) str[0];
     int i;
     int pointer = 1;
 
     while (pointer < length) {
-//        printf("shifting k from %i ", k);
         k = k << 1;
-//        printf("to %i \n",k);
         i = (int) str[pointer];
-//        printf("loaded value i %i \n",i);
-//        printf("adding i (%i) and k (%i) \n", i,k);
         k = i + k;
-//        printf("sum is %i \n", k);
 
         pointer++;
     }
