@@ -7,3 +7,7 @@ tests
 compiler
 test
 *.o
+
+*.tab.c
+*.tab.h
+lex.yy.c
