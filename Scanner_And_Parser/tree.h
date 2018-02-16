@@ -60,7 +60,7 @@ typedef struct body{
 
 typedef struct decl_list{
     int lineno;
-    enum {LIST; EMPTY} kind;
+    enum {LIST, EMPTY} kind;
     struct declaration *decl;
     struct decl_list *list;
 } decl_list;
