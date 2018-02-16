@@ -120,8 +120,9 @@ typedef struct term{
     int lineno;
     enum {term_ID, term_PAR, term_EXPRESSION, term_ABS, term_NUM, term_TRUE, term_FALSE, term_NULL} kind;
     union {
+
         //TODO Skal være noget mere her
-    };
+    } val;
 } term;
 
 typedef struct act_list{
