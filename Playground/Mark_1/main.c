@@ -4,7 +4,6 @@
 #include <immintrin.h>
 #include <stdio.h>
 
-#include "main.h"
 
 void brackettest(){
 
@@ -23,7 +22,6 @@ void brackettest(){
 }
 
 int main() {
-    if()
     brackettest();
 
 

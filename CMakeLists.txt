@@ -50,5 +50,4 @@ add_executable(Scanner_And_Parser
 
 add_executable(Z_Playground_Mark_1
         Playground/Mark_1/main.c
-        Playground/Mark_1/main.h
         )
