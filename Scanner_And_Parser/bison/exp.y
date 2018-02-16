@@ -17,7 +17,7 @@ void yyerror() {
 }
 
 %token <intconst> tINTCONST
-%token <stringconst> tIDENTIFIER 
+%token <stringconst> tIDENTIFIER
 
 %type <exp> program exp
 

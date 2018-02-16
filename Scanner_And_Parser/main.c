@@ -14,5 +14,6 @@ int main() {
     lineno = 1;
     yyparse();
     prettyEXP(theexpression);
+    printf("\n");
     return 0;
 }

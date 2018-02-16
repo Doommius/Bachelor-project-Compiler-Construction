@@ -1,17 +1,27 @@
 %{
 #include "y.tab.h"
 #include <string.h>
- 
+
 extern int lineno;
 extern int fileno();
 %}
 
 %option noyywrap nounput noinput
 
+SYMBOLS [+\-]
+
 %%
 [ \t]+        /* ignore */;
 \n              lineno++;
 
+
+[a-zA-Z_][a-zA-Z0-9_]* { yylval.stringconst = (char *)malloc(strlen(yytext)+1);
+                         sprintf(yylval.stringconst,"%s",yytext);
+                         return tIDENTIFIER; }
+
+
+
+/*
 "*"             return '*';
 "/"             return '/';
 "+"             return '+';
@@ -23,7 +33,10 @@ extern int fileno();
                        return tINTCONST; }
 
 [a-zA-Z_][a-zA-Z0-9_]* { yylval.stringconst = (char *)malloc(strlen(yytext)+1);
-                         sprintf(yylval.stringconst,"%s",yytext); 
+                         sprintf(yylval.stringconst,"%s",yytext);
                          return tIDENTIFIER; }
+
+                        */
 .               /* ignore */;
+
 %%

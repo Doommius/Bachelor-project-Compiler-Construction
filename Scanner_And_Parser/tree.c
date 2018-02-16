@@ -3,6 +3,16 @@
  
 extern int lineno;
 
+type *make_type_id(char *id){
+    type *t;
+    t = NEW(type);
+    t->lineno = lineno;
+    t->kind = type_ID;
+    t->val.id = id;
+}
+
+
+/*
 EXP *makeEXPid(char *id)
 { EXP *e;
   e = NEW(EXP);
@@ -60,3 +70,4 @@ EXP *makeEXPminus(EXP *left, EXP *right)
   e->val.minusE.right = right;
   return e;
 }
+ */
