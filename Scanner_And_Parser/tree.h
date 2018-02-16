@@ -8,8 +8,6 @@
 
 typedef enum {idK,intconstK,timesK,divK,plusK,minusK, modK} kindArithmetic;
 
-
-
 typedef struct EXP {
     int lineno;
     kindArithmetic kind;
@@ -42,10 +40,7 @@ typedef struct tail{
     char *id;
 } tail;
 
-
-
 typedef enum {type_ID, type_INT, type_BOOl, type_ARRAY, type_RECORD} kindtype;
-
 typedef struct type {
     int lineno;
     kindtype kind;
@@ -154,7 +149,7 @@ typedef struct exp_list{
 type *make_type_id(char *id);
 
 
-EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kind kind);
+EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind);
 
 /*
 typedef enum {idK,intconstK,timesK,divK,plusK,minusK} kind;

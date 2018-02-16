@@ -34,6 +34,7 @@ void yyerror() {
 %token TYPESTRING
 %token TYPEBOOLEAN
 %token SEMICOLON
+%token RETURN
 
 
 %type <exp> program exp

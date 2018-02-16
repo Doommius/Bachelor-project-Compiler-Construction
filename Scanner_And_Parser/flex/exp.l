@@ -38,12 +38,14 @@ SYMBOLS [+\-]
 "%"             return 'MOD';
 "("             return '(';
 ")"             return ')';
-"="             return EQ;
+"=="            return EQ;
 "!="            return NEQ;
 "<"             return LT;
 "<="            return LEQ;
 ">"             return GT;
 ">="            return GEQ;
+"="             return ASSIGN /* maybe not? */ ;
+":="            return ASSIGN;
 "if"            return IF;
 "else"          return ELSE;
 "while"         return WHILE;
@@ -57,6 +59,11 @@ SYMBOLS [+\-]
 "boolean"       return TYPEBOOLEAN;
 "bool"          return TYPEBOOLEAN;
 "function"      return FUNCTION;
+"return"        return RETURN;
+"&&"            return AND;
+"and"           return AND;
+"||"            return OR;
+"or"            return OR;
 
 0|([1-9][0-9]*)        { yylval.intconst = atoi(yytext);
                        return tINTCONST; }
