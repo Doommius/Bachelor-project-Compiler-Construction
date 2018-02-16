@@ -53,13 +53,15 @@ exp : tIDENTIFIER
     | tINTCONST
       {$$ = makeEXPintconst($1);}
     | exp '*' exp
-      {$$ = makeEXPtimes($1,$3);}
+      {$$ = makeEXPArithmeticstructure($1,$3,timesK);}
     | exp '/' exp
-      {$$ = makeEXPdiv($1,$3);}
+      {$$ = makeEXPArithmeticstructure($1,$3,divK);}
     | exp '+' exp
-      {$$ = makeEXPplus($1,$3);}
+      {$$ = makeEXPArithmeticstructure($1,$3,plusK);}
     | exp '-' exp
-      {$$ = makeEXPminus($1,$3);}
+      {$$ = makeEXPArithmeticstructure($1,$3,minusK);}
+    | exp '%' exp
+      {$$ = makeEXPArithmeticstructure($1,$3,modK);}
     | '(' exp ')'
       {$$ = $2;}
 ;

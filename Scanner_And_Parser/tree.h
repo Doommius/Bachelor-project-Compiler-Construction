@@ -141,6 +141,9 @@ typedef struct exp_list{
 
 type *make_type_id(char *id);
 
+
+EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kind kind);
+
 /*
 typedef enum {idK,intconstK,timesK,divK,plusK,minusK} kind;
 typedef struct EXP {
