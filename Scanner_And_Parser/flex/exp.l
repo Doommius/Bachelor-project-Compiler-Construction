@@ -24,6 +24,13 @@ SYMBOLS [+\-]
 \n              lineno++;
 
 
+[a-zA-Z_][a-zA-Z0-9_]* { yylval.stringconst = (char *)malloc(strlen(yytext)+1);
+                         sprintf(yylval.stringconst,"%s",yytext);
+                         return tIDENTIFIER; }
+
+
+
+
 "*"             return '*';
 "/"             return '/';
 "+"             return '+';
@@ -57,6 +64,7 @@ SYMBOLS [+\-]
 [a-zA-Z_][a-zA-Z0-9_]* { yylval.stringconst = (char *)malloc(strlen(yytext)+1);
                          sprintf(yylval.stringconst,"%s",yytext);
                          return tIDENTIFIER; }
+
 
 .               /* ignore */;
 
