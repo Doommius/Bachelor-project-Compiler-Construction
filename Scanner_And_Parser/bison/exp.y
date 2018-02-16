@@ -18,6 +18,23 @@ void yyerror() {
 
 %token <intconst> tINTCONST
 %token <stringconst> tIDENTIFIER
+%token EQ
+%token NEQ
+%token LEQ
+%token GEQ
+%token LT
+%token GT
+%token IF
+%token ELSE
+%token WHILE
+%token FOR
+%token IN
+%token FUNCTION
+%token TYPEINT
+%token TYPESTRING
+%token TYPEBOOLEAN
+%token SEMICOLON
+
 
 %type <exp> program exp
 

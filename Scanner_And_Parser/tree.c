@@ -7,9 +7,20 @@ type *make_type_id(char *id){
     type *t;
     t = NEW(type);
     t->lineno = lineno;
-    t->kind = type_ID;
+    t->kind = idK;
     t->val.id = id;
 }
+
+EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kind kind)
+{ EXP *e;
+    e = NEW(EXP);
+    e->lineno = lineno;
+    e->kind = kind;
+    e->data.val.left = left;
+    e->data.val.right = right;
+    return e;
+}
+
 
 
 /*

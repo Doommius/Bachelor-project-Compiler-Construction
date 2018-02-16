@@ -2,6 +2,18 @@
 #define __tree_h
 
 
+typedef enum {idK,intconstK,timesK,divK,plusK,minusK, modK} kind;
+
+typedef struct EXP {
+    int lineno;
+    kind kind;
+    union {
+        char *idE;
+        int intconstE;
+        struct {struct EXP *left; struct EXP *right;} val;
+    } data;
+} EXP;
+
 typedef struct function{
     int lineno;
     struct head *head;
