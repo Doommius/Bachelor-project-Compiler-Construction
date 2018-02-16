@@ -2,23 +2,20 @@ cmake_minimum_required(VERSION 3.6)   # CMake version check
 project(Compiler)                     # Create project "simple_example"
 set(CMAKE_CXX_STANDARD 11)            # Enable c++11 standard
 
-
-include_directories(include)
-
 set(SOURCE_FILES_symboltable
-         include/memory.h
-         include/struct.h
-         include/symbol.h
-         src/memory.c
-         src/symbol.c)
+        symboltree/include/memory.h
+        symboltree/include/struct.h
+        symboltree/include/symbol.h
+        symboltree/src/memory.c
+        symboltree/src/symbol.c)
 
 add_executable(symboltable
-        src/main.c
+        symboltree/src/main.c
         ${SOURCE_FILES_symboltable}
         )
 
 add_executable(symboltable_test
-        src/tests.c
+        symboltree/src/tests.c
         ${SOURCE_FILES_symboltable}
 )
 
@@ -34,7 +31,7 @@ BISON_TARGET(Parser Scanner_And_Parser/bison/exp.y ${CMAKE_CURRENT_BINARY_DIR}/.
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
 
- set(SOURCE_FILES_scanner_And_parser
+set(SOURCE_FILES_scanner_And_parser
          Scanner_And_Parser/main.c
          Scanner_And_Parser/memory.c
          Scanner_And_Parser/memory.h
@@ -49,3 +46,9 @@ add_executable(Scanner_And_Parser
         ${SOURCE_FILES_scanner_And_parser}
 
 )
+
+
+add_executable(Z_Playground_Mark_1
+        Playground/Mark_1/main.c
+        Playground/Mark_1/main.h
+        )

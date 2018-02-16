@@ -2,11 +2,17 @@
 #define __tree_h
 
 
-typedef enum {idK,intconstK,timesK,divK,plusK,minusK, modK} kind;
+//#define EMPTY 0
+//#define LIST 1
+//#define TYPE 2
+
+typedef enum {idK,intconstK,timesK,divK,plusK,minusK, modK} kindArithmetic;
+
+
 
 typedef struct EXP {
     int lineno;
-    kind kind;
+    kindArithmetic kind;
     union {
         char *idE;
         int intconstE;
@@ -36,15 +42,20 @@ typedef struct tail{
     char *id;
 } tail;
 
+
+
+typedef enum {type_ID, type_INT, type_BOOl, type_ARRAY, type_RECORD} kindtype;
+
 typedef struct type {
     int lineno;
-    enum {type_ID, type_INT, type_BOOl, type_ARRAY, type_RECORD} kind;
+    kindtype kind;
     union {
         char *id;
         //TODO der skal være noget mere her
     } val;
 } type;
 
+//TO
 typedef struct par_decl_list{
     int lineno;
     enum {LIST, EMPTY} kind;
