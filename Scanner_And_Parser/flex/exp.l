@@ -10,7 +10,8 @@ extern int fileno();
 
 %option noyywrap nounput noinput
 
-SYMBOLS [+\-]
+/* abbreviation of symbols we match on, TO BE EXPANDED */
+SYMBOLS [+\-*\/\(\)\[\]{}!\|,]
 
 
 /* Rules
@@ -23,16 +24,7 @@ SYMBOLS [+\-]
 [ \t]+        /* ignore */;
 \n              lineno++;
 
-
-"*"             return '*';
-"/"             return '/';
-"+"             return '+';
-"-"             return '-';
-"%"             return 'MOD';
-"("             return '(';
-")"             return ')';
-"{"             return '{';
-"}"             return '}';
+{SYMBOLS}       return yytext[0];
 
 "=="            return EQ;
 "!="            return NEQ;
@@ -58,6 +50,9 @@ SYMBOLS [+\-]
 "and"           return AND;
 "||"            return OR;
 "or"            return OR;
+"true"          return TRUE;
+"false"         return FALSE;
+"null"          return _NULL;
 
 0|([1-9][0-9]*)        { yylval.intconst = atoi(yytext);
                        return tINTCONST; }

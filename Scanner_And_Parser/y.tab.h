@@ -66,7 +66,10 @@ extern int yydebug;
     RETURN = 276,
     AND = 277,
     OR = 278,
-    ASSIGN = 279
+    ASSIGN = 279,
+    TRUE = 280,
+    FALSE = 281,
+    _NULL = 282
   };
 #endif
 /* Tokens.  */
@@ -92,13 +95,16 @@ extern int yydebug;
 #define AND 277
 #define OR 278
 #define ASSIGN 279
+#define TRUE 280
+#define FALSE 281
+#define _NULL 282
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 14 "bison/exp.y" /* yacc.c:1909  */
+#line 16 "bison/exp.y" /* yacc.c:1909  */
 
     int intconst;
     char *stringconst;
@@ -118,10 +124,10 @@ union YYSTYPE
     struct variable *variable;
     struct expression *expression;
     struct term *term;
-    struct acl_list *acl_list;
+    struct act_list *act_list;
     struct exp_list *exp_list;
 
-#line 125 "y.tab.h" /* yacc.c:1909  */
+#line 131 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -99,7 +99,17 @@ typedef struct statement{
 typedef struct variable{
     int lineno;
     char *id;
-    struct variable *var;
+    Var_kind kind;
+    union {
+        struct {
+            struct variable *var;
+            struct expression *exp;
+        } exp;
+        struct {
+            struct variable *var;
+            char *id;
+        } varid;
+    } val;
     //TODO Skal være noget mere her
 } variable;
 
@@ -121,8 +131,14 @@ typedef struct term{
     int lineno;
     TERM_kind kind;
     union {
-
         int num;
+        struct expression *expression;
+        struct term *term_not;
+        struct variable *variable;
+        struct {
+            char *id;
+            struct act_list *list;
+        } list;
         //TODO Skal være noget mere her
     } val;
 } term;
@@ -144,10 +160,27 @@ typedef struct exp_list{
 
 type *make_type_id(char *id);
 
+variable *make_Var_id(char *id);
+variable *make_Var_exp(variable *var, expression *expression);
+variable *make_Var_varid(variable *var, char *id);
+
 expression *make_EXP(EXP_kind kind, expression *left, expression *right);
 expression *make_EXP_term(term *term);
 
 term *make_Term_num(int intconst);
+term *make_Term_exp(expression *expression);
+term *make_Term_not(term *term);
+term *make_Term_abs(expression *expression);
+term *make_Term_boolean(int bool);
+term *make_Term_null();
+term *make_Term_variable(variable *var);
+term *make_Term_list(char *id, act_list *list);
+
+act_list *make_Act_list(exp_list *list);
+act_list *make_Act_empty();
+
+exp_list *make_ExpL_exp(expression *expression);
+exp_list *make_ExpL_list(expression *expression, exp_list *list);
 
 
 //EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind);
