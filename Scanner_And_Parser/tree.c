@@ -7,10 +7,40 @@ type *make_type_id(char *id) {
     type *t;
     t = NEW(type);
     t->lineno = lineno;
-    t->kind = idK;
+    t->kind = type_ID;
     t->val.id = id;
+    return t;
 }
 
+expression *make_EXP(EXP_kind kind, expression *left, expression *right){
+    expression *e;
+    e = NEW(expression);
+    e->lineno = lineno;
+    e->kind = kind;
+    e->val.ops.left = left;
+    e->val.ops.right = right;
+    return e;
+}
+
+expression *make_EXP_term(term *term){
+    expression *e;
+    e = NEW(expression);
+    e->lineno = lineno;
+    e->kind = exp_TERM;
+    e->val.term = term;
+    return e;
+}
+
+term *make_Term_num(int intconst){
+    term *t;
+    t = NEW(term);
+    t->lineno = lineno;
+    t->kind = term_NUM;
+    t->val.num = intconst;
+    return t;
+}
+
+/*
 EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind) {
     EXP *e;
     e = NEW(EXP);
@@ -21,65 +51,6 @@ EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind) {
     return e;
 
 }
+*/
 
 
-
-/*
-EXP *makeEXPid(char *id)
-{ EXP *e;
-  e = NEW(EXP);
-  e->lineno = lineno;
-  e->kind = idK;
-  e->val.idE = id;
-  return e;
-}
-
-EXP *makeEXPintconst(int intconst)
-{ EXP *e;
-  e = NEW(EXP);
-  e->lineno = lineno;
-  e->kind = intconstK;
-  e->val.intconstE = intconst;
-  return e;
-}
-
-EXP *makeEXPtimes(EXP *left, EXP *right)
-{ EXP *e;
-  e = NEW(EXP);
-  e->lineno = lineno;
-  e->kind = timesK;
-  e->val.timesE.left = left;
-  e->val.timesE.right = right;
-  return e;
-}
-
-EXP *makeEXPdiv(EXP *left, EXP *right)
-{ EXP *e;
-  e = NEW(EXP);
-  e->lineno = lineno;
-  e->kind = divK;
-  e->val.divE.left = left;
-  e->val.divE.right = right;
-  return e;
-}
-
-EXP *makeEXPplus(EXP *left, EXP *right)
-{ EXP *e;
-  e = NEW(EXP);
-  e->lineno = lineno;
-  e->kind = plusK;
-  e->val.plusE.left = left;
-  e->val.plusE.right = right;
-  return e;
-}
-
-EXP *makeEXPminus(EXP *left, EXP *right)
-{ EXP *e;
-  e = NEW(EXP);
-  e->lineno = lineno;
-  e->kind = minusK;
-  e->val.minusE.left = left;
-  e->val.minusE.right = right;
-  return e;
-}
- */

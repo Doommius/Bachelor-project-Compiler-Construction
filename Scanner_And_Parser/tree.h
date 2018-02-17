@@ -1,22 +1,12 @@
 #ifndef __tree_h
 #define __tree_h
 
-
+#include "kind.h"
 //#define EMPTY 0
 //#define LIST 1
 //#define TYPE 2
 
-typedef enum {idK,intconstK,timesK,divK,plusK,minusK, modK} kindArithmetic;
 
-typedef struct EXP {
-    int lineno;
-    kindArithmetic kind;
-    union {
-        char *idE;
-        int intconstE;
-        struct {struct EXP *left; struct EXP *right;} val;
-    } data;
-} EXP;
 
 typedef struct function{
     int lineno;
@@ -40,10 +30,9 @@ typedef struct tail{
     char *id;
 } tail;
 
-typedef enum {type_ID, type_INT, type_BOOl, type_ARRAY, type_RECORD} kindtype;
 typedef struct type {
     int lineno;
-    kindtype kind;
+    TYPE_kind kind;
     union {
         char *id;
         //TODO der skal være noget mere her
@@ -53,13 +42,13 @@ typedef struct type {
 //TO
 typedef struct par_decl_list{
     int lineno;
-    enum {LIST, EMPTY} kind;
+    PDL_kind kind;
     struct var_decl_list *list;
 } par_decl_list;
 
 typedef struct var_decl_list{
     int lineno;
-    enum {LIST, TYPE} kind;
+    VDL_kind kind;
     struct var_decl_list *list;
     struct var_type *vartype;
 } var_decl_list;
@@ -78,14 +67,14 @@ typedef struct body{
 
 typedef struct decl_list{
     int lineno;
-    enum {LIST, EMPTY} kind;
+    DL_kind kind;
     struct declaration *decl;
     struct decl_list *list;
 } decl_list;
 
 typedef struct declaration{
     int lineno;
-    enum {ID, FUNC, VAR} kind;
+    DECL_kind kind;
     //TODO ved ikke lige med det der type id = <type>, det her er midlertidigt
     struct type *type;
     struct function *function;
@@ -103,7 +92,7 @@ typedef struct statement_list{
 typedef struct statement{
     int lineno;
     //TODO Sikkert ikke rigtigt
-    enum {RETURN, WRITE, ALLOCATE, ASSIGNMENT, IF, WHILE, LIST} kind;
+    STATEMENT_kind kind;
 
 } statement;
 
@@ -116,30 +105,37 @@ typedef struct variable{
 
 typedef struct expression{
     int lineno;
-    enum {EXP, TERM} kind;
-    struct expression *expression;
-    struct term *term;
+    EXP_kind kind;
+    union {
+        struct {
+            struct expression *left;
+            struct expression *right;
+        } ops;
+        struct term *term;
+    } val;
+
     //TODO Skal være noget mere her
 } expression;
 
 typedef struct term{
     int lineno;
-    enum {term_ID, term_PAR, term_EXPRESSION, term_ABS, term_NUM, term_TRUE, term_FALSE, term_NULL} kind;
+    TERM_kind kind;
     union {
 
+        int num;
         //TODO Skal være noget mere her
     } val;
 } term;
 
 typedef struct act_list{
     int lineno;
-    enum {LIST, EMPTY} kind;
+    AL_kind kind;
     struct exp_list *list;
 } act_list;
 
 typedef struct exp_list{
     int lineno;
-    enum {EXP, LIST} kind;
+    EL_kind kind;
     struct expression *expression;
     struct exp_list *list;
 } exp_list;
@@ -148,36 +144,13 @@ typedef struct exp_list{
 
 type *make_type_id(char *id);
 
+expression *make_EXP(EXP_kind kind, expression *left, expression *right);
+expression *make_EXP_term(term *term);
 
-EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind);
-
-/*
-typedef enum {idK,intconstK,timesK,divK,plusK,minusK} kind;
-typedef struct EXP {
-  int lineno;
-  kind kind;
-  union {
-    char *idE;
-    int intconstE;
-    struct {struct EXP *left; struct EXP *right;} timesE;
-    struct {struct EXP *left; struct EXP *right;} divE;
-    struct {struct EXP *left; struct EXP *right;} plusE;
-    struct {struct EXP *left; struct EXP *right;} minusE;
-  } val;
-} EXP;
+term *make_Term_num(int intconst);
 
 
- 
-EXP *makeEXPid(char *id);
+//EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind);
 
-EXP *makeEXPintconst(int intconst);
 
-EXP *makeEXPtimes(EXP *left, EXP *right);
-
-EXP *makeEXPdiv(EXP *left, EXP *right);
-
-EXP *makeEXPplus(EXP *left, EXP *right);
-
-EXP *makeEXPminus(EXP *left, EXP *right);
-*/
 #endif

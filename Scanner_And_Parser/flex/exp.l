@@ -24,13 +24,6 @@ SYMBOLS [+\-]
 \n              lineno++;
 
 
-[a-zA-Z_][a-zA-Z0-9_]* { yylval.stringconst = (char *)malloc(strlen(yytext)+1);
-                         sprintf(yylval.stringconst,"%s",yytext);
-                         return tIDENTIFIER; }
-
-
-
-
 "*"             return '*';
 "/"             return '/';
 "+"             return '+';
@@ -38,6 +31,9 @@ SYMBOLS [+\-]
 "%"             return 'MOD';
 "("             return '(';
 ")"             return ')';
+"{"             return '{';
+"}"             return '}';
+
 "=="            return EQ;
 "!="            return NEQ;
 "<"             return LT;
@@ -51,8 +47,6 @@ SYMBOLS [+\-]
 "while"         return WHILE;
 "for"           return FOR;
 "in"            return IN;
-"{"             return '{';
-"}"             return '}';
 ";"             return SEMICOLON;
 "int"           return TYPEINT;
 "string"        return TYPESTRING;

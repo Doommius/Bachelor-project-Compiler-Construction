@@ -6,14 +6,14 @@
 
 int lineno;
 
-EXP *theexpression;
+expression *theprogram;
 
 int main() {
 
     freopen("input.txt", "r", stdin);
     lineno = 1;
     yyparse();
-    prettyEXP(theexpression);
+    prettyEXP(theprogram);
     printf("\n");
     return 0;
 }

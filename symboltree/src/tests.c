@@ -1,6 +1,6 @@
 // First file!
 #include <stdio.h>
-#include "symbol.h"
+#include "../include/symbol.h"
 #include <string.h>
 
 #define ANSI_COLOR_RED     "\x1b[31m"
@@ -18,6 +18,7 @@ int main(int argc, char **argv) {
     int returnvalue = 1;
     int testpassed = 0;
     int totaltests = 0;
+
 
 
 
