@@ -11,7 +11,7 @@ extern int fileno();
 %option noyywrap nounput noinput
 
 /* abbreviation of symbols we match on, TO BE EXPANDED */
-SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.]
+SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;]
 
 
 /* Rules
@@ -32,14 +32,12 @@ SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.]
 "<="            return LEQ;
 ">"             return GT;
 ">="            return GEQ;
-"="             return ASSIGN /* maybe not? */ ;
 ":="            return ASSIGN;
 "if"            return IF;
 "else"          return ELSE;
 "while"         return WHILE;
 "for"           return FOR;
 "in"            return IN;
-";"             return SEMICOLON;
 "int"           return TYPEINT;
 "string"        return TYPESTRING;
 "boolean"       return TYPEBOOLEAN;
@@ -53,6 +51,21 @@ SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.]
 "true"          return TRUE;
 "false"         return FALSE;
 "null"          return _NULL;
+
+"func"          return FUNC;
+"end"           return END;
+
+"int"           return INT;
+"bool"          return BOOL;
+"array of"      return ARRAY_OF;
+"record of"     return RECORD_OF;
+"type"          return TYPE;
+"var"           return VAR;
+"write"         return WRITE;
+"allocate"      return ALLOCATE;
+"of length"     return OF_LENGTH;
+"then"          return THEN;
+"do"            return DO;
 
 0|([1-9][0-9]*)        { yylval.intconst = atoi(yytext);
                        return tINTCONST; }

@@ -2,6 +2,194 @@
 #include "pretty.h"
 #include "tree.h"
 
+void prettyFunc(function *f){
+    prettyHead(f->head);
+    prettyBody(f->body);
+    prettyTail(f->tail);
+}
+
+void prettyHead(head *h){
+    printf("func %s (", h->id);
+    prettyPDL(h->list);
+    printf(") :");
+    prettyType(h->type);
+}
+
+void prettyTail(tail *t){
+    printf("\nend %s", t->id);
+}
+
+void prettyType(type *t){
+    switch (t->kind){
+        case type_ID:
+            printf("%s", t->val.id);
+            break;
+
+        case type_INT:
+            printf("int");
+            break;
+
+        case type_BOOl:
+            printf("bool");
+            break;
+
+        case type_ARRAY:
+            printf("array of");
+            break;
+
+        case type_RECORD:
+            printf("record of");
+            prettyVDL(t->val.list);
+            break;
+    }
+}
+
+void prettyPDL(par_decl_list *pdl){
+    switch (pdl->kind){
+        case pdl_LIST:
+            prettyVDL(pdl->list);
+            break;
+
+        case pdl_EMPTY:
+            break;
+    }
+}
+
+void prettyVDL(var_decl_list *vdl){
+    switch (vdl->kind){
+        case vdl_LIST:
+            prettyVT(vdl->vartype);
+            printf(",");
+            prettyVDL(vdl->list);
+            break;
+
+        case vdl_TYPE:
+            prettyVT(vdl->vartype);
+            break;
+    }
+}
+
+void prettyVT(var_type *vt){
+    printf("%s : ",vt->id);
+    prettyType(vt->type);
+}
+
+void prettyBody(body *b){
+    prettyDL(b->d_list);
+    prettySL(b->s_list);
+}
+
+void prettyDL(decl_list *dl){
+    switch (dl->kind){
+        case dl_LIST:
+            prettyDecl(dl->decl);
+            prettyDL(dl->list);
+            break;
+
+        case dl_EMPTY:
+            break;
+    }
+}
+
+void prettyDecl(declaration *d){
+    switch (d->kind){
+        case decl_TYPE:
+            printf("type %s = ", d->val.type.id);
+            prettyType(d->val.type.type);
+            printf(";");
+            break;
+
+        case decl_FUNC:
+            prettyFunc(d->val.function);
+            break;
+
+        case decl_VAR:
+            printf("var ");
+            prettyVDL(d->val.list);
+            printf(";");
+            break;
+    }
+}
+
+void prettySL(statement_list *sl){
+    switch (sl->kind){
+        case sl_STATEMENT:
+            prettySTMT(sl->statement);
+            break;
+
+        case sl_LIST:
+            prettySTMT(sl->statement);
+            prettySL(sl->list);
+    }
+}
+
+void prettySTMT(statement *s){
+    switch (s->kind){
+        case statement_RETURN:
+            printf("return ");
+            prettyEXP(s->val.ret);
+            printf(";");
+            break;
+
+        case statement_WRITE:
+            printf("write ");
+            prettyEXP(s->val.wrt);
+            printf(";");
+            break;
+
+        case statement_ALLOCATE:
+            printf("allocate ");
+            prettyVar(s->val.allocate.variable);
+            printf(";");
+            break;
+
+        case statement_ALLOCATE_LENGTH:
+            printf("allocate ");
+            prettyVar(s->val.allocate.variable);
+            printf(" of length ");
+            prettyEXP(s->val.allocate.length);
+            printf(";");
+            break;
+
+        case statement_ASSIGNMENT:
+            prettyVar(s->val.assignment.variable);
+            printf(" = ");
+            prettyEXP(s->val.assignment.expression);
+            printf(";");
+            break;
+
+        case statement_IF:
+            printf("if ");
+            prettyEXP(s->val.ifthen.expression);
+            printf(" then ");
+            prettySTMT(s->val.ifthen.statement1);
+            break;
+
+        case statement_IF_ELSE:
+            printf("if ");
+            prettyEXP(s->val.ifthen.expression);
+            printf(" then ");
+            prettySTMT(s->val.ifthen.statement1);
+            printf(" else ");
+            prettySTMT(s->val.ifthen.statement2);
+            break;
+
+        case statement_WHILE:
+            printf("while ");
+            prettyEXP(s->val.loop.expression);
+            printf(" do ");
+            prettySTMT(s->val.loop.statement);
+            break;
+
+        case statement_LIST:
+            printf("{");
+            prettySL(s->val.list);
+            printf("}");
+            break;
+    }
+}
+
+
 void prettyVar(variable *v){
     switch (v->kind){
 

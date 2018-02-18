@@ -20,9 +20,11 @@ typedef enum {vdl_LIST, vdl_TYPE} VDL_kind;
 
 typedef enum {dl_LIST, dl_EMPTY} DL_kind;
 
-typedef enum {decl_ID, decl_FUNC, decl_VAR} DECL_kind;
+typedef enum {decl_TYPE, decl_FUNC, decl_VAR} DECL_kind;
 
-typedef enum {statement_RETURN, statement_WRITE, statement_ALLOCATE, statement_ASSIGNMENT, statement_IF, statement_WHILE, statement_LIST} STATEMENT_kind;
+typedef enum {sl_STATEMENT, sl_LIST} SL_kind;
+
+typedef enum {statement_RETURN, statement_WRITE, statement_ALLOCATE, statement_ALLOCATE_LENGTH, statement_ASSIGNMENT, statement_IF, statement_IF_ELSE, statement_WHILE, statement_LIST} STATEMENT_kind;
 
 typedef enum {al_LIST, al_EMPTY} AL_kind;
 

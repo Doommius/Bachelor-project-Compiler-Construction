@@ -35,6 +35,8 @@ typedef struct type {
     TYPE_kind kind;
     union {
         char *id;
+        struct type *type;
+        struct var_decl_list *list;
         //TODO der skal være noget mere her
     } val;
 } type;
@@ -76,14 +78,20 @@ typedef struct declaration{
     int lineno;
     DECL_kind kind;
     //TODO ved ikke lige med det der type id = <type>, det her er midlertidigt
-    struct type *type;
-    struct function *function;
-    struct var_decl_list *list;
+    union {
+       struct {
+           char *id;
+           struct type *type;
+       } type;
+        struct function *function;
+        var_decl_list *list;
+    } val;
 
 } declaration;
 
 typedef struct statement_list{
     int lineno;
+    SL_kind kind;
     struct statement *statement;
     struct statement_list *list;
 
@@ -91,8 +99,33 @@ typedef struct statement_list{
 
 typedef struct statement{
     int lineno;
-    //TODO Sikkert ikke rigtigt
     STATEMENT_kind kind;
+    union {
+        struct expression *ret;
+        struct expression *wrt;
+        struct {
+            struct variable *variable;
+            struct expression *length;
+        } allocate;
+
+        struct {
+            struct variable *variable;
+            struct expression *expression;
+        } assignment;
+
+        struct {
+            struct expression *expression;
+            struct statement *statement1;
+            struct statement *statement2;
+        } ifthen;
+
+        struct {
+            struct expression *expression;
+            struct statement *statement;
+        } loop;
+
+        struct statement_list *list;
+    } val;
 
 } statement;
 
@@ -156,9 +189,47 @@ typedef struct exp_list{
     struct exp_list *list;
 } exp_list;
 
+function *make_Func(head *h, body *b, tail *t);
 
+head *make_Head(char *id, par_decl_list *pdl, type *t);
 
-type *make_type_id(char *id);
+tail *make_Tail(char *id);
+
+type *make_Type_id(char *id);
+type *make_Type_int();
+type *make_Type_bool();
+type *make_Type_array(type *t);
+type *make_Type_record(var_decl_list *vdl);
+
+par_decl_list *make_PDL_list(var_decl_list *vdl);
+par_decl_list *make_PDL_empty();
+
+var_decl_list *make_VDL_list(var_type *vt, var_decl_list *vdl);
+var_decl_list *make_VDL_type(var_type *vt);
+
+var_type *make_VType_id(char *id, type *t);
+
+body *make_Body(decl_list *dl, statement_list *sl);
+
+decl_list *make_DL_list(declaration *d, decl_list *dl);
+decl_list *make_DL_empty();
+
+declaration *make_Decl_type(char *id, type *t);
+declaration *make_Decl_func(function *f);
+declaration *make_Decl_list(var_decl_list *vdl);
+
+statement_list *make_SL_statement(statement *s);
+statement_list *make_SL_list(statement *s, statement_list *sl);
+
+statement *make_STMT_ret(expression *e);
+statement *make_STMT_wrt(expression *e);
+statement *make_STMT_allocate_var(variable *v);
+statement *make_STMT_allocate_length(variable *v, expression *e);
+statement *make_STMT_assign(variable *v, expression *e);
+statement *make_STMT_if(expression *e, statement *s);
+statement *make_STMT_if_else(expression *e, statement *s1, statement *s2);
+statement *make_STMT_while(expression *e, statement *s);
+statement *make_STMT_list(statement_list *sl);
 
 variable *make_Var_id(char *id);
 variable *make_Var_exp(variable *var, expression *expression);

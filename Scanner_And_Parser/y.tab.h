@@ -69,7 +69,20 @@ extern int yydebug;
     ASSIGN = 279,
     TRUE = 280,
     FALSE = 281,
-    _NULL = 282
+    _NULL = 282,
+    FUNC = 283,
+    END = 284,
+    INT = 285,
+    BOOL = 286,
+    ARRAY_OF = 287,
+    RECORD_OF = 288,
+    TYPE = 289,
+    VAR = 290,
+    OF_LENGTH = 291,
+    THEN = 292,
+    WRITE = 293,
+    ALLOCATE = 294,
+    DO = 295
   };
 #endif
 /* Tokens.  */
@@ -98,6 +111,19 @@ extern int yydebug;
 #define TRUE 280
 #define FALSE 281
 #define _NULL 282
+#define FUNC 283
+#define END 284
+#define INT 285
+#define BOOL 286
+#define ARRAY_OF 287
+#define RECORD_OF 288
+#define TYPE 289
+#define VAR 290
+#define OF_LENGTH 291
+#define THEN 292
+#define WRITE 293
+#define ALLOCATE 294
+#define DO 295
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -127,7 +153,7 @@ union YYSTYPE
     struct act_list *act_list;
     struct exp_list *exp_list;
 
-#line 131 "y.tab.h" /* yacc.c:1909  */
+#line 157 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
