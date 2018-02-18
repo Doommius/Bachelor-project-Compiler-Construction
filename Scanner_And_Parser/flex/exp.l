@@ -11,7 +11,7 @@ extern int fileno();
 %option noyywrap nounput noinput
 
 /* abbreviation of symbols we match on, TO BE EXPANDED */
-SYMBOLS [+\-*\/\(\)\[\]{}!\|,]
+SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.]
 
 
 /* Rules

@@ -10,7 +10,7 @@ typedef enum {idK,intconstK,timesK,divK,plusK,minusK, modK} kindArithmetic;
 
 typedef enum {exp_PLUS, exp_MIN, exp_MULT, exp_DIV, exp_EQ, exp_NEQ, exp_GT, exp_LT, exp_GEQ, exp_LEQ, exp_AND, exp_OR, exp_TERM} EXP_kind;
 
-typedef enum {term_VAR, term_LIST, term_PAR, term_EXP, term_NOT, term_ABS, term_NUM, term_TRUE, term_FALSE, term_NULL} TERM_kind;
+typedef enum {term_VAR, term_LIST, term_PAR, term_NOT, term_ABS, term_NUM, term_TRUE, term_FALSE, term_NULL} TERM_kind;
 
 typedef enum {type_ID, type_INT, type_BOOl, type_ARRAY, type_RECORD} TYPE_kind;
 

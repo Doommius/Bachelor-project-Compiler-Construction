@@ -2,6 +2,28 @@
 #include "pretty.h"
 #include "tree.h"
 
+void prettyVar(variable *v){
+    switch (v->kind){
+
+        case var_ID:
+            printf("%s", v->id);
+            break;
+
+        case var_EXP:
+            prettyVar(v->val.exp.var);
+            printf("[");
+            prettyEXP(v->val.exp.exp);
+            printf("]");
+            break;
+
+        case var_VID:
+            prettyVar(v->val.varid.var);
+            printf(".%s", v->val.varid.id);
+            break;
+
+    }
+}
+
 void prettyEXP(expression *e) {
     switch (e->kind) {
 
@@ -110,6 +132,17 @@ void prettyEXP(expression *e) {
 
 void prettyTerm(term *t){
     switch (t->kind){
+
+        case term_VAR:
+            prettyVar(t->val.variable);
+            break;
+
+        case term_LIST:
+            printf("%s (", t->val.list.id);
+            prettyAL(t->val.list.list);
+            printf(")");
+            break;
+
         case term_PAR:
             printf("(");
             prettyEXP(t->val.expression);
@@ -143,4 +176,34 @@ void prettyTerm(term *t){
             printf("%i", t->val.num);
             break;
     }
+}
+
+void prettyAL(act_list *al){
+    switch (al->kind){
+
+        case al_LIST:
+            prettyEL(al->list);
+            break;
+
+        case al_EMPTY:
+            break;
+
+    }
+}
+
+
+void prettyEL(exp_list *el){
+    switch (el->kind){
+
+        case el_EXP:
+            prettyEXP(el->expression);
+            break;
+
+        case el_LIST:
+            prettyEXP(el->expression);
+            printf(", ");
+            prettyEL(el->list);
+            break;
+    }
+
 }

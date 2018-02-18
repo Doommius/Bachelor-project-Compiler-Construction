@@ -1467,7 +1467,7 @@ yyreduce:
 
   case 21:
 #line 124 "bison/exp.y" /* yacc.c:1646  */
-    {(yyval.term) = make_Term_exp((yyvsp[-1].expression));}
+    {(yyval.term) = make_Term_par((yyvsp[-1].expression));}
 #line 1472 "y.tab.c" /* yacc.c:1646  */
     break;
 

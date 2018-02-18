@@ -94,7 +94,7 @@ expression  :   expression '+' expression
         {$$ = make_EXP(exp_MIN, $1, $3);}
             | expression '*' expression
         {$$ = make_EXP(exp_MULT, $1, $3);}
-            | expression '/' expression
+            | expression '/' expressiona.list
         {$$ = make_EXP(exp_DIV, $1, $3);}
             | '(' expression ')'
         {$$ = $2;}
@@ -121,7 +121,7 @@ expression  :   expression '+' expression
 term    :       tINTCONST
         {$$ = make_Term_num($1);}
             | '(' expression ')'
-        {$$ = make_Term_exp($2);}
+        {$$ = make_Term_par($2);}
             | '!' term
         {$$ = make_Term_not($2);}
             | '|' expression '|'

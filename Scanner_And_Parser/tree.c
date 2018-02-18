@@ -41,11 +41,11 @@ term *make_Term_num(int intconst){
     return t;
 }
 
-term *make_Term_exp(expression *expression){
+term *make_Term_par(expression *expression){
     term *t;
     t = NEW(term);
     t->lineno = lineno;
-    t->kind = term_EXP;
+    t->kind = term_PAR;
     t->val.expression = expression;
     return t;
 }

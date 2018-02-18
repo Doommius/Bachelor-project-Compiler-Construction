@@ -168,7 +168,7 @@ expression *make_EXP(EXP_kind kind, expression *left, expression *right);
 expression *make_EXP_term(term *term);
 
 term *make_Term_num(int intconst);
-term *make_Term_exp(expression *expression);
+term *make_Term_par(expression *expression);
 term *make_Term_not(term *term);
 term *make_Term_abs(expression *expression);
 term *make_Term_boolean(int bool);
