@@ -71,7 +71,7 @@
 
 extern char *yytext;
 //extern EXP *theexpression;
-extern expression *theprogram;
+extern body *theprogram;
 
 void yyerror() {
    printf("syntax error before %s\n",yytext);
@@ -1546,7 +1546,7 @@ yyreduce:
 
   case 17:
 #line 157 "bison/exp.y" /* yacc.c:1646  */
-    {(yyval.decl_list) = make_DL_list((yyvsp[-1].declaration), (yyvsp[-1].declaration));}
+    {(yyval.decl_list) = make_DL_list((yyvsp[-1].declaration), (yyvsp[0].decl_list));}
 #line 1551 "y.tab.c" /* yacc.c:1646  */
     break;
 

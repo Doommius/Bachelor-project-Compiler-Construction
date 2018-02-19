@@ -1,1 +1,8 @@
-a[1]
+func myFunc(a : int) : int
+{
+  return 10;
+}
+end myFunc
+
+
+nut = myFunc();

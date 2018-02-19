@@ -6,7 +6,7 @@
 
 extern char *yytext;
 //extern EXP *theexpression;
-extern expression *theprogram;
+extern body *theprogram;
 
 void yyerror() {
    printf("syntax error before %s\n",yytext);
@@ -154,7 +154,7 @@ body        :   decl_list statement_list
 ;
 
 decl_list   :   declaration decl_list
-        {$$ = make_DL_list($1, $1);}
+        {$$ = make_DL_list($1, $2);}
             | /*empty*/
         {$$ = make_DL_empty();}
 ;

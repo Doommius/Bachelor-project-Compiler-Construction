@@ -4,14 +4,16 @@
 
 extern int lineno;
 extern int fileno();
+
 %}
 
-
+%x COMMENT_SINGLE
+%x COMMENT_MULTI
 
 %option noyywrap nounput noinput
 
 /* abbreviation of symbols we match on, TO BE EXPANDED */
-SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;]
+SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
 
 
 /* Rules
@@ -36,18 +38,10 @@ SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;]
 "if"            return IF;
 "else"          return ELSE;
 "while"         return WHILE;
-"for"           return FOR;
-"in"            return IN;
-"int"           return TYPEINT;
-"string"        return TYPESTRING;
-"boolean"       return TYPEBOOLEAN;
-"bool"          return TYPEBOOLEAN;
-"function"      return FUNCTION;
 "return"        return RETURN;
 "&&"            return AND;
 "and"           return AND;
 "||"            return OR;
-"or"            return OR;
 "true"          return TRUE;
 "false"         return FALSE;
 "null"          return _NULL;
@@ -74,7 +68,28 @@ SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;]
                          sprintf(yylval.stringconst,"%s",yytext);
                          return tIDENTIFIER; }
 
+"#"             BEGIN(COMMENT_SINGLE);
+"(*"            BEGIN(COMMENT_MULTI);
 
-.               /* ignore */;
+<COMMENT_SINGLE>{
+
+\n              lineno++; BEGIN(0);
+
+.               /* ignore */
+
+}
+
+<COMMENT_MULTI>{
+
+\n              lineno++;
+"*)"            BEGIN(0);
+
+.               /* ignore */
+<<EOF>>         fprintf(stderr, "Comment not closed at the end of the file. Found at line: %i\n", lineno); exit(1);
+
+}
+
+
+.               fprintf(stderr, "Unrecognized symbol. Found at line: %i\n", lineno); exit(1);
 
 %%

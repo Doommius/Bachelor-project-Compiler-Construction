@@ -96,7 +96,7 @@ void prettyDecl(declaration *d){
         case decl_TYPE:
             printf("type %s = ", d->val.type.id);
             prettyType(d->val.type.type);
-            printf(";");
+            printf(";\n");
             break;
 
         case decl_FUNC:
@@ -106,7 +106,7 @@ void prettyDecl(declaration *d){
         case decl_VAR:
             printf("var ");
             prettyVDL(d->val.list);
-            printf(";");
+            printf(";\n");
             break;
     }
 }
@@ -128,19 +128,19 @@ void prettySTMT(statement *s){
         case statement_RETURN:
             printf("return ");
             prettyEXP(s->val.ret);
-            printf(";");
+            printf(";\n");
             break;
 
         case statement_WRITE:
             printf("write ");
             prettyEXP(s->val.wrt);
-            printf(";");
+            printf(";\n");
             break;
 
         case statement_ALLOCATE:
             printf("allocate ");
             prettyVar(s->val.allocate.variable);
-            printf(";");
+            printf(";\n");
             break;
 
         case statement_ALLOCATE_LENGTH:
@@ -148,14 +148,14 @@ void prettySTMT(statement *s){
             prettyVar(s->val.allocate.variable);
             printf(" of length ");
             prettyEXP(s->val.allocate.length);
-            printf(";");
+            printf(";\n");
             break;
 
         case statement_ASSIGNMENT:
             prettyVar(s->val.assignment.variable);
             printf(" = ");
             prettyEXP(s->val.assignment.expression);
-            printf(";");
+            printf(";\n");
             break;
 
         case statement_IF:
