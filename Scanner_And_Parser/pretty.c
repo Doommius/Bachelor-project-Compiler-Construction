@@ -2,20 +2,26 @@
 #include "pretty.h"
 #include "tree.h"
 
+int indent_depth;
+
 void prettyFunc(function *f){
     prettyHead(f->head);
+    indent_depth++;
     prettyBody(f->body);
+    indent_depth--;
     prettyTail(f->tail);
 }
 
 void prettyHead(head *h){
-    printf("func %s (", h->id);
+    printf("func %s(", h->id);
     prettyPDL(h->list);
-    printf(") :");
+    printf(") : ");
     prettyType(h->type);
+    printf("\n");
 }
 
 void prettyTail(tail *t){
+    indent();
     printf("\nend %s", t->id);
 }
 
@@ -92,6 +98,7 @@ void prettyDL(decl_list *dl){
 }
 
 void prettyDecl(declaration *d){
+    indent();
     switch (d->kind){
         case decl_TYPE:
             printf("type %s = ", d->val.type.id);
@@ -124,6 +131,11 @@ void prettySL(statement_list *sl){
 }
 
 void prettySTMT(statement *s){
+
+    if(s->kind != statement_LIST){
+        indent();
+    }
+
     switch (s->kind){
         case statement_RETURN:
             printf("return ");
@@ -161,30 +173,39 @@ void prettySTMT(statement *s){
         case statement_IF:
             printf("if ");
             prettyEXP(s->val.ifthen.expression);
-            printf(" then ");
+            printf(" then\n");
+            indent_depth++;
             prettySTMT(s->val.ifthen.statement1);
+            indent_depth--;
             break;
 
         case statement_IF_ELSE:
             printf("if ");
             prettyEXP(s->val.ifthen.expression);
-            printf(" then ");
+            printf(" then\n");
+            indent_depth++;
             prettySTMT(s->val.ifthen.statement1);
-            printf(" else ");
+            indent_depth--;
+            printf(" else\n");
+            indent_depth++;
             prettySTMT(s->val.ifthen.statement2);
+            indent_depth--;
             break;
 
         case statement_WHILE:
             printf("while ");
             prettyEXP(s->val.loop.expression);
-            printf(" do ");
+            printf(" do\n");
             prettySTMT(s->val.loop.statement);
             break;
 
         case statement_LIST:
-            printf("{");
+            printf("{\n");
+            indent_depth++;
             prettySL(s->val.list);
-            printf("}");
+            indent_depth--;
+            indent();
+            printf("}\n");
             break;
     }
 }
@@ -379,7 +400,6 @@ void prettyAL(act_list *al){
     }
 }
 
-
 void prettyEL(exp_list *el){
     switch (el->kind){
 
@@ -392,6 +412,15 @@ void prettyEL(exp_list *el){
             printf(", ");
             prettyEL(el->list);
             break;
+    }
+}
+
+void indent(){
+
+    int spaces = 0;
+    while (spaces < (indent_depth *4)){
+        printf(" ");
+        spaces++;
     }
 
 }

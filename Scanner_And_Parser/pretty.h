@@ -33,3 +33,5 @@ void prettyTerm(term *t);
 void prettyAL(act_list *al);
 
 void prettyEL(exp_list *el);
+
+void indent();
