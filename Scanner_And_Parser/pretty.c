@@ -193,9 +193,9 @@ void prettySTMT(statement *s){
             break;
 
         case statement_WHILE:
-            printf("while ");
+            printf("while (");
             prettyEXP(s->val.loop.expression);
-            printf(" do\n");
+            printf(") do\n");
             prettySTMT(s->val.loop.statement);
             break;
 
@@ -238,99 +238,75 @@ void prettyEXP(expression *e) {
     switch (e->kind) {
 
         case exp_MULT:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf("*");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_DIV:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf("/");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_PLUS:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf("+");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_MIN:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf("-");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_EQ:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf("==");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_NEQ:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf("!=");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_GT:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf(">");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_LT:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf("<");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_GEQ:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf(">=");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_LEQ:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf("<=");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_AND:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf("&&");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_OR:
-            printf("(");
             prettyEXP(e->val.ops.left);
             printf("||");
             prettyEXP(e->val.ops.right);
-            printf(")");
             break;
 
         case exp_TERM:
@@ -348,7 +324,7 @@ void prettyTerm(term *t){
             break;
 
         case term_LIST:
-            printf("%s (", t->val.list.id);
+            printf("%s(", t->val.list.id);
             prettyAL(t->val.list.list);
             printf(")");
             break;
