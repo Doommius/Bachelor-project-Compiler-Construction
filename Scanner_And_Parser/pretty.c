@@ -22,7 +22,7 @@ void prettyHead(head *h){
 
 void prettyTail(tail *t){
     indent();
-    printf("\nend %s", t->id);
+    printf("end %s\n", t->id);
 }
 
 void prettyType(type *t){
@@ -200,6 +200,7 @@ void prettySTMT(statement *s){
             break;
 
         case statement_LIST:
+            indent();
             printf("{\n");
             indent_depth++;
             prettySL(s->val.list);
