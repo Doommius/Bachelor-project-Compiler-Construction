@@ -28,19 +28,18 @@ SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
 
 {SYMBOLS}       return yytext[0];
 
+
 "=="            return EQ;
 "!="            return NEQ;
 "<"             return LT;
 "<="            return LEQ;
 ">"             return GT;
 ">="            return GEQ;
-":="            return ASSIGN;
 "if"            return IF;
 "else"          return ELSE;
 "while"         return WHILE;
 "return"        return RETURN;
 "&&"            return AND;
-"and"           return AND;
 "||"            return OR;
 "true"          return TRUE;
 "false"         return FALSE;
@@ -74,6 +73,10 @@ SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
 <COMMENT_SINGLE>{
 
 \n              lineno++; BEGIN(0);
+
+"|"[a-zA-Z0-9_]* ECHO; printf("    BAR\n");
+[a-zA-Z0-9_]+"||"[a-zA-Z0-9_]+            ECHO; printf("    OR\n");
+
 
 .               /* ignore */
 

@@ -159,7 +159,7 @@ decl_list   :   declaration decl_list
         {$$ = make_DL_empty();}
 ;
 
-declaration :   TYPE tIDENTIFIER '=' type ';'
+declaration :   TYPE tIDENTIFIER '='     type ';'
         {$$ = make_Decl_type($2, $4);}
             | function
         {$$ = make_Decl_func($1);}

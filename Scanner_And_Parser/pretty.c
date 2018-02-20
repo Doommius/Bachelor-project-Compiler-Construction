@@ -180,9 +180,9 @@ void prettySTMT(statement *s){
             break;
 
         case statement_IF_ELSE:
-            printf("if ");
+            printf("if ( ");
             prettyEXP(s->val.ifthen.expression);
-            printf(" then\n");
+            printf(" ) then\n");
             indent_depth++;
             prettySTMT(s->val.ifthen.statement1);
             indent_depth--;
@@ -263,49 +263,49 @@ void prettyEXP(expression *e) {
 
         case exp_EQ:
             prettyEXP(e->val.ops.left);
-            printf("==");
+            printf(" == ");
             prettyEXP(e->val.ops.right);
             break;
 
         case exp_NEQ:
             prettyEXP(e->val.ops.left);
-            printf("!=");
+            printf(" != ");
             prettyEXP(e->val.ops.right);
             break;
 
         case exp_GT:
             prettyEXP(e->val.ops.left);
-            printf(">");
+            printf(" > ");
             prettyEXP(e->val.ops.right);
             break;
 
         case exp_LT:
             prettyEXP(e->val.ops.left);
-            printf("<");
+            printf(" < ");
             prettyEXP(e->val.ops.right);
             break;
 
         case exp_GEQ:
             prettyEXP(e->val.ops.left);
-            printf(">=");
+            printf(" >= ");
             prettyEXP(e->val.ops.right);
             break;
 
         case exp_LEQ:
             prettyEXP(e->val.ops.left);
-            printf("<=");
+            printf(" <= ");
             prettyEXP(e->val.ops.right);
             break;
 
         case exp_AND:
             prettyEXP(e->val.ops.left);
-            printf("&&");
+            printf(" && ");
             prettyEXP(e->val.ops.right);
             break;
 
         case exp_OR:
             prettyEXP(e->val.ops.left);
-            printf("||");
+            printf(" || ");
             prettyEXP(e->val.ops.right);
             break;
 
