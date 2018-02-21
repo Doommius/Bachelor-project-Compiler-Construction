@@ -1,7 +1,7 @@
 #ifndef __tree_h
 #define __tree_h
 
-#include "kind.h"
+#include "../../../../include/kind.h"
 //#define EMPTY 0
 //#define LIST 1
 //#define TYPE 2

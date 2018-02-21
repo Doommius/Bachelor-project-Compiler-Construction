@@ -1,5 +1,5 @@
-#include "memory.h"
-#include "tree.h"
+#include "../../../Scanner_And_Parser/memory.h"
+#include "include/tree.h"
 #include <stdio.h>
 
 extern int lineno;
