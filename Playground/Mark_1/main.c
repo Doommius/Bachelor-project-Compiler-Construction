@@ -4,7 +4,6 @@
 #include <immintrin.h>
 #include <stdio.h>
 
-#include "main.h"
 
 void brackettest(){
 

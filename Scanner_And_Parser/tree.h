@@ -1,24 +1,12 @@
 #ifndef __tree_h
 #define __tree_h
 
-
+#include "kind.h"
 //#define EMPTY 0
 //#define LIST 1
 //#define TYPE 2
 
-typedef enum {idK,intconstK,timesK,divK,plusK,minusK, modK} kindArithmetic;
 
-
-
-typedef struct EXP {
-    int lineno;
-    kindArithmetic kind;
-    union {
-        char *idE;
-        int intconstE;
-        struct {struct EXP *left; struct EXP *right;} val;
-    } data;
-} EXP;
 
 typedef struct function{
     int lineno;
@@ -42,15 +30,13 @@ typedef struct tail{
     char *id;
 } tail;
 
-
-
-typedef enum {type_ID, type_INT, type_BOOl, type_ARRAY, type_RECORD} kindtype;
-
 typedef struct type {
     int lineno;
-    kindtype kind;
+    TYPE_kind kind;
     union {
         char *id;
+        struct type *type;
+        struct var_decl_list *list;
         //TODO der skal være noget mere her
     } val;
 } type;
@@ -58,13 +44,13 @@ typedef struct type {
 //TO
 typedef struct par_decl_list{
     int lineno;
-    enum {LIST, EMPTY} kind;
+    PDL_kind kind;
     struct var_decl_list *list;
 } par_decl_list;
 
 typedef struct var_decl_list{
     int lineno;
-    enum {LIST, TYPE} kind;
+    VDL_kind kind;
     struct var_decl_list *list;
     struct var_type *vartype;
 } var_decl_list;
@@ -83,23 +69,29 @@ typedef struct body{
 
 typedef struct decl_list{
     int lineno;
-    enum {LIST, EMPTY} kind;
+    DL_kind kind;
     struct declaration *decl;
     struct decl_list *list;
 } decl_list;
 
 typedef struct declaration{
     int lineno;
-    enum {ID, FUNC, VAR} kind;
+    DECL_kind kind;
     //TODO ved ikke lige med det der type id = <type>, det her er midlertidigt
-    struct type *type;
-    struct function *function;
-    struct var_decl_list *list;
+    union {
+       struct {
+           char *id;
+           struct type *type;
+       } type;
+        struct function *function;
+        var_decl_list *list;
+    } val;
 
 } declaration;
 
 typedef struct statement_list{
     int lineno;
+    SL_kind kind;
     struct statement *statement;
     struct statement_list *list;
 
@@ -107,82 +99,162 @@ typedef struct statement_list{
 
 typedef struct statement{
     int lineno;
-    //TODO Sikkert ikke rigtigt
-    enum {RETURN, WRITE, ALLOCATE, ASSIGNMENT, IF, WHILE, LIST} kind;
+    STATEMENT_kind kind;
+    union {
+        struct expression *ret;
+        struct expression *wrt;
+        struct {
+            struct variable *variable;
+            struct expression *length;
+        } allocate;
+
+        struct {
+            struct variable *variable;
+            struct expression *expression;
+        } assignment;
+
+        struct {
+            struct expression *expression;
+            struct statement *statement1;
+            struct statement *statement2;
+        } ifthen;
+
+        struct {
+            struct expression *expression;
+            struct statement *statement;
+        } loop;
+
+        struct statement_list *list;
+    } val;
 
 } statement;
 
 typedef struct variable{
     int lineno;
     char *id;
-    struct variable *var;
+    Var_kind kind;
+    union {
+        struct {
+            struct variable *var;
+            struct expression *exp;
+        } exp;
+        struct {
+            struct variable *var;
+            char *id;
+        } varid;
+    } val;
     //TODO Skal være noget mere her
 } variable;
 
 typedef struct expression{
     int lineno;
-    enum {EXP, TERM} kind;
-    struct expression *expression;
-    struct term *term;
+    EXP_kind kind;
+    union {
+        struct {
+            struct expression *left;
+            struct expression *right;
+        } ops;
+        struct term *term;
+    } val;
+
     //TODO Skal være noget mere her
 } expression;
 
 typedef struct term{
     int lineno;
-    enum {term_ID, term_PAR, term_EXPRESSION, term_ABS, term_NUM, term_TRUE, term_FALSE, term_NULL} kind;
+    TERM_kind kind;
     union {
-
+        int num;
+        struct expression *expression;
+        struct term *term_not;
+        struct variable *variable;
+        struct {
+            char *id;
+            struct act_list *list;
+        } list;
         //TODO Skal være noget mere her
     } val;
 } term;
 
 typedef struct act_list{
     int lineno;
-    enum {LIST, EMPTY} kind;
+    AL_kind kind;
     struct exp_list *list;
 } act_list;
 
 typedef struct exp_list{
     int lineno;
-    enum {EXP, LIST} kind;
+    EL_kind kind;
     struct expression *expression;
     struct exp_list *list;
 } exp_list;
 
+function *make_Func(head *h, body *b, tail *t);
+
+head *make_Head(char *id, par_decl_list *pdl, type *t);
+
+tail *make_Tail(char *id);
+
+type *make_Type_id(char *id);
+type *make_Type_int();
+type *make_Type_bool();
+type *make_Type_array(type *t);
+type *make_Type_record(var_decl_list *vdl);
+
+par_decl_list *make_PDL_list(var_decl_list *vdl);
+par_decl_list *make_PDL_empty();
+
+var_decl_list *make_VDL_list(var_type *vt, var_decl_list *vdl);
+var_decl_list *make_VDL_type(var_type *vt);
+
+var_type *make_VType_id(char *id, type *t);
+
+body *make_Body(decl_list *dl, statement_list *sl);
+
+decl_list *make_DL_list(declaration *d, decl_list *dl);
+decl_list *make_DL_empty();
+
+declaration *make_Decl_type(char *id, type *t);
+declaration *make_Decl_func(function *f);
+declaration *make_Decl_list(var_decl_list *vdl);
+
+statement_list *make_SL_statement(statement *s);
+statement_list *make_SL_list(statement *s, statement_list *sl);
+
+statement *make_STMT_ret(expression *e);
+statement *make_STMT_wrt(expression *e);
+statement *make_STMT_allocate_var(variable *v);
+statement *make_STMT_allocate_length(variable *v, expression *e);
+statement *make_STMT_assign(variable *v, expression *e);
+statement *make_STMT_if(expression *e, statement *s);
+statement *make_STMT_if_else(expression *e, statement *s1, statement *s2);
+statement *make_STMT_while(expression *e, statement *s);
+statement *make_STMT_list(statement_list *sl);
+
+variable *make_Var_id(char *id);
+variable *make_Var_exp(variable *var, expression *expression);
+variable *make_Var_varid(variable *var, char *id);
+
+expression *make_EXP(EXP_kind kind, expression *left, expression *right);
+expression *make_EXP_term(term *term);
+
+term *make_Term_num(int intconst);
+term *make_Term_par(expression *expression);
+term *make_Term_not(term *term);
+term *make_Term_abs(expression *expression);
+term *make_Term_boolean(int bool);
+term *make_Term_null();
+term *make_Term_variable(variable *var);
+term *make_Term_list(char *id, act_list *list);
+
+act_list *make_Act_list(exp_list *list);
+act_list *make_Act_empty();
+
+exp_list *make_ExpL_exp(expression *expression);
+exp_list *make_ExpL_list(expression *expression, exp_list *list);
 
 
-type *make_type_id(char *id);
+//EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind);
 
 
-EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kind kind);
-
-/*
-typedef enum {idK,intconstK,timesK,divK,plusK,minusK} kind;
-typedef struct EXP {
-  int lineno;
-  kind kind;
-  union {
-    char *idE;
-    int intconstE;
-    struct {struct EXP *left; struct EXP *right;} timesE;
-    struct {struct EXP *left; struct EXP *right;} divE;
-    struct {struct EXP *left; struct EXP *right;} plusE;
-    struct {struct EXP *left; struct EXP *right;} minusE;
-  } val;
-} EXP;
-
-
- 
-EXP *makeEXPid(char *id);
-
-EXP *makeEXPintconst(int intconst);
-
-EXP *makeEXPtimes(EXP *left, EXP *right);
-
-EXP *makeEXPdiv(EXP *left, EXP *right);
-
-EXP *makeEXPplus(EXP *left, EXP *right);
-
-EXP *makeEXPminus(EXP *left, EXP *right);
-*/
 #endif

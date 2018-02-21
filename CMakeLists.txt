@@ -38,7 +38,7 @@ set(SOURCE_FILES_scanner_And_parser
          Scanner_And_Parser/pretty.c
          Scanner_And_Parser/pretty.h
          Scanner_And_Parser/tree.c
-         Scanner_And_Parser/tree.h)
+         Scanner_And_Parser/tree.h Scanner_And_Parser/kind.h)
 
 add_executable(Scanner_And_Parser
         ${BISON_Parser_OUTPUTS}
@@ -50,5 +50,4 @@ add_executable(Scanner_And_Parser
 
 add_executable(Z_Playground_Mark_1
         Playground/Mark_1/main.c
-        Playground/Mark_1/main.h
         )

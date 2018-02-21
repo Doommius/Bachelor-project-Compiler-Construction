@@ -4,13 +4,16 @@
 
 extern int lineno;
 extern int fileno();
+
 %}
 
-
+%x COMMENT_SINGLE
+%x COMMENT_MULTI
 
 %option noyywrap nounput noinput
 
-SYMBOLS [+\-]
+/* abbreviation of symbols we match on, TO BE EXPANDED */
+SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
 
 
 /* Rules
@@ -23,22 +26,10 @@ SYMBOLS [+\-]
 [ \t]+        /* ignore */;
 \n              lineno++;
 
-
-[a-zA-Z_][a-zA-Z0-9_]* { yylval.stringconst = (char *)malloc(strlen(yytext)+1);
-                         sprintf(yylval.stringconst,"%s",yytext);
-                         return tIDENTIFIER; }
+{SYMBOLS}       return yytext[0];
 
 
-
-
-"*"             return '*';
-"/"             return '/';
-"+"             return '+';
-"-"             return '-';
-"%"             return 'MOD';
-"("             return '(';
-")"             return ')';
-"="             return EQ;
+"=="            return EQ;
 "!="            return NEQ;
 "<"             return LT;
 "<="            return LEQ;
@@ -47,16 +38,27 @@ SYMBOLS [+\-]
 "if"            return IF;
 "else"          return ELSE;
 "while"         return WHILE;
-"for"           return FOR;
-"in"            return IN;
-"{"             return '{';
-"}"             return '}';
-";"             return SEMICOLON;
-"int"           return TYPEINT;
-"string"        return TYPESTRING;
-"boolean"       return TYPEBOOLEAN;
-"bool"          return TYPEBOOLEAN;
-"function"      return FUNCTION;
+"return"        return RETURN;
+"&&"            return AND;
+"||"            return OR;
+"true"          return TRUE;
+"false"         return FALSE;
+"null"          return _NULL;
+
+"func"          return FUNC;
+"end"           return END;
+
+"int"           return INT;
+"bool"          return BOOL;
+"array of"      return ARRAY_OF;
+"record of"     return RECORD_OF;
+"type"          return TYPE;
+"var"           return VAR;
+"write"         return WRITE;
+"allocate"      return ALLOCATE;
+"of length"     return OF_LENGTH;
+"then"          return THEN;
+"do"            return DO;
 
 0|([1-9][0-9]*)        { yylval.intconst = atoi(yytext);
                        return tINTCONST; }
@@ -65,7 +67,32 @@ SYMBOLS [+\-]
                          sprintf(yylval.stringconst,"%s",yytext);
                          return tIDENTIFIER; }
 
+"#"             BEGIN(COMMENT_SINGLE);
+"(*"            BEGIN(COMMENT_MULTI);
 
-.               /* ignore */;
+<COMMENT_SINGLE>{
+
+\n              lineno++; BEGIN(0);
+
+"|"[a-zA-Z0-9_]* ECHO; printf("    BAR\n");
+[a-zA-Z0-9_]+"||"[a-zA-Z0-9_]+            ECHO; printf("    OR\n");
+
+
+.               /* ignore */
+
+}
+
+<COMMENT_MULTI>{
+
+\n              lineno++;
+"*)"            BEGIN(0);
+
+.               /* ignore */
+<<EOF>>         fprintf(stderr, "Comment not closed at the end of the file. Found at line: %i\n", lineno); exit(1);
+
+}
+
+
+.               fprintf(stderr, "Unrecognized symbol. Found at line: %i\n", lineno); exit(1);
 
 %%

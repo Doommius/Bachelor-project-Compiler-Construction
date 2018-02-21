@@ -1,0 +1,1 @@
+Small test to see how bracket affect a C program.
