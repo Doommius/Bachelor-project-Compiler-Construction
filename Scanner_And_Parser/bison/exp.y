@@ -47,13 +47,6 @@ void yyerror() {
 %token IF
 %token ELSE
 %token WHILE
-%token FOR
-%token IN
-%token FUNCTION
-%token TYPEINT
-%token TYPESTRING
-%token TYPEBOOLEAN
-%token SEMICOLON
 %token RETURN
 %token AND
 %token OR

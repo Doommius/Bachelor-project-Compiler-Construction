@@ -4,6 +4,7 @@
 
 extern int lineno;
 extern int fileno();
+int nested_comment = 0;
 
 %}
 
@@ -13,7 +14,7 @@ extern int fileno();
 %option noyywrap nounput noinput
 
 /* abbreviation of symbols we match on, TO BE EXPANDED */
-SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
+SYMBOLS [+\-*\/\(\)\[\]{}\|!,\.=;:]
 
 
 /* Rules
@@ -28,7 +29,6 @@ SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
 
 {SYMBOLS}       return yytext[0];
 
-
 "=="            return EQ;
 "!="            return NEQ;
 "<"             return LT;
@@ -40,7 +40,7 @@ SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
 "while"         return WHILE;
 "return"        return RETURN;
 "&&"            return AND;
-"||"            return OR;
+" || "            return OR;
 "true"          return TRUE;
 "false"         return FALSE;
 "null"          return _NULL;
@@ -68,16 +68,11 @@ SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
                          return tIDENTIFIER; }
 
 "#"             BEGIN(COMMENT_SINGLE);
-"(*"            BEGIN(COMMENT_MULTI);
+"(*"            nested_comment++; BEGIN(COMMENT_MULTI);
 
 <COMMENT_SINGLE>{
 
 \n              lineno++; BEGIN(0);
-
-"|"[a-zA-Z0-9_]* ECHO; printf("    BAR\n");
-[a-zA-Z0-9_]+"||"[a-zA-Z0-9_]+            ECHO; printf("    OR\n");
-
-
 .               /* ignore */
 
 }
@@ -85,7 +80,14 @@ SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
 <COMMENT_MULTI>{
 
 \n              lineno++;
-"*)"            BEGIN(0);
+"(*"            nested_comment++;
+"*)"            {   nested_comment--;
+                    if (nested_comment == 0){
+                        BEGIN(0);
+                    }
+                }
+
+
 
 .               /* ignore */
 <<EOF>>         fprintf(stderr, "Comment not closed at the end of the file. Found at line: %i\n", lineno); exit(1);
