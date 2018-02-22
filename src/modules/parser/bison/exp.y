@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-#include "tree.h"
+#include "../src/modules/parser/include/tree.h"
 #include "y.tab.h"
 
 

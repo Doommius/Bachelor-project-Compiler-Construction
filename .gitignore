@@ -3,9 +3,8 @@ cmake-build-debug
 .idea
 .directory
 *.zip
-tests
-compiler
 test
+compiler
 *.o
 
 *.tab.c

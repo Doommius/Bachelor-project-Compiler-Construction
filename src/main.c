@@ -1,12 +1,9 @@
-//
-// Created by jervelund on 2/9/18.
-//
-#include "symbol.h"
 #include <string.h>
 #include <stdio.h>
-#include <struct.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include "struct.h"
+#include "symbol.h"
 
 int main(int argc, char **argv) {
 
@@ -24,7 +21,7 @@ int main(int argc, char **argv) {
             str[strlen(buf)-1] = 0;
             SYMBOL *symbol = putSymbol(table, str, Hash(str));
         } else {
-        break;
+            break;
         }
     } while (buf != "\0");
 
