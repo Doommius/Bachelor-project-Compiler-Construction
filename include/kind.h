@@ -1,7 +1,3 @@
-//
-// Created by morten on 2/17/18.
-//
-
 #ifndef COMPILER_KIND_H
 #define COMPILER_KIND_H
 

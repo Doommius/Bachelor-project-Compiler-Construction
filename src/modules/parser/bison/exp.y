@@ -1,13 +1,10 @@
 %{
 #include <stdio.h>
-#include "tree.h"
+#include "../src/modules/parser/include/tree.h"
 #include "y.tab.h"
-
-
 extern char *yytext;
 //extern EXP *theexpression;
 extern body *theprogram;
-
 void yyerror() {
    printf("syntax error before %s\n",yytext);
 }

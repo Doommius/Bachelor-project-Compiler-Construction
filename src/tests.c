@@ -1,6 +1,6 @@
 // First file!
 #include <stdio.h>
-#include "../include/symbol.h"
+#include "modules/symbol_tree/include/symbol.h"
 #include <string.h>
 
 #define ANSI_COLOR_RED     "\x1b[31m"

@@ -79,10 +79,10 @@ typedef struct declaration{
     DECL_kind kind;
     //TODO ved ikke lige med det der type id = <type>, det her er midlertidigt
     union {
-       struct {
-           char *id;
-           struct type *type;
-       } type;
+        struct {
+            char *id;
+            struct type *type;
+        } type;
         struct function *function;
         var_decl_list *list;
     } val;
