@@ -14,7 +14,7 @@ int nested_comment = 0;
 %option noyywrap nounput noinput
 
 /* abbreviation of symbols we match on, TO BE EXPANDED */
-SYMBOLS [+\-*\/\(\)\[\]{}\|!,\.=;:]
+SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
 
 
 /* Rules
@@ -40,7 +40,6 @@ SYMBOLS [+\-*\/\(\)\[\]{}\|!,\.=;:]
 "while"         return WHILE;
 "return"        return RETURN;
 "&&"            return AND;
-" || "            return OR;
 "true"          return TRUE;
 "false"         return FALSE;
 "null"          return _NULL;

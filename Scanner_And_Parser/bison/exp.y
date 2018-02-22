@@ -90,7 +90,7 @@ void yyerror() {
 
 %start program
 
-%left AND OR
+%left AND '|'
 %left EQ NEQ
 %left GT LT GEQ LEQ
 %left '+' '-'
@@ -218,8 +218,8 @@ expression  :   expression '+' expression
         {$$ = make_EXP(exp_LEQ, $1, $3);}
             | expression AND expression
         {$$ = make_EXP(exp_AND, $1, $3);}
-            | expression OR expression
-        {$$ = make_EXP(exp_OR, $1, $3);}
+            | expression '|''|' expression
+        {$$ = make_EXP(exp_OR, $1, $4);}
             | term
         {$$ = make_EXP_term($1);}
 ;

@@ -3,6 +3,7 @@
 #include "tree.h"
 
 int indent_depth;
+int exp_depth;
 
 void prettyFunc(function *f){
     prettyHead(f->head);
@@ -180,9 +181,9 @@ void prettySTMT(statement *s){
             break;
 
         case statement_IF_ELSE:
-            printf("if ( ");
+            printf("if (");
             prettyEXP(s->val.ifthen.expression);
-            printf(" ) then\n");
+            printf(") then\n");
             indent_depth++;
             prettySTMT(s->val.ifthen.statement1);
             indent_depth--;
