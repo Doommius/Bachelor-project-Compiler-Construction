@@ -90,6 +90,8 @@ void yyerror() {
 
 %start program
 
+%precedence NEG
+
 %left AND '|'
 %left EQ NEQ
 %left GT LT GEQ LEQ
@@ -220,12 +222,16 @@ expression  :   expression '+' expression
         {$$ = make_EXP(exp_AND, $1, $3);}
             | expression '|''|' expression
         {$$ = make_EXP(exp_OR, $1, $4);}
+            | '-' expression %prec NEG
+        {$$ = make_EXP_neg($2);}
             | term
         {$$ = make_EXP_term($1);}
 ;
 
 term    :       tINTCONST
         {$$ = make_Term_num($1);}
+            | '-' tINTCONST %prec NEG
+        {$$ = make_Term_neg_num($2);}
             | '(' expression ')'
         {$$ = make_Term_par($2);}
             | '!' term

@@ -155,6 +155,7 @@ typedef struct expression{
             struct expression *right;
         } ops;
         struct term *term;
+        struct expression *neg;
     } val;
 
     //TODO Skal være noget mere her
@@ -237,8 +238,10 @@ variable *make_Var_varid(variable *var, char *id);
 
 expression *make_EXP(EXP_kind kind, expression *left, expression *right);
 expression *make_EXP_term(term *term);
+expression *make_EXP_neg(expression *neg);
 
 term *make_Term_num(int intconst);
+term *make_Term_neg_num(int intconst);
 term *make_Term_par(expression *expression);
 term *make_Term_not(term *term);
 term *make_Term_abs(expression *expression);

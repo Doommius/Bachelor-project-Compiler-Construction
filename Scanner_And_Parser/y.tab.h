@@ -75,7 +75,8 @@ extern int yydebug;
     THEN = 285,
     WRITE = 286,
     ALLOCATE = 287,
-    DO = 288
+    DO = 288,
+    NEG = 289
   };
 #endif
 /* Tokens.  */
@@ -110,6 +111,7 @@ extern int yydebug;
 #define WRITE 286
 #define ALLOCATE 287
 #define DO 288
+#define NEG 289
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -139,7 +141,7 @@ union YYSTYPE
     struct act_list *act_list;
     struct exp_list *exp_list;
 
-#line 143 "y.tab.h" /* yacc.c:1909  */
+#line 145 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

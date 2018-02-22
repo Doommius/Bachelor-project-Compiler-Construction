@@ -314,6 +314,11 @@ void prettyEXP(expression *e) {
             prettyTerm(e->val.term);
             break;
 
+        case exp_NEG:
+            printf("-");
+            prettyEXP(e->val.neg);
+            break;
+
     }
 }
 
@@ -360,6 +365,10 @@ void prettyTerm(term *t){
             break;
 
         case term_NUM:
+            printf("%i", t->val.num);
+            break;
+
+        case term_NEG_NUM:
             printf("%i", t->val.num);
             break;
     }
