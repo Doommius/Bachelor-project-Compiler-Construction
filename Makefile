@@ -15,10 +15,11 @@ INC_ALL = -Iinclude/ $(INC) $(SCANPARSE_INC)
 MAIN_DIR = main
 TEST_DIR = tests
 
-SRC = $(filter-out $(wildcard $(SRC_DIR)/scan_parse.c) $(wildcard $(SRC_DIR)/tests.c), $(wildcard $(SRC_DIR)/*.c $(MOD_DIR)/symbol_tree/*.c) )
+SRC = $(filter-out $(wildcard $(SRC_DIR)/scan_parse.c) $(wildcard $(SRC_DIR)/tests.c), \
+				$(wildcard $(SRC_DIR)/*.c $(MOD_DIR)/symbol_tree/*.c) )
 INC = $(INC_DIR) -I$(MOD_DIR)/symbol_tree/include/
-OBJRT = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJ = $(OBJRT:$(MOD_DIR)/symbol_tree/%.c=$(OBJ_DIR)/modules/symbol_tree/%.o)
+OBJRT = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)													# Root
+OBJ = $(OBJRT:$(MOD_DIR)/symbol_tree/%.c=$(OBJ_DIR)/modules/symbol_tree/%.o)					# Symboltree
 LIB = $(LDFLAGS) -L$(MOD_DIR)/symbol_tree/
 
 SCANPARSE_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/tests.c), \
@@ -32,7 +33,8 @@ SCANPARSE_OBJSC = $(SCANPARSE_OBJRT:$(MOD_DIR)/scanner/%.c=$(OBJ_DIR)/modules/sc
 SCANPARSE_OBJPA = $(SCANPARSE_OBJSC:$(MOD_DIR)/parser/%.c=$(OBJ_DIR)/modules/parser/%.o)		# Parser
 SCANPARSE_OBJ   = $(SCANPARSE_OBJPA:$(MOD_DIR)/pretty/%.c=$(OBJ_DIR)/modules/pretty/%.o)		# Pretty
 
-TEST_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/scan_parse.c), $(wildcard $(SRC_DIR)/*.c $(MOD_DIR)/symbol_tree/*.c))
+TEST_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/scan_parse.c), \
+				$(wildcard $(SRC_DIR)/*.c $(MOD_DIR)/symbol_tree/*.c))
 TEST_OBJ = $(TEST_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 CC = gcc
@@ -104,12 +106,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 clean:
 	$(RM) $(OBJ)
 	$(RM) $(TEST_OBJ)
-	$
+	$(RM) $(SCANPARSE_OBJ)
 
 clean-all:
-	$(RM) $(OBJ)
-	$(RM) $(TEST_OBJ)
-	$(RM) $(SCANPARSE_OBJ)
+	rm -rf $(OBJ_DIR)/*
 	$(RM) $(EXE)
 	$(RM) $(TEST)
 	$(RM) $(SCANPARSE)
