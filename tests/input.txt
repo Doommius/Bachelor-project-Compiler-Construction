@@ -17,3 +17,4 @@ end c
 b = -(-a+b);
 
 if ( c() || c() || |a+|a+b||>0 ) then write 0; else write 1;
+(*

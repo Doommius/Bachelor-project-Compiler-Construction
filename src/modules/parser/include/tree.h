@@ -2,18 +2,12 @@
 #define __tree_h
 
 #include "kind.h"
-//#define EMPTY 0
-//#define LIST 1
-//#define TYPE 2
-
-
 
 typedef struct function{
     int lineno;
     struct head *head;
     struct body *body;
     struct tail *tail;
-    //TODO Der skal være noget mere her
 
 } function;
 
@@ -37,11 +31,9 @@ typedef struct type {
         char *id;
         struct type *type;
         struct var_decl_list *list;
-        //TODO der skal være noget mere her
     } val;
 } type;
 
-//TO
 typedef struct par_decl_list{
     int lineno;
     PDL_kind kind;
@@ -77,7 +69,6 @@ typedef struct decl_list{
 typedef struct declaration{
     int lineno;
     DECL_kind kind;
-    //TODO ved ikke lige med det der type id = <type>, det her er midlertidigt
     union {
         struct {
             char *id;
@@ -143,7 +134,6 @@ typedef struct variable{
             char *id;
         } varid;
     } val;
-    //TODO Skal være noget mere her
 } variable;
 
 typedef struct expression{
@@ -158,7 +148,6 @@ typedef struct expression{
         struct expression *neg;
     } val;
 
-    //TODO Skal være noget mere her
 } expression;
 
 typedef struct term{
@@ -173,7 +162,6 @@ typedef struct term{
             char *id;
             struct act_list *list;
         } list;
-        //TODO Skal være noget mere her
     } val;
 } term;
 
@@ -255,6 +243,8 @@ act_list *make_Act_empty();
 
 exp_list *make_ExpL_exp(expression *expression);
 exp_list *make_ExpL_list(expression *expression, exp_list *list);
+
+int check_Func(head *head, tail *tail);
 
 
 //EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind);

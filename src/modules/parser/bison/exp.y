@@ -101,7 +101,11 @@ program :   body
 ;
 
 function    :   head body tail
-        {$$ = make_Func($1, $2, $3);}
+        {$$ = make_Func($1, $2, $3);
+        if (check_Func($1, $3) != 0){
+            fprintf(stderr, "Function name: %s, at line %i, does not match function name: %s, at line %i\n", $1->id, $1->lineno, $3->id, $3->lineno);
+            YYABORT;
+            }}
 ;
 
 head        :   FUNC tIDENTIFIER '(' par_decl_list ')' ':' type

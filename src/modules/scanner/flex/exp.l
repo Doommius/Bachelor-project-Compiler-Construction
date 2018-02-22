@@ -16,13 +16,6 @@ int nested_comment = 0;
 /* abbreviation of symbols we match on, TO BE EXPANDED */
 SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
 
-
-/* Rules
-   TODO Add some things that do stuff?
-
-
-
-*/
 %%
 [ \t]+        /* ignore */;
 \n              lineno++;
