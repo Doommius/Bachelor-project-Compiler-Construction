@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../scanner/include/pretty.h"
+#include "pretty.h"
 #include "tree.h"
 
 int indent_depth;
