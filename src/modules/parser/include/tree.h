@@ -34,7 +34,6 @@ typedef struct type {
     } val;
 } type;
 
-//TO
 typedef struct par_decl_list{
     int lineno;
     PDL_kind kind;
