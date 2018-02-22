@@ -25,7 +25,7 @@ SCANPARSE_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/tests.
 				$(wildcard $(SRC_DIR)/*.c \
 				$(MOD_DIR)/scanner/*.c)   \
 				$(MOD_DIR)/parser/*.c)    \
-				$(MOD_DIR)/pretty/*.c))
+				$(MOD_DIR)/pretty/*.c
 SCANPARSE_INC   = $(INC_DIR) -I$(MOD_DIR)/parser/include/ -I$(MOD_DIR)/pretty/include/
 SCANPARSE_OBJRT = $(SCANPARSE_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)								# Root
 SCANPARSE_OBJSC = $(SCANPARSE_OBJRT:$(MOD_DIR)/scanner/%.c=$(OBJ_DIR)/modules/scanner/%.o)		# Scanner
@@ -45,7 +45,7 @@ LDFLAGS += -Llib
 # Left empty if no libs are needed
 LDLIBS += -lm
 
-all: $(EXE) $(TEST)
+all: $(EXE) $(TEST) $(SCANPARSE)
 
 ###
 ## Compiler compilation
@@ -104,10 +104,12 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 clean:
 	$(RM) $(OBJ)
 	$(RM) $(TEST_OBJ)
+	$
 
 clean-all:
 	$(RM) $(OBJ)
 	$(RM) $(TEST_OBJ)
+	$(RM) $(SCANPARSE_OBJ)
 	$(RM) $(EXE)
 	$(RM) $(TEST)
 	$(RM) $(SCANPARSE)
