@@ -24,9 +24,9 @@ LIB = $(LDFLAGS) -L$(MOD_DIR)/symbol_tree/
 
 SCANPARSE_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/tests.c), \
 				$(wildcard $(SRC_DIR)/*.c \
-				$(MOD_DIR)/scanner/*.c)   \
-				$(MOD_DIR)/parser/*.c)    \
-				$(MOD_DIR)/pretty/*.c
+				$(MOD_DIR)/scanner/*.c   \
+				$(MOD_DIR)/parser/*.c    \
+				$(MOD_DIR)/pretty/*.c ))
 SCANPARSE_INC   = $(INC_DIR) -I$(MOD_DIR)/parser/include/ -I$(MOD_DIR)/pretty/include/
 SCANPARSE_OBJRT = $(SCANPARSE_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)								# Root
 SCANPARSE_OBJSC = $(SCANPARSE_OBJRT:$(MOD_DIR)/scanner/%.c=$(OBJ_DIR)/modules/scanner/%.o)		# Scanner
