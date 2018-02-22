@@ -104,9 +104,8 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 
 clean:
-	$(RM) $(OBJ)
-	$(RM) $(TEST_OBJ)
-	$(RM) $(SCANPARSE_OBJ)
+	rm -rf $(OBJ_DIR)/*
+	$(RM) include/y.tab.h
 
 clean-all:
 	rm -rf $(OBJ_DIR)/*
