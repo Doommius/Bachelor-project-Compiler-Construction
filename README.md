@@ -26,6 +26,10 @@ To compile tests
 make tests
 ```
 
+To compile scanner and parser
+```
+make exp
+```
 ### Run the program(s)
 
 For compiler:
