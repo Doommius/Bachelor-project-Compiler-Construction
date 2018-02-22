@@ -525,13 +525,13 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   102,   102,   106,   110,   114,   118,   120,   122,   124,
-     126,   130,   133,   136,   138,   142,   146,   151,   154,   157,
-     159,   161,   165,   167,   171,   173,   175,   177,   179,   181,
-     183,   185,   187,   191,   193,   195,   199,   201,   203,   205,
-     207,   209,   211,   213,   215,   217,   219,   221,   223,   225,
-     227,   231,   233,   235,   237,   239,   241,   243,   245,   247,
-     249,   253,   256,   259,   261
+       0,   102,   102,   106,   114,   118,   122,   124,   126,   128,
+     130,   134,   137,   140,   142,   146,   150,   155,   158,   161,
+     163,   165,   169,   171,   175,   177,   179,   181,   183,   185,
+     187,   189,   191,   195,   197,   199,   203,   205,   207,   209,
+     211,   213,   215,   217,   219,   221,   223,   225,   227,   229,
+     231,   235,   237,   239,   241,   243,   245,   247,   249,   251,
+     253,   257,   260,   263,   265
 };
 #endif
 
@@ -1452,378 +1452,382 @@ yyreduce:
 
   case 3:
 #line 107 "bison/exp.y" /* yacc.c:1646  */
-    {(yyval.function) = make_Func((yyvsp[-2].head), (yyvsp[-1].body), (yyvsp[0].tail));}
-#line 1457 "y.tab.c" /* yacc.c:1646  */
+    {(yyval.function) = make_Func((yyvsp[-2].head), (yyvsp[-1].body), (yyvsp[0].tail));
+        if (check_Func((yyvsp[-2].head), (yyvsp[0].tail)) != 0){
+            fprintf(stderr, "Function name: %s, at line %i, does not match function name: %s, at line %i\n", (yyvsp[-2].head)->id, (yyvsp[-2].head)->lineno, (yyvsp[0].tail)->id, (yyvsp[0].tail)->lineno);
+            YYABORT;
+            }}
+#line 1461 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 111 "bison/exp.y" /* yacc.c:1646  */
+#line 115 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.head) = make_Head((yyvsp[-5].stringconst), (yyvsp[-3].par_decl_list), (yyvsp[0].type));}
-#line 1463 "y.tab.c" /* yacc.c:1646  */
+#line 1467 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 115 "bison/exp.y" /* yacc.c:1646  */
+#line 119 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.tail) = make_Tail((yyvsp[0].stringconst));}
-#line 1469 "y.tab.c" /* yacc.c:1646  */
+#line 1473 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 119 "bison/exp.y" /* yacc.c:1646  */
+#line 123 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.type) = make_Type_id((yyvsp[0].stringconst));}
-#line 1475 "y.tab.c" /* yacc.c:1646  */
+#line 1479 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 121 "bison/exp.y" /* yacc.c:1646  */
+#line 125 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.type) = make_Type_int();}
-#line 1481 "y.tab.c" /* yacc.c:1646  */
+#line 1485 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 123 "bison/exp.y" /* yacc.c:1646  */
+#line 127 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.type) = make_Type_bool();}
-#line 1487 "y.tab.c" /* yacc.c:1646  */
+#line 1491 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 125 "bison/exp.y" /* yacc.c:1646  */
+#line 129 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.type) = make_Type_array((yyvsp[0].type));}
-#line 1493 "y.tab.c" /* yacc.c:1646  */
+#line 1497 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 127 "bison/exp.y" /* yacc.c:1646  */
+#line 131 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.type) = make_Type_record((yyvsp[-1].var_decl_list));}
-#line 1499 "y.tab.c" /* yacc.c:1646  */
+#line 1503 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 131 "bison/exp.y" /* yacc.c:1646  */
+#line 135 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.par_decl_list) = make_PDL_list((yyvsp[0].var_decl_list));}
-#line 1505 "y.tab.c" /* yacc.c:1646  */
+#line 1509 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 133 "bison/exp.y" /* yacc.c:1646  */
+#line 137 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.par_decl_list) = make_PDL_empty();}
-#line 1511 "y.tab.c" /* yacc.c:1646  */
+#line 1515 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 137 "bison/exp.y" /* yacc.c:1646  */
+#line 141 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.var_decl_list) = make_VDL_list((yyvsp[-2].var_type), (yyvsp[0].var_decl_list));}
-#line 1517 "y.tab.c" /* yacc.c:1646  */
+#line 1521 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 139 "bison/exp.y" /* yacc.c:1646  */
+#line 143 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.var_decl_list) = make_VDL_type((yyvsp[0].var_type));}
-#line 1523 "y.tab.c" /* yacc.c:1646  */
+#line 1527 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 143 "bison/exp.y" /* yacc.c:1646  */
+#line 147 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.var_type) = make_VType_id((yyvsp[-2].stringconst), (yyvsp[0].type));}
-#line 1529 "y.tab.c" /* yacc.c:1646  */
+#line 1533 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 147 "bison/exp.y" /* yacc.c:1646  */
+#line 151 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.body) = make_Body((yyvsp[-1].decl_list), (yyvsp[0].statement_list));}
-#line 1535 "y.tab.c" /* yacc.c:1646  */
+#line 1539 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 152 "bison/exp.y" /* yacc.c:1646  */
+#line 156 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.decl_list) = make_DL_list((yyvsp[-1].declaration), (yyvsp[0].decl_list));}
-#line 1541 "y.tab.c" /* yacc.c:1646  */
+#line 1545 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 154 "bison/exp.y" /* yacc.c:1646  */
+#line 158 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.decl_list) = make_DL_empty();}
-#line 1547 "y.tab.c" /* yacc.c:1646  */
+#line 1551 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 158 "bison/exp.y" /* yacc.c:1646  */
+#line 162 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.declaration) = make_Decl_type((yyvsp[-3].stringconst), (yyvsp[-1].type));}
-#line 1553 "y.tab.c" /* yacc.c:1646  */
+#line 1557 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 160 "bison/exp.y" /* yacc.c:1646  */
+#line 164 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.declaration) = make_Decl_func((yyvsp[0].function));}
-#line 1559 "y.tab.c" /* yacc.c:1646  */
+#line 1563 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 162 "bison/exp.y" /* yacc.c:1646  */
+#line 166 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.declaration) = make_Decl_list((yyvsp[-1].var_decl_list));}
-#line 1565 "y.tab.c" /* yacc.c:1646  */
+#line 1569 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 166 "bison/exp.y" /* yacc.c:1646  */
+#line 170 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.statement_list) = make_SL_statement((yyvsp[0].statement));}
-#line 1571 "y.tab.c" /* yacc.c:1646  */
+#line 1575 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 168 "bison/exp.y" /* yacc.c:1646  */
+#line 172 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.statement_list) = make_SL_list((yyvsp[-1].statement), (yyvsp[0].statement_list));}
-#line 1577 "y.tab.c" /* yacc.c:1646  */
+#line 1581 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 172 "bison/exp.y" /* yacc.c:1646  */
+#line 176 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.statement) = make_STMT_ret((yyvsp[-1].expression));}
-#line 1583 "y.tab.c" /* yacc.c:1646  */
+#line 1587 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 174 "bison/exp.y" /* yacc.c:1646  */
+#line 178 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.statement) = make_STMT_wrt((yyvsp[-1].expression));}
-#line 1589 "y.tab.c" /* yacc.c:1646  */
+#line 1593 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 176 "bison/exp.y" /* yacc.c:1646  */
+#line 180 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.statement) = make_STMT_allocate_var((yyvsp[-1].variable));}
-#line 1595 "y.tab.c" /* yacc.c:1646  */
+#line 1599 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 178 "bison/exp.y" /* yacc.c:1646  */
+#line 182 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.statement) = make_STMT_allocate_length((yyvsp[-3].variable), (yyvsp[-1].expression));}
-#line 1601 "y.tab.c" /* yacc.c:1646  */
+#line 1605 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 180 "bison/exp.y" /* yacc.c:1646  */
+#line 184 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.statement) = make_STMT_assign((yyvsp[-3].variable), (yyvsp[-1].expression));}
-#line 1607 "y.tab.c" /* yacc.c:1646  */
+#line 1611 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 182 "bison/exp.y" /* yacc.c:1646  */
+#line 186 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.statement) = make_STMT_if((yyvsp[-2].expression), (yyvsp[0].statement));}
-#line 1613 "y.tab.c" /* yacc.c:1646  */
+#line 1617 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 184 "bison/exp.y" /* yacc.c:1646  */
+#line 188 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.statement) = make_STMT_if_else((yyvsp[-4].expression), (yyvsp[-2].statement), (yyvsp[0].statement));}
-#line 1619 "y.tab.c" /* yacc.c:1646  */
+#line 1623 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 186 "bison/exp.y" /* yacc.c:1646  */
+#line 190 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.statement) = make_STMT_while((yyvsp[-2].expression), (yyvsp[0].statement));}
-#line 1625 "y.tab.c" /* yacc.c:1646  */
+#line 1629 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 188 "bison/exp.y" /* yacc.c:1646  */
+#line 192 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.statement) = make_STMT_list((yyvsp[-1].statement_list));}
-#line 1631 "y.tab.c" /* yacc.c:1646  */
+#line 1635 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 192 "bison/exp.y" /* yacc.c:1646  */
+#line 196 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.variable) = make_Var_id((yyvsp[0].stringconst));}
-#line 1637 "y.tab.c" /* yacc.c:1646  */
+#line 1641 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 194 "bison/exp.y" /* yacc.c:1646  */
+#line 198 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.variable) = make_Var_exp((yyvsp[-3].variable), (yyvsp[-1].expression));}
-#line 1643 "y.tab.c" /* yacc.c:1646  */
+#line 1647 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 196 "bison/exp.y" /* yacc.c:1646  */
+#line 200 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.variable) = make_Var_varid((yyvsp[-2].variable), (yyvsp[0].stringconst));}
-#line 1649 "y.tab.c" /* yacc.c:1646  */
+#line 1653 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 200 "bison/exp.y" /* yacc.c:1646  */
+#line 204 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_PLUS, (yyvsp[-2].expression), (yyvsp[0].expression));}
-#line 1655 "y.tab.c" /* yacc.c:1646  */
+#line 1659 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 202 "bison/exp.y" /* yacc.c:1646  */
+#line 206 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_MIN, (yyvsp[-2].expression), (yyvsp[0].expression));}
-#line 1661 "y.tab.c" /* yacc.c:1646  */
+#line 1665 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 204 "bison/exp.y" /* yacc.c:1646  */
+#line 208 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_MULT, (yyvsp[-2].expression), (yyvsp[0].expression));}
-#line 1667 "y.tab.c" /* yacc.c:1646  */
+#line 1671 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 206 "bison/exp.y" /* yacc.c:1646  */
+#line 210 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_DIV, (yyvsp[-2].expression), (yyvsp[0].expression));}
-#line 1673 "y.tab.c" /* yacc.c:1646  */
+#line 1677 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 208 "bison/exp.y" /* yacc.c:1646  */
+#line 212 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = (yyvsp[-1].expression);}
-#line 1679 "y.tab.c" /* yacc.c:1646  */
+#line 1683 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 210 "bison/exp.y" /* yacc.c:1646  */
+#line 214 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_EQ, (yyvsp[-2].expression), (yyvsp[0].expression));}
-#line 1685 "y.tab.c" /* yacc.c:1646  */
+#line 1689 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 212 "bison/exp.y" /* yacc.c:1646  */
+#line 216 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_NEQ, (yyvsp[-2].expression), (yyvsp[0].expression));}
-#line 1691 "y.tab.c" /* yacc.c:1646  */
+#line 1695 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 214 "bison/exp.y" /* yacc.c:1646  */
+#line 218 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_GT, (yyvsp[-2].expression), (yyvsp[0].expression));}
-#line 1697 "y.tab.c" /* yacc.c:1646  */
+#line 1701 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 216 "bison/exp.y" /* yacc.c:1646  */
+#line 220 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_LT, (yyvsp[-2].expression), (yyvsp[0].expression));}
-#line 1703 "y.tab.c" /* yacc.c:1646  */
+#line 1707 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 218 "bison/exp.y" /* yacc.c:1646  */
+#line 222 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_GEQ, (yyvsp[-2].expression), (yyvsp[0].expression));}
-#line 1709 "y.tab.c" /* yacc.c:1646  */
+#line 1713 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 220 "bison/exp.y" /* yacc.c:1646  */
+#line 224 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_LEQ, (yyvsp[-2].expression), (yyvsp[0].expression));}
-#line 1715 "y.tab.c" /* yacc.c:1646  */
+#line 1719 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 222 "bison/exp.y" /* yacc.c:1646  */
+#line 226 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_AND, (yyvsp[-2].expression), (yyvsp[0].expression));}
-#line 1721 "y.tab.c" /* yacc.c:1646  */
+#line 1725 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 224 "bison/exp.y" /* yacc.c:1646  */
+#line 228 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP(exp_OR, (yyvsp[-3].expression), (yyvsp[0].expression));}
-#line 1727 "y.tab.c" /* yacc.c:1646  */
+#line 1731 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 226 "bison/exp.y" /* yacc.c:1646  */
+#line 230 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP_neg((yyvsp[0].expression));}
-#line 1733 "y.tab.c" /* yacc.c:1646  */
+#line 1737 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 228 "bison/exp.y" /* yacc.c:1646  */
+#line 232 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.expression) = make_EXP_term((yyvsp[0].term));}
-#line 1739 "y.tab.c" /* yacc.c:1646  */
+#line 1743 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 232 "bison/exp.y" /* yacc.c:1646  */
+#line 236 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.term) = make_Term_num((yyvsp[0].intconst));}
-#line 1745 "y.tab.c" /* yacc.c:1646  */
+#line 1749 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 234 "bison/exp.y" /* yacc.c:1646  */
+#line 238 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.term) = make_Term_neg_num((yyvsp[0].intconst));}
-#line 1751 "y.tab.c" /* yacc.c:1646  */
+#line 1755 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 236 "bison/exp.y" /* yacc.c:1646  */
+#line 240 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.term) = make_Term_par((yyvsp[-1].expression));}
-#line 1757 "y.tab.c" /* yacc.c:1646  */
+#line 1761 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 238 "bison/exp.y" /* yacc.c:1646  */
+#line 242 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.term) = make_Term_not((yyvsp[0].term));}
-#line 1763 "y.tab.c" /* yacc.c:1646  */
+#line 1767 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 240 "bison/exp.y" /* yacc.c:1646  */
+#line 244 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.term) = make_Term_abs((yyvsp[-1].expression));}
-#line 1769 "y.tab.c" /* yacc.c:1646  */
+#line 1773 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 242 "bison/exp.y" /* yacc.c:1646  */
+#line 246 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.term) = make_Term_boolean(1);}
-#line 1775 "y.tab.c" /* yacc.c:1646  */
+#line 1779 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 244 "bison/exp.y" /* yacc.c:1646  */
+#line 248 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.term) = make_Term_boolean(0);}
-#line 1781 "y.tab.c" /* yacc.c:1646  */
+#line 1785 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 246 "bison/exp.y" /* yacc.c:1646  */
+#line 250 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.term) = make_Term_null();}
-#line 1787 "y.tab.c" /* yacc.c:1646  */
+#line 1791 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 248 "bison/exp.y" /* yacc.c:1646  */
+#line 252 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.term) = make_Term_variable((yyvsp[0].variable));}
-#line 1793 "y.tab.c" /* yacc.c:1646  */
+#line 1797 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 250 "bison/exp.y" /* yacc.c:1646  */
+#line 254 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.term) = make_Term_list((yyvsp[-3].stringconst), (yyvsp[-1].act_list));}
-#line 1799 "y.tab.c" /* yacc.c:1646  */
+#line 1803 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 254 "bison/exp.y" /* yacc.c:1646  */
+#line 258 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.act_list) = make_Act_list((yyvsp[0].exp_list));}
-#line 1805 "y.tab.c" /* yacc.c:1646  */
+#line 1809 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 256 "bison/exp.y" /* yacc.c:1646  */
+#line 260 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.act_list) = make_Act_empty();}
-#line 1811 "y.tab.c" /* yacc.c:1646  */
+#line 1815 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 260 "bison/exp.y" /* yacc.c:1646  */
+#line 264 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.exp_list) = make_ExpL_exp((yyvsp[0].expression));}
-#line 1817 "y.tab.c" /* yacc.c:1646  */
+#line 1821 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 262 "bison/exp.y" /* yacc.c:1646  */
+#line 266 "bison/exp.y" /* yacc.c:1646  */
     {(yyval.exp_list) = make_ExpL_list((yyvsp[-2].expression), (yyvsp[0].exp_list));}
-#line 1823 "y.tab.c" /* yacc.c:1646  */
+#line 1827 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1827 "y.tab.c" /* yacc.c:1646  */
+#line 1831 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2051,5 +2055,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 265 "bison/exp.y" /* yacc.c:1906  */
+#line 269 "bison/exp.y" /* yacc.c:1906  */
 

@@ -1,6 +1,7 @@
 #include "memory.h"
 #include "tree.h"
 #include <stdio.h>
+#include <memory.h>
 
 extern int lineno;
 
@@ -468,17 +469,11 @@ variable *make_Var_varid(variable *var, char *id){
     return v;
 }
 
-/*
-EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind) {
-    EXP *e;
-    e = NEW(EXP);
-    e->lineno = lineno;
-    e->kind = kind;
-    e->data.val.left = left;
-    e->data.val.right = right;
-    return e;
-
+int check_Func(head *head, tail *tail){
+    if (strcmp(head->id, tail->id) == 0){
+        return 0;
+    }
+    return 1;
 }
-*/
 
 

@@ -256,6 +256,8 @@ act_list *make_Act_empty();
 exp_list *make_ExpL_exp(expression *expression);
 exp_list *make_ExpL_list(expression *expression, exp_list *list);
 
+int check_Func(head *head, tail *tail);
+
 
 //EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind);
 

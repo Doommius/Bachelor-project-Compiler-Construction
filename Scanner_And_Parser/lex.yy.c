@@ -1025,13 +1025,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case YY_STATE_EOF(COMMENT_MULTI):
 #line 92 "flex/exp.l"
-fprintf(stderr, "Comment not closed at the end of the file. Found at line: %i\n", lineno); exit(1);
+fprintf(stderr, "Comment not closed at the end of the file. Found at line: %i\n", lineno); YYABORT;
 	YY_BREAK
 
 case 41:
 YY_RULE_SETUP
 #line 97 "flex/exp.l"
-fprintf(stderr, "Unrecognized symbol. Found at line: %i\n", lineno); exit(1);
+fprintf(stderr, "Unrecognized symbol. Found at line: %i\n", lineno); YYABORT;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
