@@ -47,5 +47,5 @@ add_executable(litter
 
 
 add_executable(Z_Playground_Mark_1
-        playground/Mark_1/main.c
+        litter/playground/Mark_1/main.c
         )
