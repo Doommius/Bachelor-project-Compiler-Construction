@@ -26,7 +26,7 @@ FLEX_TARGET(Scanner src/modules/scanner/flex/exp.l ${CMAKE_CURRENT_BINARY_DIR}/.
 
 
 #Bison Flags -v -r all usefull for debugging
-BISON_TARGET(Parser Scanner_And_Parser/bison/exp.y ${CMAKE_CURRENT_BINARY_DIR}/../Scanner_And_Parser/y.tab.c)
+BISON_TARGET(Parser litter/bison/exp.y ${CMAKE_CURRENT_BINARY_DIR}/../Scanner_And_Parser/y.tab.c)
 
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
@@ -38,7 +38,7 @@ set(SOURCE_FILES_scanner_And_parser
         src/modules/parser/tree.c
         src/modules/parser/include/tree.h include/kind.h)
 
-add_executable(Scanner_And_Parser
+add_executable(litter
         ${BISON_Parser_OUTPUTS}
         ${FLEX_Scanner_OUTPUTS}
         ${SOURCE_FILES_scanner_And_parser}

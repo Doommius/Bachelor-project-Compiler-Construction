@@ -1,6 +1,6 @@
-#include <stdio.h>
 #include "memory.h"
 #include "tree.h"
+#include <stdio.h>
 
 extern int lineno;
 
@@ -477,8 +477,5 @@ EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind) {
     e->data.val.left = left;
     e->data.val.right = right;
     return e;
-
 }
 */
-
-
