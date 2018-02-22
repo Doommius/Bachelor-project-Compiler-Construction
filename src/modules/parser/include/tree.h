@@ -13,7 +13,6 @@ typedef struct function{
     struct head *head;
     struct body *body;
     struct tail *tail;
-    //TODO Der skal være noget mere her
 
 } function;
 
@@ -37,7 +36,6 @@ typedef struct type {
         char *id;
         struct type *type;
         struct var_decl_list *list;
-        //TODO der skal være noget mere her
     } val;
 } type;
 
@@ -77,7 +75,6 @@ typedef struct decl_list{
 typedef struct declaration{
     int lineno;
     DECL_kind kind;
-    //TODO ved ikke lige med det der type id = <type>, det her er midlertidigt
     union {
         struct {
             char *id;
@@ -143,7 +140,6 @@ typedef struct variable{
             char *id;
         } varid;
     } val;
-    //TODO Skal være noget mere her
 } variable;
 
 typedef struct expression{
@@ -158,7 +154,6 @@ typedef struct expression{
         struct expression *neg;
     } val;
 
-    //TODO Skal være noget mere her
 } expression;
 
 typedef struct term{
@@ -173,7 +168,6 @@ typedef struct term{
             char *id;
             struct act_list *list;
         } list;
-        //TODO Skal være noget mere her
     } val;
 } term;
 
