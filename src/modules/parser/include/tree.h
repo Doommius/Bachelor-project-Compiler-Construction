@@ -2,11 +2,6 @@
 #define __tree_h
 
 #include "kind.h"
-//#define EMPTY 0
-//#define LIST 1
-//#define TYPE 2
-
-
 
 typedef struct function{
     int lineno;
