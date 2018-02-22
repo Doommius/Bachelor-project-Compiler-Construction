@@ -8,9 +8,14 @@ int lineno;
 
 body *theprogram;
 
-int main() {
+int main(int argc, char **argv) {
 
-    freopen("input.txt", "r", stdin);
+    if(argc < 2) {
+        freopen("input.txt", "r", stdin);
+    } else {
+        freopen(argv[1], "r", stdin);
+    }
+
     lineno = 1;
     yyparse();
     prettyBody(theprogram);
