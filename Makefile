@@ -80,14 +80,14 @@ $(OBJ_DIR)/modules/pretty/%.o: $(MOD_DIR)/pretty/%.c
 	mkdir -p $(OBJ_DIR)/modules/pretty
 	$(CC) $(SCANPARSE_INC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/y.tab.c $(MOD_DIR)/y.tab.h:  $(MOD_DIR)/parser/bison/exp.y
+$(OBJ_DIR)/y.tab.c $(OBJ_DIR)/y.tab.h:  $(MOD_DIR)/parser/bison/exp.y
 	bison -y -d $(MOD_DIR)/parser/bison/exp.y
 	mv y.tab.c $(OBJ_DIR)/
 	cp y.tab.h $(OBJ_DIR)/
 	mv y.tab.h include/
 
 $(OBJ_DIR)/lex.yy.c: $(MOD_DIR)/scanner/flex/exp.l $(OBJ_DIR)/y.tab.h
-	flex $<
+	flex $(MOD_DIR)/scanner/flex/exp.l
 	mv lex.yy.c $(OBJ_DIR)/
 
 ###
