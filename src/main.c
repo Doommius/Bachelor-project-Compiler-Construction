@@ -1,9 +1,9 @@
-#include "symbol.h"
 #include <string.h>
 #include <stdio.h>
-#include <struct.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include "struct.h"
+#include "symbol.h"
 
 int main(int argc, char **argv) {
 
