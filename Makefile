@@ -1,6 +1,6 @@
 #Made by Troels Blicher Petersen (trpet15)
 
-EXE = compiler
+EXE = symboltable
 
 TEST = test
 

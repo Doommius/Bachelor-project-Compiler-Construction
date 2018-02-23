@@ -5,9 +5,12 @@ cmake-build-debug
 *.zip
 test
 compiler
+symboltable
+exp
 *.o
 
 *.tab.c
 *.tab.h
 lex.yy.c
 tests/exp
+.vscode/settings.json
