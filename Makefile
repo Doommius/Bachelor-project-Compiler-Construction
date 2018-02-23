@@ -40,7 +40,7 @@ TEST_OBJ = $(TEST_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 CC = gcc
 
 CPPFLAGS += $(INC_DIR)							# -I is a preprocessor flag, not a compiler flag
-CFLAGS += -std=c11 -Wall -Wextra -pedantic -g		# some warnings about bad code
+CFLAGS += -std=c11 -Wall -Wextra -pedantic -g	# some warnings about bad code
 
 # -L is a linker flag
 LDFLAGS += -Llib
@@ -64,11 +64,6 @@ $(OBJ_DIR)/modules/symbol_tree/%.o: $(MOD_DIR)/symbol_tree/%.c
 ###
 $(SCANPARSE): $(OBJ_DIR)/y.tab.o $(OBJ_DIR)/lex.yy.o $(SCANPARSE_OBJ)
 	$(CC) $(LIB) $(SCANPARSE_INC) $^ $(LDLIBS) -o $@ -lfl
-
-## Scanner
-#$(OBJ_DIR)/modules/scanner/flex/: $(MOD_DIR)/scanner/flex/%.l
-#	mkdir -p $(OBJ_DIR)/modules/scanner
-
 
 ## Parser
 $(OBJ_DIR)/modules/parser/%.o: $(MOD_DIR)/parser/%.c
