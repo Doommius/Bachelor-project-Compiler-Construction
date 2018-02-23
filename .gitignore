@@ -13,4 +13,4 @@ exp
 *.tab.h
 lex.yy.c
 tests/exp
-.vscode/settings.json
+.vscode
