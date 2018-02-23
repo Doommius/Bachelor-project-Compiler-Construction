@@ -78,9 +78,6 @@ SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
                         BEGIN(0);
                     }
                 }
-
-
-
 .               /* ignore */
 <<EOF>>         fprintf(stderr, "Comment not closed at the end of the file. Found at line: %i\n", lineno); exit(1);
 

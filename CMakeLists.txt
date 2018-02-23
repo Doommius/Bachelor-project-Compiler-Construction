@@ -17,7 +17,7 @@ add_executable(symboltable
 add_executable(symboltable_test
         src/tests.c
         ${SOURCE_FILES_symboltable}
-)
+        )
 
 find_package(BISON)
 find_package(FLEX)
@@ -43,7 +43,7 @@ add_executable(litter
         ${FLEX_Scanner_OUTPUTS}
         ${SOURCE_FILES_scanner_And_parser}
 
-)
+        )
 
 
 add_executable(Z_Playground_Mark_1
