@@ -40,7 +40,7 @@ TEST_OBJ = $(TEST_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 CC = gcc
 
 CPPFLAGS += $(INC_DIR)							# -I is a preprocessor flag, not a compiler flag
-CFLAGS += -std=c11 -Wall -Wextra -pedantic		# some warnings about bad code
+CFLAGS += -std=c11 -Wall -Wextra -pedantic -g		# some warnings about bad code
 
 # -L is a linker flag
 LDFLAGS += -Llib
