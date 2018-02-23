@@ -109,6 +109,7 @@ clean:
 
 clean-all:
 	rm -rf $(OBJ_DIR)/*
+	$(RM) include/y.tab.h
 	$(RM) $(EXE)
 	$(RM) $(TEST)
 	$(RM) $(SCANPARSE)
