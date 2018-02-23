@@ -5,6 +5,8 @@ cmake-build-debug
 *.zip
 test
 compiler
+symboltable
+exp
 *.o
 
 *.tab.c
