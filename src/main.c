@@ -6,6 +6,7 @@
 #include "tree.h"
 #include "pretty.h"
 #include "y.tab.h"
+#include "weeder.h"
 
 int lineno;
 
@@ -43,7 +44,10 @@ int main(int argc, char **argv) {
 
     lineno = 1;
     yyparse();
-    prettyBody(theprogram);
+    //prettyBody(theprogram);
+    weeder(theprogram);
+
+    
     printf("\n");
     return 1;
 }
