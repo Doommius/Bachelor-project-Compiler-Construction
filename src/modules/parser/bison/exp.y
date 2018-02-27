@@ -1,6 +1,6 @@
 
 //Comments
-// String followed by : is detected as a decleartion evening when within string, code still works, but syntax highlighting is messed up.
+// String followed by : is detected as a decleartion evening when within a string, the code still works, but syntax highlighting is broken.
 
 %{
 #include <stdio.h>
@@ -107,7 +107,7 @@ program:   body
 function:   head body tail
         {$$ = make_Func($1, $2, $3);
         if (check_Func($1, $3) != 0){
-            fprintf(stderr, " Function name : %s, at line %i, does not match function name : %s, at line %i\n ", $1->id, $1->lineno, $3->id, $3->lineno);
+            fprintf(stderr, "Function name: %s, at line %i, does not match function name: %s, at line %i\n ", $1->id, $1->lineno, $3->id, $3->lineno);
             YYABORT;
             }}
 ;

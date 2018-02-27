@@ -11,6 +11,7 @@ int main(int argc, char **argv) {
     int no_line = 1;
 
     SymbolTable *table = initSymbolTable();
+    //    char str[100]; // make sure that this size is enough to hold the single line
     char buf[100];
     do {
         fgets(buf, sizeof buf, stdin);
