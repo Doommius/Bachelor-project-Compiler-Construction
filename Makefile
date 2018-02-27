@@ -6,8 +6,6 @@ SYM = symboltable
 
 TEST = test
 
-SCANPARSE = exp
-
 SRC_DIR = src
 INC_DIR = -Iinclude/
 OBJ_DIR = build
@@ -43,7 +41,8 @@ OBJOP = $(OBJCO:$(MOD_DIR)/optimizer/%.c=$(OBJ_DIR)/modules/optimizer)			# Root
 OBJ = $(OBJOP)					# Symboltree
 LIB = $(LDFLAGS) -L$(MOD_DIR)/symbol_tree/
 
-SCANPARSE_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/tests.c), \
+SCANPARSE_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/scan_parse.c)\
+				 $(wildcard $(SRC_DIR)/tests.c), \
 				$(wildcard $(SRC_DIR)/*.c \
 				$(MOD_DIR)/scanner/*.c   \
 				$(MOD_DIR)/parser/*.c    \
@@ -71,28 +70,20 @@ LDFLAGS += -Llib
 # Left empty if no libs are needed
 LDLIBS += -lm
 
-all: $(EXE) $(TEST) $(SCANPARSE)
+all: $(EXE) $(TEST)
 
 ###
 ## Compiler compilation
 ###
-$(EXE): $(OBJ) $(OBJ_DIR)/y.tab.o $(OBJ_DIR)/lex.yy.o
-	$(CC) $(LIB) $(SCANPARSE_INC) $^ $(LDLIBS) -o $@ -lfl
-	$(CC) $(LIB) $(INC) $^ $(LDLIBS) -o $@
+$(EXE): $(OBJ_DIR)/y.tab.o $(OBJ_DIR)/lex.yy.o $(OBJ)
+	$(CC) $(LIB) $(INC) $^ $(LDLIBS) -o $@ -lfl
 
 ###
 ## Symbol tree compilation
 ### 
-
 $(OBJ_DIR)/modules/symbol_tree/%.o: $(MOD_DIR)/symbol_tree/%.c
 	mkdir -p $(OBJ_DIR)/modules/symbol_tree
 	$(CC) $(INC) $(CFLAGS) -c $< -o $@
-
-###
-## Scanner and Parser compilation
-###
-$(SCANPARSE): $(OBJ_DIR)/y.tab.o $(OBJ_DIR)/lex.yy.o $(SCANPARSE_OBJ)
-	$(CC) $(LIB) $(SCANPARSE_INC) $^ $(LDLIBS) -o $@ -lfl
 
 ## Parser
 $(OBJ_DIR)/modules/parser/%.o: $(MOD_DIR)/parser/%.c
