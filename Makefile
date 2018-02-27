@@ -1,6 +1,8 @@
 #Made by Troels Blicher Petersen (trpet15)
 
-EXE = symboltable
+EXE = compiler
+
+SYM = symboltable
 
 TEST = test
 
@@ -15,11 +17,22 @@ INC_ALL = -Iinclude/ $(INC) $(SCANPARSE_INC)
 MAIN_DIR = main
 TEST_DIR = tests
 
+INC_SCANNER 	= -I$(MOD_DIR)/scanner/include/
+INC_PARSER 		= -I$(MOD_DIR)/parser/include/
+INC_PRETTY		= -I$(MOD_DIR)/pretty/include/
+INC_SYMBOLTREE	= -I$(MOD_DIR)/symbol_tree/include/
+INC_TYPECHECKER	= -I$(MOD_DIR)/typechecker/include
+
 SRC = $(filter-out $(wildcard $(SRC_DIR)/scan_parse.c) $(wildcard $(SRC_DIR)/tests.c), \
 				$(wildcard $(SRC_DIR)/*.c $(MOD_DIR)/symbol_tree/*.c) )
-INC = $(INC_DIR) -I$(MOD_DIR)/symbol_tree/include/
-OBJRT = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)													# Root
-OBJ = $(OBJRT:$(MOD_DIR)/symbol_tree/%.c=$(OBJ_DIR)/modules/symbol_tree/%.o)					# Symboltree
+INC = $(INC_DIR) $(INC_SCANNER) $(INC_PARSRER) $(INC_PRETTY) $(INC_SYMBOLTREE) $(INC_TYPECHECKER)
+OBJRT = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)								
+OBJSC = $(OBJRT:$(MOD_DIR)/scanner/%.c=$(OBJ_DIR)/modules/scanner/%.o)
+OBJPA = $(OBJSC:$(MOD_DIR)/parser/%.c=$(OBJ_DIR)/modules/parser/%.o)
+OBJPR = $(OBJPA:$(MOD_DIR)/pretty/%.c=$(OBJ_DIR)/modules/pretty/%.o)	
+OBJSY = $(OBJPR:$(MOD_DIR)/symbol_tree/%.c=$(OBJ_DIR)/modules/symbol_tree/%.o)
+OBJTY = $(OBJSY:$(MOD_DIR)/typechecker/%.c=$(OBJ_DIR)/modules/typechecker/%.o)				# Root
+OBJ = $(OBJSY)					# Symboltree
 LIB = $(LDFLAGS) -L$(MOD_DIR)/symbol_tree/
 
 SCANPARSE_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/tests.c), \
@@ -36,6 +49,9 @@ SCANPARSE_OBJ   = $(SCANPARSE_OBJPA:$(MOD_DIR)/pretty/%.c=$(OBJ_DIR)/modules/pre
 TEST_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/scan_parse.c), \
 				$(wildcard $(SRC_DIR)/*.c $(MOD_DIR)/symbol_tree/*.c))
 TEST_OBJ = $(TEST_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+
+TC_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/scan_parse.c \), \
+				$(wildcard $(SRC_DIR)/*.c $(MOD_DIR)/symbol_tree/*.c))
 
 CC = gcc
 
@@ -54,6 +70,10 @@ all: $(EXE) $(TEST) $(SCANPARSE)
 ###
 $(EXE): $(OBJ)
 	$(CC) $(LIB) $(INC) $^ $(LDLIBS) -o $@
+
+###
+## Symbol tree compilation
+### 
 
 $(OBJ_DIR)/modules/symbol_tree/%.o: $(MOD_DIR)/symbol_tree/%.c
 	mkdir -p $(OBJ_DIR)/modules/symbol_tree
@@ -85,6 +105,12 @@ $(OBJ_DIR)/lex.yy.c: $(MOD_DIR)/scanner/flex/exp.l $(OBJ_DIR)/y.tab.h
 	flex $(MOD_DIR)/scanner/flex/exp.l
 	mv lex.yy.c $(OBJ_DIR)/
 
+###
+## Type checker compilation
+###
+$(OBJ_DIR)/modules/typechecker/%.o: $(MOD_DIR)/typechecker/%.c
+	mkdir -p $(OBJ_DIR)/modules/typechecker
+	$(CC) $(INC) $(CFLAGS) -c $< -o $@
 ###
 ## Test program compilation
 ###
