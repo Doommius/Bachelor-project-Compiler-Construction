@@ -2,15 +2,13 @@
 
 EXE = compiler
 
-SYM = symboltable
-
 TEST = test
 
 SRC_DIR = src
 INC_DIR = -Iinclude/
 OBJ_DIR = build
 MOD_DIR = src/modules
-INC_ALL = -Iinclude/ $(INC) $(SCANPARSE_INC)
+INC_ALL = -Iinclude/ $(INC)
 
 MAIN_DIR = main
 TEST_DIR = tests
@@ -25,7 +23,7 @@ INC_RESOURCE	= -I$(MOD_DIR)/resource/include/
 INC_CODE		= -I$(MOD_DIR)/code/include/
 INC_OPTIMIZER	= -I$(MOD_DIR)/optimizer/include/
 
-SRC = $(filter-out $(wildcard $(SRC_DIR)/scan_parse.c) $(wildcard $(SRC_DIR)/tests.c), \
+SRC = $(filter-out $(wildcard $(SRC_DIR)/tests.c), \
 				$(wildcard $(SRC_DIR)/*.c \
 				$(MOD_DIR)/*/*.c ) )
 INC = 	$(INC_DIR) \
@@ -49,18 +47,6 @@ OBJCO = $(OBJRE:$(MOD_DIR)/code/%.c=$(OBJ_DIR)/modules/code/%.o)				# Code
 OBJOP = $(OBJCO:$(MOD_DIR)/optimizer/%.c=$(OBJ_DIR)/modules/optimizer)			# Root
 OBJ = $(OBJOP)					# Symboltree
 LIB = $(LDFLAGS) -L$(MOD_DIR)/symbol_tree/
-
-SCANPARSE_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/scan_parse.c)\
-				 $(wildcard $(SRC_DIR)/tests.c), \
-				$(wildcard $(SRC_DIR)/*.c \
-				$(MOD_DIR)/scanner/*.c   \
-				$(MOD_DIR)/parser/*.c    \
-				$(MOD_DIR)/pretty/*.c ))
-SCANPARSE_INC   = $(INC_DIR) -I$(MOD_DIR)/parser/include/ -I$(MOD_DIR)/pretty/include/
-SCANPARSE_OBJRT = $(SCANPARSE_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)								# Root
-SCANPARSE_OBJSC = $(SCANPARSE_OBJRT:$(MOD_DIR)/scanner/%.c=$(OBJ_DIR)/modules/scanner/%.o)		# Scanner
-SCANPARSE_OBJPA = $(SCANPARSE_OBJSC:$(MOD_DIR)/parser/%.c=$(OBJ_DIR)/modules/parser/%.o)		# Parser
-SCANPARSE_OBJ   = $(SCANPARSE_OBJPA:$(MOD_DIR)/pretty/%.c=$(OBJ_DIR)/modules/pretty/%.o)		# Pretty
 
 TEST_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/scan_parse.c), \
 				$(wildcard $(SRC_DIR)/*.c $(MOD_DIR)/symbol_tree/*.c))
@@ -97,12 +83,12 @@ $(OBJ_DIR)/modules/symbol_tree/%.o: $(MOD_DIR)/symbol_tree/%.c
 ## Parser
 $(OBJ_DIR)/modules/parser/%.o: $(MOD_DIR)/parser/%.c
 	mkdir -p $(OBJ_DIR)/modules/parser
-	$(CC) $(SCANPARSE_INC) $(CFLAGS) -c $< -o $@
+	$(CC) $(INC) $(CFLAGS) -c $< -o $@
 
 ## Pretty
 $(OBJ_DIR)/modules/pretty/%.o: $(MOD_DIR)/pretty/%.c
 	mkdir -p $(OBJ_DIR)/modules/pretty
-	$(CC) $(SCANPARSE_INC) $(CFLAGS) -c $< -o $@
+	$(CC) $(INC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/y.tab.c $(OBJ_DIR)/y.tab.h:  $(MOD_DIR)/parser/bison/exp.y
 	mkdir -p $(OBJ_DIR)
@@ -172,4 +158,3 @@ clean-all:
 	$(RM) include/y.tab.h
 	$(RM) $(EXE)
 	$(RM) $(TEST)
-	$(RM) $(SCANPARSE)
