@@ -8,7 +8,7 @@
  * Computes the hash function as seen below.
  *
  */
-int Hash(char *str) {
+int Hash(char *str){
     unsigned int length;
     length = (unsigned)strlen(str);
 
