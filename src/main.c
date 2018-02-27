@@ -7,6 +7,7 @@
 #include "pretty.h"
 #include "y.tab.h"
 #include "weeder.h"
+#include "typechecker.h"
 
 int lineno;
 
@@ -47,6 +48,7 @@ int main(int argc, char **argv) {
     //prettyBody(theprogram);
     weeder(theprogram);
 
+    test();
     
     printf("\n");
     return 1;

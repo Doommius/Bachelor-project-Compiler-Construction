@@ -18,16 +18,32 @@ TEST_DIR = tests
 INC_SCANNER 	= -I$(MOD_DIR)/scanner/include/
 INC_PARSER 		= -I$(MOD_DIR)/parser/include/
 INC_PRETTY		= -I$(MOD_DIR)/pretty/include/
+INC_WEEDER		= -I$(MOD_DIR)/weeder/include/
 INC_SYMBOLTREE	= -I$(MOD_DIR)/symbol_tree/include/
-INC_TYPECHECKER	= -I$(MOD_DIR)/typechecker/include
+INC_TYPECHECKER	= -I$(MOD_DIR)/typechecker/include/
+INC_RESOURCE	= -I$(MOD_DIR)/resource/include/
+INC_CODE		= -I$(MOD_DIR)/code/include/
+INC_OPTIMIZER	= -I$(MOD_DIR)/optimizer/include/
 
 SRC = $(filter-out $(wildcard $(SRC_DIR)/scan_parse.c) $(wildcard $(SRC_DIR)/tests.c), \
 				$(wildcard $(SRC_DIR)/*.c \
 				$(MOD_DIR)/symbol_tree/*.c \
 				$(MOD_DIR)/scanner/*.c   \
 				$(MOD_DIR)/parser/*.c    \
-				$(MOD_DIR)/pretty/*.c  ) )
-INC = $(INC_DIR) $(INC_SCANNER) $(INC_PARSRER) $(INC_PRETTY) $(INC_SYMBOLTREE) $(INC_TYPECHECKER)
+				$(MOD_DIR)/pretty/*.c \
+				$(MOD_DIR)/weeder/*.c \
+				$(MOD_DIR)/typechecker/*.c \
+				$(MOD_DIR)/resource/*c \
+				$(MOD_DIR)/code/*.c ) )
+INC = 	$(INC_DIR) \
+		$(INC_SCANNER) \
+		$(INC_PARSER) \
+		$(INC_PRETTY) \
+		$(INC_WEEDER) \
+		$(INC_SYMBOLTREE) \
+		$(INC_TYPECHECKER) \
+		$(INC_RESOURCE) \
+		$(INC_CODE)
 OBJRT = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)									# | MODULES |
 OBJSC = $(OBJRT:$(MOD_DIR)/scanner/%.c=$(OBJ_DIR)/modules/scanner/%.o)			# Scanner
 OBJPA = $(OBJSC:$(MOD_DIR)/parser/%.c=$(OBJ_DIR)/modules/parser/%.o)			# Parser
@@ -96,6 +112,7 @@ $(OBJ_DIR)/modules/pretty/%.o: $(MOD_DIR)/pretty/%.c
 	$(CC) $(SCANPARSE_INC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/y.tab.c $(OBJ_DIR)/y.tab.h:  $(MOD_DIR)/parser/bison/exp.y
+	mkdir -p $(OBJ_DIR)
 	bison -y -d $(MOD_DIR)/parser/bison/exp.y
 	mv y.tab.c $(OBJ_DIR)/
 	cp y.tab.h $(OBJ_DIR)/
@@ -104,6 +121,13 @@ $(OBJ_DIR)/y.tab.c $(OBJ_DIR)/y.tab.h:  $(MOD_DIR)/parser/bison/exp.y
 $(OBJ_DIR)/lex.yy.c: $(MOD_DIR)/scanner/flex/exp.l $(OBJ_DIR)/y.tab.h
 	flex $(MOD_DIR)/scanner/flex/exp.l
 	mv lex.yy.c $(OBJ_DIR)/
+
+###
+## Weeder compilation
+###
+$(OBJ_DIR)/modules/weeder/%.o: $(MOD_DIR)/weeder/%.c
+	mkdir -p $(OBJ_DIR)/modules/weeder
+	$(CC) $(INC) $(CFLAGS) -c $< -o $@
 
 ###
 ## Type checker compilation
@@ -142,7 +166,7 @@ $(TEST): $(TEST_OBJ)
 ## Project files object creation
 ###
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	mkdir -p build
+	mkdir -p $(OBJ_DIR)
 	$(CC) $(INC_ALL) $(CFLAGS) -c $< -o $@
 
 
