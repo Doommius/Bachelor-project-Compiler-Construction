@@ -13,42 +13,19 @@ INC_ALL = -Iinclude/ $(INC)
 MAIN_DIR = main
 TEST_DIR = tests
 
-INC_SCANNER 	= -I$(MOD_DIR)/scanner/include/
-INC_PARSER 		= -I$(MOD_DIR)/parser/include/
-INC_PRETTY		= -I$(MOD_DIR)/pretty/include/
-INC_WEEDER		= -I$(MOD_DIR)/weeder/include/
-INC_SYMBOLTREE	= -I$(MOD_DIR)/symbol_tree/include/
-INC_TYPECHECKER	= -I$(MOD_DIR)/typechecker/include/
-INC_RESOURCE	= -I$(MOD_DIR)/resource/include/
-INC_CODE		= -I$(MOD_DIR)/code/include/
-INC_OPTIMIZER	= -I$(MOD_DIR)/optimizer/include/
+INC_TEST = $(addprefix -I, $(wildcard $(MOD_DIR)/*/include/))
 
 SRC = $(filter-out $(wildcard $(SRC_DIR)/tests.c), \
 				$(wildcard $(SRC_DIR)/*.c \
 				$(MOD_DIR)/*/*.c ) )
 INC = 	$(INC_DIR) \
-		$(INC_SCANNER) \
-		$(INC_PARSER) \
-		$(INC_PRETTY) \
-		$(INC_WEEDER) \
-		$(INC_SYMBOLTREE) \
-		$(INC_TYPECHECKER) \
-		$(INC_RESOURCE) \
-		$(INC_CODE)
-OBJRT = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)									# | MODULES |
-OBJSC = $(OBJRT:$(MOD_DIR)/scanner/%.c=$(OBJ_DIR)/modules/scanner/%.o)			# Scanner
-OBJPA = $(OBJSC:$(MOD_DIR)/parser/%.c=$(OBJ_DIR)/modules/parser/%.o)			# Parser
-OBJPR = $(OBJPA:$(MOD_DIR)/pretty/%.c=$(OBJ_DIR)/modules/pretty/%.o)			# Pretty
-OBJWE = $(OBJPR:$(MOD_DIR)/weeder/%.c=$(OBJ_DIR)/modules/weeder/%.o)			# Weeder
-OBJSY = $(OBJWE:$(MOD_DIR)/symbol_tree/%.c=$(OBJ_DIR)/modules/symbol_tree/%.o)	# Symbol tree
-OBJTY = $(OBJSY:$(MOD_DIR)/typechecker/%.c=$(OBJ_DIR)/modules/typechecker/%.o)	# Type checker
-OBJRE = $(OBJTY:$(MOD_DIR)/resource/%.c=$(OBJ_DIR)/modules/resource/%.o)		# Resource
-OBJCO = $(OBJRE:$(MOD_DIR)/code/%.c=$(OBJ_DIR)/modules/code/%.o)				# Code
-OBJOP = $(OBJCO:$(MOD_DIR)/optimizer/%.c=$(OBJ_DIR)/modules/optimizer)			# Root
-OBJ = $(OBJOP)					# Symboltree
+		$(INC_TEST)
+OBJRT 	= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)									# | MODULES |
+OBJMOD 	= $(OBJRT:$(MOD_DIR)/*/%.c=$(OBJ_DIR)/modules/*/%.o)
+OBJ = $(OBJMOD)					# Symboltree
 LIB = $(LDFLAGS) -L$(MOD_DIR)/symbol_tree/
 
-TEST_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/scan_parse.c), \
+TEST_SRC = $(filter-out $(wildcard src/main.c), \
 				$(wildcard $(SRC_DIR)/*.c $(MOD_DIR)/symbol_tree/*.c))
 TEST_OBJ = $(TEST_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
@@ -139,14 +116,14 @@ $(OBJ_DIR)/modules/optimizer/%.o: $(MOD_DIR)/optimizer/%.c
 ## Test program compilation
 ###
 $(TEST): $(TEST_OBJ)
-	$(CC) $(LIB) $(INC_ALL) $^ $(LDLIBS) -o $@
+	$(CC) $(LIB) $(INC) $^ $(LDLIBS) -o $@
 
 ###
 ## Project files object creation
 ###
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(OBJ_DIR)
-	$(CC) $(INC_ALL) $(CFLAGS) -c $< -o $@
+	$(CC) $(INC) $(CFLAGS) -c $< -o $@
 
 
 clean:
