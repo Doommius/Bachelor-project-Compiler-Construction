@@ -27,14 +27,7 @@ INC_OPTIMIZER	= -I$(MOD_DIR)/optimizer/include/
 
 SRC = $(filter-out $(wildcard $(SRC_DIR)/scan_parse.c) $(wildcard $(SRC_DIR)/tests.c), \
 				$(wildcard $(SRC_DIR)/*.c \
-				$(MOD_DIR)/symbol_tree/*.c \
-				$(MOD_DIR)/scanner/*.c   \
-				$(MOD_DIR)/parser/*.c    \
-				$(MOD_DIR)/pretty/*.c \
-				$(MOD_DIR)/weeder/*.c \
-				$(MOD_DIR)/typechecker/*.c \
-				$(MOD_DIR)/resource/*c \
-				$(MOD_DIR)/code/*.c ) )
+				$(MOD_DIR)/*/*.c ) )
 INC = 	$(INC_DIR) \
 		$(INC_SCANNER) \
 		$(INC_PARSER) \

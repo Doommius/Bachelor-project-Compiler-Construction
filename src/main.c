@@ -48,7 +48,6 @@ int main(int argc, char **argv) {
     //prettyBody(theprogram);
     weeder(theprogram);
 
-    test();
     
     printf("\n");
     return 1;
