@@ -3,14 +3,13 @@
 #include "pretty.h"
 #include "y.tab.h"
 
-
 int lineno;
 
 body *theprogram;
 
 int main(int argc, char **argv) {
 
-    if(argc < 2) {
+    if (argc < 2) {
         freopen("input.txt", "r", stdin);
     } else {
         freopen(argv[1], "r", stdin);
@@ -21,5 +20,4 @@ int main(int argc, char **argv) {
     prettyBody(theprogram);
     printf("\n");
     return 0;
-
 }
