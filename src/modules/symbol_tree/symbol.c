@@ -4,22 +4,21 @@
 #include "symbol.h"
 #include "memory.h"
 
-
 /*
  * Computes the hash function as seen below.
  *
  */
 int Hash(char *str) {
     unsigned int length;
-    length = (unsigned) strlen(str);
+    length = (unsigned)strlen(str);
 
-    int k = (int) str[0];
+    int k = (int)str[0];
     int i;
     int pointer = 1;
 
     while (pointer < length) {
         k = k << 1;
-        i = (int) str[pointer];
+        i = (int)str[pointer];
         k = i + k;
 
         pointer++;
@@ -54,7 +53,6 @@ SymbolTable *scopeSymbolTable(SymbolTable *t) {
     return newTable;
 }
 
-
 /*
  * putSymbol takes a hash table and a string, name, as arguments and inserts name into the hash table together with the associated value value. A pointer
  * to the SYMBOL value which stores name is returned.
@@ -78,10 +76,8 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
         symbol->next = t->table[value];
         t->table[value] = symbol;
         return symbol;
-
     }
 }
-
 
 /*
     getSymbol takes a hash table and a string name as arguments and searches for
@@ -93,7 +89,7 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
     which name is stored
     */
 SYMBOL *getSymbol(SymbolTable *t, char *name) {
-//    First check if t is null
+    //    First check if t is null
     if (t == NULL) {
         return NULL;
     }
@@ -112,7 +108,6 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
     //Symbol does not exists
     return NULL;
 }
-
 
 /*
  * dumpSymbolTable takes a pointer to a hash table t as argument and prints all

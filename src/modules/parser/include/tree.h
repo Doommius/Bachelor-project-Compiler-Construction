@@ -3,7 +3,7 @@
 
 #include "kind.h"
 
-typedef struct function{
+typedef struct function {
     int lineno;
     struct head *head;
     struct body *body;
@@ -11,7 +11,7 @@ typedef struct function{
 
 } function;
 
-typedef struct head{
+typedef struct head {
     int lineno;
     char *id;
     struct par_decl_list *list;
@@ -19,7 +19,7 @@ typedef struct head{
 
 } head;
 
-typedef struct tail{
+typedef struct tail {
     int lineno;
     char *id;
 } tail;
@@ -34,39 +34,39 @@ typedef struct type {
     } val;
 } type;
 
-typedef struct par_decl_list{
+typedef struct par_decl_list {
     int lineno;
     PDL_kind kind;
     struct var_decl_list *list;
 } par_decl_list;
 
-typedef struct var_decl_list{
+typedef struct var_decl_list {
     int lineno;
     VDL_kind kind;
     struct var_decl_list *list;
     struct var_type *vartype;
 } var_decl_list;
 
-typedef struct var_type{
+typedef struct var_type {
     int lineno;
     char *id;
     struct type *type;
 } var_type;
 
-typedef struct body{
+typedef struct body {
     int lineno;
     struct decl_list *d_list;
     struct statement_list *s_list;
 } body;
 
-typedef struct decl_list{
+typedef struct decl_list {
     int lineno;
     DL_kind kind;
     struct declaration *decl;
     struct decl_list *list;
 } decl_list;
 
-typedef struct declaration{
+typedef struct declaration {
     int lineno;
     DECL_kind kind;
     union {
@@ -80,7 +80,7 @@ typedef struct declaration{
 
 } declaration;
 
-typedef struct statement_list{
+typedef struct statement_list {
     int lineno;
     SL_kind kind;
     struct statement *statement;
@@ -88,7 +88,7 @@ typedef struct statement_list{
 
 } statement_list;
 
-typedef struct statement{
+typedef struct statement {
     int lineno;
     STATEMENT_kind kind;
     union {
@@ -120,7 +120,7 @@ typedef struct statement{
 
 } statement;
 
-typedef struct variable{
+typedef struct variable {
     int lineno;
     char *id;
     Var_kind kind;
@@ -136,7 +136,7 @@ typedef struct variable{
     } val;
 } variable;
 
-typedef struct expression{
+typedef struct expression {
     int lineno;
     EXP_kind kind;
     union {
@@ -150,7 +150,7 @@ typedef struct expression{
 
 } expression;
 
-typedef struct term{
+typedef struct term {
     int lineno;
     TERM_kind kind;
     union {
@@ -165,13 +165,13 @@ typedef struct term{
     } val;
 } term;
 
-typedef struct act_list{
+typedef struct act_list {
     int lineno;
     AL_kind kind;
     struct exp_list *list;
 } act_list;
 
-typedef struct exp_list{
+typedef struct exp_list {
     int lineno;
     EL_kind kind;
     struct expression *expression;
@@ -246,8 +246,6 @@ exp_list *make_ExpL_list(expression *expression, exp_list *list);
 
 int check_Func(head *head, tail *tail);
 
-
 //EXP *makeEXPArithmeticstructure(EXP *left, EXP *right, kindArithmetic kind);
-
 
 #endif

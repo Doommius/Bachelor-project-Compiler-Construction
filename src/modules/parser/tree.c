@@ -4,8 +4,7 @@
 
 extern int lineno;
 
-
-function *make_Func(head *h, body *b, tail *t){
+function *make_Func(head *h, body *b, tail *t) {
     function *f;
     f = NEW(function);
     f->lineno = lineno;
@@ -15,7 +14,7 @@ function *make_Func(head *h, body *b, tail *t){
     return f;
 }
 
-head *make_Head(char *id, par_decl_list *pdl, type *t){
+head *make_Head(char *id, par_decl_list *pdl, type *t) {
     head *h;
     h = NEW(head);
     h->lineno = lineno;
@@ -25,7 +24,7 @@ head *make_Head(char *id, par_decl_list *pdl, type *t){
     return h;
 }
 
-tail *make_Tail(char *id){
+tail *make_Tail(char *id) {
     tail *t;
     t = NEW(tail);
     t->lineno = lineno;
@@ -33,7 +32,7 @@ tail *make_Tail(char *id){
     return t;
 }
 
-type *make_Type_id(char *id){
+type *make_Type_id(char *id) {
     type *t;
     t = NEW(type);
     t->lineno = lineno;
@@ -42,7 +41,7 @@ type *make_Type_id(char *id){
     return t;
 }
 
-type *make_Type_int(){
+type *make_Type_int() {
     type *t;
     t = NEW(type);
     t->lineno = lineno;
@@ -50,7 +49,7 @@ type *make_Type_int(){
     return t;
 }
 
-type *make_Type_bool(){
+type *make_Type_bool() {
     type *t;
     t = NEW(type);
     t->lineno = lineno;
@@ -58,7 +57,7 @@ type *make_Type_bool(){
     return t;
 }
 
-type *make_Type_array(type *t1){
+type *make_Type_array(type *t1) {
     type *t;
     t = NEW(type);
     t->lineno = lineno;
@@ -67,7 +66,7 @@ type *make_Type_array(type *t1){
     return t;
 }
 
-type *make_Type_record(var_decl_list *vdl){
+type *make_Type_record(var_decl_list *vdl) {
     type *t;
     t = NEW(type);
     t->lineno = lineno;
@@ -76,7 +75,7 @@ type *make_Type_record(var_decl_list *vdl){
     return t;
 }
 
-par_decl_list *make_PDL_list(var_decl_list *vdl){
+par_decl_list *make_PDL_list(var_decl_list *vdl) {
     par_decl_list *pdl;
     pdl = NEW(par_decl_list);
     pdl->lineno = lineno;
@@ -85,7 +84,7 @@ par_decl_list *make_PDL_list(var_decl_list *vdl){
     return pdl;
 }
 
-par_decl_list *make_PDL_empty(){
+par_decl_list *make_PDL_empty() {
     par_decl_list *pdl;
     pdl = NEW(par_decl_list);
     pdl->lineno = lineno;
@@ -94,7 +93,7 @@ par_decl_list *make_PDL_empty(){
     return pdl;
 }
 
-var_decl_list *make_VDL_list(var_type *vt, var_decl_list *vdl1){
+var_decl_list *make_VDL_list(var_type *vt, var_decl_list *vdl1) {
     var_decl_list *vdl;
     vdl = NEW(var_decl_list);
     vdl->lineno = lineno;
@@ -104,7 +103,7 @@ var_decl_list *make_VDL_list(var_type *vt, var_decl_list *vdl1){
     return vdl;
 }
 
-var_decl_list *make_VDL_type(var_type *vt){
+var_decl_list *make_VDL_type(var_type *vt) {
     var_decl_list *vdl;
     vdl = NEW(var_decl_list);
     vdl->lineno = lineno;
@@ -114,7 +113,7 @@ var_decl_list *make_VDL_type(var_type *vt){
     return vdl;
 }
 
-var_type *make_VType_id(char *id, type *t){
+var_type *make_VType_id(char *id, type *t) {
     var_type *vt;
     vt = NEW(var_type);
     vt->lineno = lineno;
@@ -123,7 +122,7 @@ var_type *make_VType_id(char *id, type *t){
     return vt;
 }
 
-body *make_Body(decl_list *dl, statement_list *sl){
+body *make_Body(decl_list *dl, statement_list *sl) {
     body *b;
     b = NEW(body);
     b->lineno = lineno;
@@ -132,7 +131,7 @@ body *make_Body(decl_list *dl, statement_list *sl){
     return b;
 }
 
-decl_list *make_DL_list(declaration *d, decl_list *dl1){
+decl_list *make_DL_list(declaration *d, decl_list *dl1) {
     decl_list *dl;
     dl = NEW(decl_list);
     dl->lineno = lineno;
@@ -142,7 +141,7 @@ decl_list *make_DL_list(declaration *d, decl_list *dl1){
     return dl;
 }
 
-decl_list *make_DL_empty(){
+decl_list *make_DL_empty() {
     decl_list *dl;
     dl = NEW(decl_list);
     dl->lineno = lineno;
@@ -152,7 +151,7 @@ decl_list *make_DL_empty(){
     return dl;
 }
 
-declaration *make_Decl_type(char *id, type *t){
+declaration *make_Decl_type(char *id, type *t) {
     declaration *d;
     d = NEW(declaration);
     d->lineno = lineno;
@@ -162,7 +161,7 @@ declaration *make_Decl_type(char *id, type *t){
     return d;
 }
 
-declaration *make_Decl_func(function *f){
+declaration *make_Decl_func(function *f) {
     declaration *d;
     d = NEW(declaration);
     d->lineno = lineno;
@@ -171,7 +170,7 @@ declaration *make_Decl_func(function *f){
     return d;
 }
 
-declaration *make_Decl_list(var_decl_list *vdl){
+declaration *make_Decl_list(var_decl_list *vdl) {
     declaration *d;
     d = NEW(declaration);
     d->lineno = lineno;
@@ -180,7 +179,7 @@ declaration *make_Decl_list(var_decl_list *vdl){
     return d;
 }
 
-statement_list *make_SL_statement(statement *s){
+statement_list *make_SL_statement(statement *s) {
     statement_list *sl;
     sl = NEW(statement_list);
     sl->lineno = lineno;
@@ -190,7 +189,7 @@ statement_list *make_SL_statement(statement *s){
     return sl;
 }
 
-statement_list *make_SL_list(statement *s, statement_list *sl1){
+statement_list *make_SL_list(statement *s, statement_list *sl1) {
     statement_list *sl;
     sl = NEW(statement_list);
     sl->lineno = lineno;
@@ -200,7 +199,7 @@ statement_list *make_SL_list(statement *s, statement_list *sl1){
     return sl;
 }
 
-statement *make_STMT_ret(expression *e){
+statement *make_STMT_ret(expression *e) {
     statement *s;
     s = NEW(statement);
     s->lineno = lineno;
@@ -209,7 +208,7 @@ statement *make_STMT_ret(expression *e){
     return s;
 }
 
-statement *make_STMT_wrt(expression *e){
+statement *make_STMT_wrt(expression *e) {
     statement *s;
     s = NEW(statement);
     s->lineno = lineno;
@@ -218,7 +217,7 @@ statement *make_STMT_wrt(expression *e){
     return s;
 }
 
-statement *make_STMT_allocate_var(variable *v){
+statement *make_STMT_allocate_var(variable *v) {
     statement *s;
     s = NEW(statement);
     s->lineno = lineno;
@@ -228,7 +227,7 @@ statement *make_STMT_allocate_var(variable *v){
     return s;
 }
 
-statement *make_STMT_allocate_length(variable *v, expression *e){
+statement *make_STMT_allocate_length(variable *v, expression *e) {
     statement *s;
     s = NEW(statement);
     s->lineno = lineno;
@@ -238,7 +237,7 @@ statement *make_STMT_allocate_length(variable *v, expression *e){
     return s;
 }
 
-statement *make_STMT_assign(variable *v, expression *e){
+statement *make_STMT_assign(variable *v, expression *e) {
     statement *s;
     s = NEW(statement);
     s->lineno = lineno;
@@ -248,7 +247,7 @@ statement *make_STMT_assign(variable *v, expression *e){
     return s;
 }
 
-statement *make_STMT_if(expression *e, statement *s1){
+statement *make_STMT_if(expression *e, statement *s1) {
     statement *s;
     s = NEW(statement);
     s->lineno = lineno;
@@ -259,7 +258,7 @@ statement *make_STMT_if(expression *e, statement *s1){
     return s;
 }
 
-statement *make_STMT_if_else(expression *e, statement *s1, statement *s2){
+statement *make_STMT_if_else(expression *e, statement *s1, statement *s2) {
     statement *s;
     s = NEW(statement);
     s->lineno = lineno;
@@ -270,7 +269,7 @@ statement *make_STMT_if_else(expression *e, statement *s1, statement *s2){
     return s;
 }
 
-statement *make_STMT_while(expression *e, statement *s1){
+statement *make_STMT_while(expression *e, statement *s1) {
     statement *s;
     s = NEW(statement);
     s->lineno = lineno;
@@ -280,7 +279,7 @@ statement *make_STMT_while(expression *e, statement *s1){
     return s;
 }
 
-statement *make_STMT_list(statement_list *sl){
+statement *make_STMT_list(statement_list *sl) {
     statement *s;
     s = NEW(statement);
     s->lineno = lineno;
@@ -289,7 +288,7 @@ statement *make_STMT_list(statement_list *sl){
     return s;
 }
 
-expression *make_EXP(EXP_kind kind, expression *left, expression *right){
+expression *make_EXP(EXP_kind kind, expression *left, expression *right) {
     expression *e;
     e = NEW(expression);
     e->lineno = lineno;
@@ -299,7 +298,7 @@ expression *make_EXP(EXP_kind kind, expression *left, expression *right){
     return e;
 }
 
-expression *make_EXP_term(term *term){
+expression *make_EXP_term(term *term) {
     expression *e;
     e = NEW(expression);
     e->lineno = lineno;
@@ -308,7 +307,7 @@ expression *make_EXP_term(term *term){
     return e;
 }
 
-expression *make_EXP_neg(expression *neg){
+expression *make_EXP_neg(expression *neg) {
     expression *e;
     e = NEW(expression);
     e->lineno = lineno;
@@ -317,7 +316,7 @@ expression *make_EXP_neg(expression *neg){
     return e;
 }
 
-term *make_Term_num(int intconst){
+term *make_Term_num(int intconst) {
     term *t;
     t = NEW(term);
     t->lineno = lineno;
@@ -326,16 +325,16 @@ term *make_Term_num(int intconst){
     return t;
 }
 
-term *make_Term_neg_num(int intconst){
+term *make_Term_neg_num(int intconst) {
     term *t;
     t = NEW(term);
     t->lineno = lineno;
     t->kind = term_NEG_NUM;
-    t->val.num = 0-intconst;
+    t->val.num = 0 - intconst;
     return t;
 }
 
-term *make_Term_par(expression *expression){
+term *make_Term_par(expression *expression) {
     term *t;
     t = NEW(term);
     t->lineno = lineno;
@@ -344,7 +343,7 @@ term *make_Term_par(expression *expression){
     return t;
 }
 
-term *make_Term_not(term *term){
+term *make_Term_not(term *term) {
     struct term *t;
     t = NEW(struct term);
     t->lineno = lineno;
@@ -353,7 +352,7 @@ term *make_Term_not(term *term){
     return t;
 }
 
-term *make_Term_abs(expression *expression){
+term *make_Term_abs(expression *expression) {
     term *t;
     t = NEW(term);
     t->lineno = lineno;
@@ -362,11 +361,11 @@ term *make_Term_abs(expression *expression){
     return t;
 }
 
-term *make_Term_boolean(int bool){
+term *make_Term_boolean(int bool) {
     term *t;
     t = NEW(term);
     t->lineno = lineno;
-    if (bool == 1){
+    if (bool == 1) {
         t->kind = term_TRUE;
         return t;
     }
@@ -374,7 +373,7 @@ term *make_Term_boolean(int bool){
     return t;
 }
 
-term *make_Term_null(){
+term *make_Term_null() {
     term *t;
     t = NEW(term);
     t->lineno = lineno;
@@ -382,7 +381,7 @@ term *make_Term_null(){
     return t;
 }
 
-term *make_Term_variable(variable *var){
+term *make_Term_variable(variable *var) {
     term *t;
     t = NEW(term);
     t->lineno = lineno;
@@ -391,7 +390,7 @@ term *make_Term_variable(variable *var){
     return t;
 }
 
-term *make_Term_list(char *id, act_list *list){
+term *make_Term_list(char *id, act_list *list) {
     term *t;
     t = NEW(term);
     t->lineno = lineno;
@@ -401,7 +400,7 @@ term *make_Term_list(char *id, act_list *list){
     return t;
 }
 
-act_list *make_Act_list(exp_list *list){
+act_list *make_Act_list(exp_list *list) {
     act_list *al;
     al = NEW(act_list);
     al->lineno = lineno;
@@ -409,7 +408,7 @@ act_list *make_Act_list(exp_list *list){
     al->list = list;
     return al;
 }
-act_list *make_Act_empty(){
+act_list *make_Act_empty() {
     act_list *al;
     al = NEW(act_list);
     al->lineno = lineno;
@@ -418,17 +417,16 @@ act_list *make_Act_empty(){
     return al;
 }
 
-exp_list *make_ExpL_exp(expression *expression){
+exp_list *make_ExpL_exp(expression *expression) {
     exp_list *el;
     el = NEW(exp_list);
     el->lineno = lineno;
     el->kind = el_EXP;
     el->expression = expression;
     return el;
-
 }
 
-exp_list *make_ExpL_list(expression *expression, exp_list *list){
+exp_list *make_ExpL_list(expression *expression, exp_list *list) {
     exp_list *el;
     el = NEW(exp_list);
     el->lineno = lineno;
@@ -438,7 +436,7 @@ exp_list *make_ExpL_list(expression *expression, exp_list *list){
     return el;
 }
 
-variable *make_Var_id(char *id){
+variable *make_Var_id(char *id) {
     variable *v;
     v = NEW(variable);
     v->lineno = lineno;
@@ -447,7 +445,7 @@ variable *make_Var_id(char *id){
     return v;
 }
 
-variable *make_Var_exp(variable *var, expression *expression){
+variable *make_Var_exp(variable *var, expression *expression) {
     variable *v;
     v = NEW(variable);
     v->lineno = lineno;
@@ -457,8 +455,7 @@ variable *make_Var_exp(variable *var, expression *expression){
     return v;
 }
 
-
-variable *make_Var_varid(variable *var, char *id){
+variable *make_Var_varid(variable *var, char *id) {
     variable *v;
     v = NEW(variable);
     v->lineno = lineno;
@@ -468,11 +465,9 @@ variable *make_Var_varid(variable *var, char *id){
     return v;
 }
 
-int check_Func(head *head, tail *tail){
-    if (strcmp(head->id, tail->id) == 0){
+int check_Func(head *head, tail *tail) {
+    if (strcmp(head->id, tail->id) == 0) {
         return 0;
     }
     return 1;
 }
-
-
