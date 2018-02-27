@@ -24,7 +24,11 @@ INC_SYMBOLTREE	= -I$(MOD_DIR)/symbol_tree/include/
 INC_TYPECHECKER	= -I$(MOD_DIR)/typechecker/include
 
 SRC = $(filter-out $(wildcard $(SRC_DIR)/scan_parse.c) $(wildcard $(SRC_DIR)/tests.c), \
-				$(wildcard $(SRC_DIR)/*.c $(MOD_DIR)/symbol_tree/*.c) )
+				$(wildcard $(SRC_DIR)/*.c \
+				$(MOD_DIR)/symbol_tree/*.c \
+				$(MOD_DIR)/scanner/*.c   \
+				$(MOD_DIR)/parser/*.c    \
+				$(MOD_DIR)/pretty/*.c  ) )
 INC = $(INC_DIR) $(INC_SCANNER) $(INC_PARSRER) $(INC_PRETTY) $(INC_SYMBOLTREE) $(INC_TYPECHECKER)
 OBJRT = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)								
 OBJSC = $(OBJRT:$(MOD_DIR)/scanner/%.c=$(OBJ_DIR)/modules/scanner/%.o)
@@ -68,7 +72,7 @@ all: $(EXE) $(TEST) $(SCANPARSE)
 ###
 ## Compiler compilation
 ###
-$(EXE): $(OBJ)
+$(EXE): $(OBJ) $(OBJ_DIR)/y.tab.o $(OBJ_DIR)/lex.yy.o
 	$(CC) $(LIB) $(INC) $^ $(LDLIBS) -o $@
 
 ###

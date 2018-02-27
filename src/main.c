@@ -2,11 +2,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "struct.h"
 #include "symbol.h"
+#include "tree.h"
+#include "pretty.h"
+#include "y.tab.h"
+
+int lineno;
+
+body *theprogram;
 
 int main(int argc, char **argv) {
-
+/*
     //    char str[100]; // make sure that this size is enough to hold the single line
     int no_line = 1;
 
@@ -27,6 +33,17 @@ int main(int argc, char **argv) {
     } while (buf != "\0");
 
     dumpSymbolTable(table);
+*/
 
+ if (argc < 2) {
+        freopen("input.txt", "r", stdin);
+    } else {
+        freopen(argv[1], "r", stdin);
+    }
+
+    lineno = 1;
+    yyparse();
+    prettyBody(theprogram);
+    printf("\n");
     return 1;
 }
