@@ -96,27 +96,27 @@ void yyerror() {
 %left '*' '/'
 
 %%
-program :   body
+program:   body
          { theprogram = $1;}
 ;
 
-function    :   head body tail
+function:   head body tail
         {$$ = make_Func($1, $2, $3);
         if (check_Func($1, $3) != 0){
-            fprintf(stderr, "Function name: %s, at line %i, does not match function name: %s, at line %i\n", $1->id, $1->lineno, $3->id, $3->lineno);
+            fprintf(stderr, " Function name; %s, at line %i, does not match function name; %s, at line %i\n ", $1->id, $1->lineno, $3->id, $3->lineno);
             YYABORT;
             }}
 ;
 
-head        :   FUNC tIDENTIFIER '(' par_decl_list ')' ':' type
+head:   FUNC tIDENTIFIER '(' par_decl_list ')' ':' type
         {$$ = make_Head($2, $4, $7);}
 ;
 
-tail        :   END tIDENTIFIER
+tail:   END tIDENTIFIER
         {$$ = make_Tail($2);}
 ;
 
-type        :   tIDENTIFIER
+type:   tIDENTIFIER
         {$$ = make_Type_id($1);}
             | INT
         {$$ = make_Type_int();}
@@ -140,22 +140,22 @@ var_decl_list:  var_type ',' var_decl_list
         {$$ = make_VDL_type($1);}
 ;
 
-var_type    :   tIDENTIFIER ':' type
+var_type:   tIDENTIFIER ':' type
         {$$ = make_VType_id($1, $3);}
 ;
 
-body        :   decl_list statement_list
+body:   decl_list statement_list
         {$$ = make_Body($1, $2);}
 
 ;
 
-decl_list   :   declaration decl_list
+decl_list:   declaration decl_list
         {$$ = make_DL_list($1, $2);}
             | /*empty*/
         {$$ = make_DL_empty();}
 ;
 
-declaration :   TYPE tIDENTIFIER '='     type ';'
+declaration:   TYPE tIDENTIFIER '='     type ';'
         {$$ = make_Decl_type($2, $4);}
             | function
         {$$ = make_Decl_func($1);}
@@ -169,7 +169,7 @@ statement_list: statement
         {$$ = make_SL_list($1, $2);}
 ;
 
-statement   :  RETURN expression ';'
+statement:  RETURN expression ';'
         {$$ = make_STMT_ret($2);}
             | WRITE expression ';'
         {$$ = make_STMT_wrt($2);}
@@ -189,7 +189,7 @@ statement   :  RETURN expression ';'
         {$$ = make_STMT_list($2);}
 ;
 
-variable    :   tIDENTIFIER
+variable:   tIDENTIFIER
         {$$ = make_Var_id($1);}
             | variable '[' expression ']'
         {$$ = make_Var_exp($1, $3);}
@@ -197,7 +197,7 @@ variable    :   tIDENTIFIER
         {$$ = make_Var_varid($1, $3);}
 ;
 
-expression  :   expression '+' expression
+expression:   expression '+' expression
         {$$ = make_EXP(exp_PLUS, $1, $3);}
             | expression '-' expression
         {$$ = make_EXP(exp_MIN, $1, $3);}
@@ -229,7 +229,7 @@ expression  :   expression '+' expression
         {$$ = make_EXP_term($1);}
 ;
 
-term    :       tINTCONST
+term:       tINTCONST
         {$$ = make_Term_num($1);}
             | '-' tINTCONST %prec NEG
         {$$ = make_Term_neg_num($2);}
@@ -264,3 +264,4 @@ exp_list:       expression
 ;
 
 %%
+
