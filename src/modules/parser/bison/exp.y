@@ -98,6 +98,8 @@ void yyerror() {
 %left GT LT GEQ LEQ
 %left '+' '-'
 %left '*' '/'
+%nonassoc THEN
+%nonassoc ELSE
 
 %%
 program:   body
@@ -183,7 +185,7 @@ statement:RETURN expression ';'
         {$$ = make_STMT_allocate_length($2, $4);}
             | variable '=' expression ';'
         {$$ = make_STMT_assign($1, $3);}
-            | IF expression THEN statement
+            | IF expression THEN statement      %prec THEN
         {$$ = make_STMT_if($2, $4);}
             | IF expression THEN statement ELSE statement
         {$$ = make_STMT_if_else($2, $4, $6);}

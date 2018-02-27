@@ -6,7 +6,6 @@ Terminals unused in grammar
 
 State 69 conflicts: 18 reduce/reduce
 State 105 conflicts: 18 reduce/reduce
-State 115 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -1918,7 +1917,6 @@ State 115
 
     ELSE  shift, and go to state 130
 
-    ELSE      [reduce using rule 28 (statement)]
     $default  reduce using rule 28 (statement)
 
 

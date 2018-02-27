@@ -106,7 +106,7 @@ $(OBJ_DIR)/modules/pretty/%.o: $(MOD_DIR)/pretty/%.c
 
 $(OBJ_DIR)/y.tab.c $(OBJ_DIR)/y.tab.h:  $(MOD_DIR)/parser/bison/exp.y
 	mkdir -p $(OBJ_DIR)
-	bison -y -d $(MOD_DIR)/parser/bison/exp.y
+	bison -y -d --report=state $(MOD_DIR)/parser/bison/exp.y
 	mv y.tab.c $(OBJ_DIR)/
 	cp y.tab.h $(OBJ_DIR)/
 	mv y.tab.h include/

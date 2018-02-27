@@ -16,4 +16,4 @@ end c
 
 b = -(-a+b);
 
-if ( c() || c() || |a+|a+b||>0 ) then write 0; else write 1;
+if ( c() || c() || ||a+c|+b|>0 ) then if (2<0) then write 0; else write 1;
