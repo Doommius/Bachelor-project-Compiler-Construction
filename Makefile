@@ -10,6 +10,8 @@ OBJ_DIR = build
 MOD_DIR = src/modules
 INC_ALL = -Iinclude/ $(INC)
 
+MODULES = $(filter-out $(MOD_DIR)/README.md, $(wildcard $(MOD_DIR)/*))
+
 MAIN_DIR = main
 TEST_DIR = tests
 
@@ -51,21 +53,12 @@ $(EXE): $(OBJ_DIR)/y.tab.o $(OBJ_DIR)/lex.yy.o $(OBJ)
 	$(CC) $(LIB) $(INC) $^ $(LDLIBS) -o $@ -lfl
 
 ###
-## Symbol tree compilation
+## Module and object building
 ### 
-$(OBJ_DIR)/modules/symbol_tree/%.o: $(MOD_DIR)/symbol_tree/%.c
-	mkdir -p $(OBJ_DIR)/modules/symbol_tree
+$(OBJ_DIR)/modules/*/%.o: $(MOD_DIR)/*/%.c
+	mkdir -p $(OBJ_DIR)/modules/*
 	$(CC) $(INC) $(CFLAGS) -c $< -o $@
 
-## Parser
-$(OBJ_DIR)/modules/parser/%.o: $(MOD_DIR)/parser/%.c
-	mkdir -p $(OBJ_DIR)/modules/parser
-	$(CC) $(INC) $(CFLAGS) -c $< -o $@
-
-## Pretty
-$(OBJ_DIR)/modules/pretty/%.o: $(MOD_DIR)/pretty/%.c
-	mkdir -p $(OBJ_DIR)/modules/pretty
-	$(CC) $(INC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/y.tab.c $(OBJ_DIR)/y.tab.h:  $(MOD_DIR)/parser/bison/exp.y
 	mkdir -p $(OBJ_DIR)
@@ -79,40 +72,6 @@ $(OBJ_DIR)/lex.yy.c: $(MOD_DIR)/scanner/flex/exp.l $(OBJ_DIR)/y.tab.h
 	mv lex.yy.c $(OBJ_DIR)/
 
 ###
-## Weeder compilation
-###
-$(OBJ_DIR)/modules/weeder/%.o: $(MOD_DIR)/weeder/%.c
-	mkdir -p $(OBJ_DIR)/modules/weeder
-	$(CC) $(INC) $(CFLAGS) -c $< -o $@
-
-###
-## Type checker compilation
-###
-$(OBJ_DIR)/modules/typechecker/%.o: $(MOD_DIR)/typechecker/%.c
-	mkdir -p $(OBJ_DIR)/modules/typechecker
-	$(CC) $(INC) $(CFLAGS) -c $< -o $@
-
-###
-## Resource modules compilation
-###
-$(OBJ_DIR)/modules/resource/%.o: $(MOD_DIR)/resource/%.c
-	mkdir -p $(OBJ_DIR)/modules/resource
-	$(CC) $(INC) $(CFLAGS) -c $< -o $@
-
-###
-## Code modules compilation
-###
-$(OBJ_DIR)/modules/code/%.o: $(MOD_DIR)/code/%.c
-	mkdir -p $(OBJ_DIR)/modules/code
-	$(CC) $(INC) $(CFLAGS) -c $< -o $@
-
-###
-## Optimizer compilation
-###
-$(OBJ_DIR)/modules/optimizer/%.o: $(MOD_DIR)/optimizer/%.c
-	mkdir -p $(OBJ_DIR)/modules/optimizer
-	$(CC) $(INC) $(CFLAGS) -c $< -o $@
-###
 ## Test program compilation
 ###
 $(TEST): $(TEST_OBJ)
@@ -122,7 +81,7 @@ $(TEST): $(TEST_OBJ)
 ## Project files object creation
 ###
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	mkdir -p $(OBJ_DIR)
+	mkdir -p $(addprefix $(OBJ_DIR)/, $(MODULES:$(SRC_DIR)/%=%))
 	$(CC) $(INC) $(CFLAGS) -c $< -o $@
 
 
