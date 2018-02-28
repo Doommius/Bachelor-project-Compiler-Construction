@@ -14,3 +14,4 @@ exp
 lex.yy.c
 tests/exp
 .vscode
+y.output
