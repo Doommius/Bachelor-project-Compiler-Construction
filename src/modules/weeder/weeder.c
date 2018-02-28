@@ -23,9 +23,9 @@ body *theprogram;
  * 
  */
 
-int weeder(body *program){
+body *weeder(body *program){
     //TODO Skal nok vaere noget mere her
-    weed_body(program);
+    program = weed_body(program);
 
 }
 
@@ -36,10 +36,17 @@ body *weed_body(body *body){
 }
 
 function *weed_function(function *func){
+    func->body = weed_body(func->body);
+    func->head = weed_head(func->head);
+    func->tail = weed_tail(func->tail);
+    return func;
 
 }
 
 head *weed_head(head *head){
+    head->list = weed_pdl(head->list);
+    head->type = weed_type(head->type);
+    return head;
 
 }
 
