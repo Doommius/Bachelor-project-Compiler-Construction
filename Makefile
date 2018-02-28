@@ -22,12 +22,12 @@ SRC = $(filter-out $(wildcard $(SRC_DIR)/tests.c), \
 				$(MOD_DIR)/*/*.c ) )
 INC = 	$(INC_DIR) \
 		$(INC_TEST)
-OBJRT 	= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)									# | MODULES |
+OBJRT 	= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 OBJMOD 	= $(OBJRT:$(MOD_DIR)/*/%.c=$(OBJ_DIR)/modules/*/%.o)
-OBJ = $(OBJMOD)					# Symboltree
-LIB = $(LDFLAGS) -L$(MOD_DIR)/symbol_tree/
+OBJ = $(OBJMOD)
+LIB = $(LDFLAGS)
 
-TEST_SRC = $(filter-out $(wildcard src/main.c), \
+TEST_SRC = $(filter-out $(wildcard src/main.c) $(MOD_DIR)/README.md, \
 				$(wildcard $(SRC_DIR)/*.c $(MOD_DIR)/symbol_tree/*.c))
 TEST_OBJ = $(TEST_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
