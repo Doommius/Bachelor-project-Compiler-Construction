@@ -21,8 +21,7 @@ typedef enum { exp_PLUS,
                exp_LEQ,
                exp_AND,
                exp_OR,
-               exp_TERM,
-               exp_NEG } EXP_kind;
+               exp_TERM} EXP_kind;
 
 typedef enum { term_VAR,
                term_LIST,
@@ -30,7 +29,6 @@ typedef enum { term_VAR,
                term_NOT,
                term_ABS,
                term_NUM,
-               term_NEG_NUM,
                term_TRUE,
                term_FALSE,
                term_NULL } TERM_kind;
@@ -67,14 +65,15 @@ typedef enum { statement_RETURN,
                statement_WHILE,
                statement_LIST } STATEMENT_kind;
 
+typedef enum { var_ID,
+               var_EXP,
+               var_VID } Var_kind;
+
 typedef enum { al_LIST,
                al_EMPTY } AL_kind;
 
 typedef enum { el_EXP,
                el_LIST } EL_kind;
 
-typedef enum { var_ID,
-               var_EXP,
-               var_VID } Var_kind;
 
 #endif //COMPILER_KIND_H

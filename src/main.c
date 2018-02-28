@@ -46,8 +46,7 @@ int main(int argc, char **argv) {
     lineno = 1;
     yyparse();
     prettyBody(theprogram);
-    weeder(theprogram);
-
+    //weeder(theprogram);
     
     printf("\n");
     return 1;

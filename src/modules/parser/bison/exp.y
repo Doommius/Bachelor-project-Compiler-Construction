@@ -235,10 +235,8 @@ expression:expression '+' expression
         {$$ = make_EXP_term($1);}
 ;
 
-term:tINTCONST
+term:       tINTCONST
         {$$ = make_Term_num($1);}
-            | '-' tINTCONST %prec NEG
-        {$$ = make_Term_neg_num($2);}
             | '(' expression ')'
         {$$ = make_Term_par($2);}
             | '!' term

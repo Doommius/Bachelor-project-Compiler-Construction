@@ -229,7 +229,6 @@ expression *make_EXP_term(term *term);
 expression *make_EXP_neg(expression *neg);
 
 term *make_Term_num(int intconst);
-term *make_Term_neg_num(int intconst);
 term *make_Term_par(expression *expression);
 term *make_Term_not(term *term);
 term *make_Term_abs(expression *expression);

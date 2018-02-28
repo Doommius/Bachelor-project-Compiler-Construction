@@ -172,9 +172,9 @@ void prettySTMT(statement *s) {
         break;
 
     case statement_IF:
-        printf("if ");
+        printf("if (");
         prettyEXP(s->val.ifthen.expression);
-        printf(" then\n");
+        printf(") then\n");
         indent_depth++;
         prettySTMT(s->val.ifthen.statement1);
         indent_depth--;
@@ -187,6 +187,7 @@ void prettySTMT(statement *s) {
         indent_depth++;
         prettySTMT(s->val.ifthen.statement1);
         indent_depth--;
+        indent();
         printf(" else\n");
         indent_depth++;
         prettySTMT(s->val.ifthen.statement2);
@@ -312,10 +313,6 @@ void prettyEXP(expression *e) {
         prettyTerm(e->val.term);
         break;
 
-    case exp_NEG:
-        printf("-");
-        prettyEXP(e->val.neg);
-        break;
     }
 }
 

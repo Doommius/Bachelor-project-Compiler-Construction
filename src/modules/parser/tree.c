@@ -307,13 +307,14 @@ expression *make_EXP_term(term *term) {
     return e;
 }
 
+//Negation of x is the same as 0-x, so we make a minus node
 expression *make_EXP_neg(expression *neg) {
-    expression *e;
-    e = NEW(expression);
-    e->lineno = lineno;
-    e->kind = exp_NEG;
-    e->val.neg = neg;
-    return e;
+
+    expression *zero = make_EXP_term(make_Term_num(0));
+
+    expression *minus = make_EXP(exp_MIN, zero, neg);
+
+    return minus;
 }
 
 term *make_Term_num(int intconst) {
@@ -322,15 +323,6 @@ term *make_Term_num(int intconst) {
     t->lineno = lineno;
     t->kind = term_NUM;
     t->val.num = intconst;
-    return t;
-}
-
-term *make_Term_neg_num(int intconst) {
-    term *t;
-    t = NEW(term);
-    t->lineno = lineno;
-    t->kind = term_NEG_NUM;
-    t->val.num = 0 - intconst;
     return t;
 }
 
