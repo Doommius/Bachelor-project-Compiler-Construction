@@ -29,7 +29,6 @@ typedef enum { term_VAR,
                term_NOT,
                term_ABS,
                term_NUM,
-               term_NEG_NUM,
                term_TRUE,
                term_FALSE,
                term_NULL } TERM_kind;

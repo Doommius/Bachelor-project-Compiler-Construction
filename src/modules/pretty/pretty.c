@@ -361,10 +361,6 @@ void prettyTerm(term *t) {
     case term_NUM:
         printf("%i", t->val.num);
         break;
-
-    case term_NEG_NUM:
-        printf("%i", t->val.num);
-        break;
     }
 }
 
