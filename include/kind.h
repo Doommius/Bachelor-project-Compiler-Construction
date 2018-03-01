@@ -1,14 +1,6 @@
 #ifndef COMPILER_KIND_H
 #define COMPILER_KIND_H
 
-typedef enum { idK,
-               intconstK,
-               timesK,
-               divK,
-               plusK,
-               minusK,
-               modK } kindArithmetic;
-
 typedef enum { exp_PLUS,
                exp_MIN,
                exp_MULT,
