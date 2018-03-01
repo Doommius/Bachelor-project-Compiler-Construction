@@ -1,6 +1,7 @@
 cmake-build-debug
 .idea
 .directory
+build
 *.zip
 test
 compiler
