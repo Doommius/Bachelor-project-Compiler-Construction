@@ -70,6 +70,7 @@ $(OBJ_DIR)/y.tab.c $(OBJ_DIR)/y.tab.h:  $(MOD_DIR)/parser/bison/exp.y
 $(OBJ_DIR)/lex.yy.c: $(MOD_DIR)/scanner/flex/exp.l $(OBJ_DIR)/y.tab.h
 	flex $(MOD_DIR)/scanner/flex/exp.l
 	mv lex.yy.c $(OBJ_DIR)/
+	mv y.output $(OBJ_DIR)/
 
 ###
 ## Test program compilation
@@ -88,9 +89,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 clean:
 	rm -rf $(OBJ_DIR)/*
 	$(RM) include/y.tab.h
+	$(RM) include/y.output
 
 clean-all:
 	rm -rf $(OBJ_DIR)/*
 	$(RM) include/y.tab.h
+	$(RM) include/y.output
 	$(RM) $(EXE)
 	$(RM) $(TEST)
