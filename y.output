@@ -4,8 +4,7 @@ Terminals unused in grammar
    ASSIGN
 
 
-State 69 conflicts: 18 reduce/reduce
-State 105 conflicts: 18 reduce/reduce
+State 103 conflicts: 18 reduce/reduce
 
 
 Grammar
@@ -77,33 +76,32 @@ Grammar
    49           | term
 
    50 term: tINTCONST
-   51     | '-' tINTCONST
-   52     | '(' expression ')'
-   53     | '!' term
-   54     | '|' expression '|'
-   55     | TRUE
-   56     | FALSE
-   57     | _NULL
-   58     | variable
-   59     | tIDENTIFIER '(' act_list ')'
+   51     | '(' expression ')'
+   52     | '!' term
+   53     | '|' expression '|'
+   54     | TRUE
+   55     | FALSE
+   56     | _NULL
+   57     | variable
+   58     | tIDENTIFIER '(' act_list ')'
 
-   60 act_list: exp_list
-   61         | %empty
+   59 act_list: exp_list
+   60         | %empty
 
-   62 exp_list: expression
-   63         | expression ',' exp_list
+   61 exp_list: expression
+   62         | expression ',' exp_list
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'!' (33) 53
-'(' (40) 3 39 52 59
-')' (41) 3 39 52 59
+'!' (33) 52
+'(' (40) 3 39 51 58
+')' (41) 3 39 51 58
 '*' (42) 37
 '+' (43) 35
-',' (44) 12 63
-'-' (45) 36 48 51
+',' (44) 12 62
+'-' (45) 36 48
 '.' (46) 34
 '/' (47) 38
 ':' (58) 3 14
@@ -112,11 +110,11 @@ $end (0) 0
 '[' (91) 33
 ']' (93) 33
 '{' (123) 9 31
-'|' (124) 47 54
+'|' (124) 47 53
 '}' (125) 9 31
 error (256)
-tINTCONST (258) 50 51
-tIDENTIFIER (259) 3 4 5 14 18 32 34 59
+tINTCONST (258) 50
+tIDENTIFIER (259) 3 4 5 14 18 32 34 58
 EQ (260) 40
 NEQ (261) 41
 LEQ (262) 45
@@ -130,9 +128,9 @@ RETURN (269) 23
 AND (270) 46
 OR (271)
 ASSIGN (272)
-TRUE (273) 55
-FALSE (274) 56
-_NULL (275) 57
+TRUE (273) 54
+FALSE (274) 55
+_NULL (275) 56
 FUNC (276) 3
 END (277) 4
 INT (278) 6
@@ -180,17 +178,17 @@ statement_list (64)
 statement (65)
     on left: 23 24 25 26 27 28 29 30 31, on right: 21 22 28 29 30
 variable (66)
-    on left: 32 33 34, on right: 25 26 27 33 34 58
+    on left: 32 33 34, on right: 25 26 27 33 34 57
 expression (67)
     on left: 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49, on right:
     23 24 26 27 28 29 30 33 35 36 37 38 39 40 41 42 43 44 45 46 47
-    48 52 54 62 63
+    48 51 53 61 62
 term (68)
-    on left: 50 51 52 53 54 55 56 57 58 59, on right: 49 53
+    on left: 50 51 52 53 54 55 56 57 58, on right: 49 52
 act_list (69)
-    on left: 60 61, on right: 59
+    on left: 59 60, on right: 58
 exp_list (70)
-    on left: 62 63, on right: 60 63
+    on left: 61 62, on right: 59 62
 
 
 State 0
@@ -596,7 +594,7 @@ State 35
 State 36
 
    32 variable: tIDENTIFIER .
-   59 term: tIDENTIFIER . '(' act_list ')'
+   58 term: tIDENTIFIER . '(' act_list ')'
 
     '('  shift, and go to state 67
 
@@ -605,28 +603,28 @@ State 36
 
 State 37
 
-   55 term: TRUE .
+   54 term: TRUE .
 
-    $default  reduce using rule 55 (term)
+    $default  reduce using rule 54 (term)
 
 
 State 38
 
-   56 term: FALSE .
+   55 term: FALSE .
 
-    $default  reduce using rule 56 (term)
+    $default  reduce using rule 55 (term)
 
 
 State 39
 
-   57 term: _NULL .
+   56 term: _NULL .
 
-    $default  reduce using rule 57 (term)
+    $default  reduce using rule 56 (term)
 
 
 State 40
 
-   54 term: '|' . expression '|'
+   53 term: '|' . expression '|'
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -646,9 +644,28 @@ State 40
 State 41
 
    48 expression: '-' . expression
-   51 term: '-' . tINTCONST
 
-    tINTCONST    shift, and go to state 69
+    tINTCONST    shift, and go to state 35
+    tIDENTIFIER  shift, and go to state 36
+    TRUE         shift, and go to state 37
+    FALSE        shift, and go to state 38
+    _NULL        shift, and go to state 39
+    '|'          shift, and go to state 40
+    '-'          shift, and go to state 41
+    '('          shift, and go to state 42
+    '!'          shift, and go to state 43
+
+    variable    go to state 44
+    expression  go to state 69
+    term        go to state 46
+
+
+State 42
+
+   39 expression: '(' . expression ')'
+   51 term: '(' . expression ')'
+
+    tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
     TRUE         shift, and go to state 37
     FALSE        shift, and go to state 38
@@ -663,29 +680,9 @@ State 41
     term        go to state 46
 
 
-State 42
-
-   39 expression: '(' . expression ')'
-   52 term: '(' . expression ')'
-
-    tINTCONST    shift, and go to state 35
-    tIDENTIFIER  shift, and go to state 36
-    TRUE         shift, and go to state 37
-    FALSE        shift, and go to state 38
-    _NULL        shift, and go to state 39
-    '|'          shift, and go to state 40
-    '-'          shift, and go to state 41
-    '('          shift, and go to state 42
-    '!'          shift, and go to state 43
-
-    variable    go to state 44
-    expression  go to state 71
-    term        go to state 46
-
-
 State 43
 
-   53 term: '!' . term
+   52 term: '!' . term
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -693,24 +690,23 @@ State 43
     FALSE        shift, and go to state 38
     _NULL        shift, and go to state 39
     '|'          shift, and go to state 40
-    '-'          shift, and go to state 72
-    '('          shift, and go to state 73
+    '('          shift, and go to state 71
     '!'          shift, and go to state 43
 
     variable  go to state 44
-    term      go to state 74
+    term      go to state 72
 
 
 State 44
 
    33 variable: variable . '[' expression ']'
    34         | variable . '.' tIDENTIFIER
-   58 term: variable .
+   57 term: variable .
 
     '['  shift, and go to state 54
     '.'  shift, and go to state 55
 
-    $default  reduce using rule 58 (term)
+    $default  reduce using rule 57 (term)
 
 
 State 45
@@ -730,19 +726,19 @@ State 45
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    EQ    shift, and go to state 75
-    NEQ   shift, and go to state 76
-    LEQ   shift, and go to state 77
-    GEQ   shift, and go to state 78
-    LT    shift, and go to state 79
-    GT    shift, and go to state 80
-    AND   shift, and go to state 81
-    THEN  shift, and go to state 82
-    '|'   shift, and go to state 83
-    '+'   shift, and go to state 84
-    '-'   shift, and go to state 85
-    '*'   shift, and go to state 86
-    '/'   shift, and go to state 87
+    EQ    shift, and go to state 73
+    NEQ   shift, and go to state 74
+    LEQ   shift, and go to state 75
+    GEQ   shift, and go to state 76
+    LT    shift, and go to state 77
+    GT    shift, and go to state 78
+    AND   shift, and go to state 79
+    THEN  shift, and go to state 80
+    '|'   shift, and go to state 81
+    '+'   shift, and go to state 82
+    '-'   shift, and go to state 83
+    '*'   shift, and go to state 84
+    '/'   shift, and go to state 85
 
 
 State 46
@@ -768,19 +764,19 @@ State 47
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    AND  shift, and go to state 81
-    DO   shift, and go to state 88
-    '|'  shift, and go to state 83
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    AND  shift, and go to state 79
+    DO   shift, and go to state 86
+    '|'  shift, and go to state 81
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
 
 State 48
@@ -799,19 +795,19 @@ State 48
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    AND  shift, and go to state 81
-    '|'  shift, and go to state 83
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
-    ';'  shift, and go to state 89
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    AND  shift, and go to state 79
+    '|'  shift, and go to state 81
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
+    ';'  shift, and go to state 87
 
 
 State 49
@@ -830,19 +826,19 @@ State 49
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    AND  shift, and go to state 81
-    '|'  shift, and go to state 83
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
-    ';'  shift, and go to state 90
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    AND  shift, and go to state 79
+    '|'  shift, and go to state 81
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
+    ';'  shift, and go to state 88
 
 
 State 50
@@ -852,8 +848,8 @@ State 50
    33 variable: variable . '[' expression ']'
    34         | variable . '.' tIDENTIFIER
 
-    OF_LENGTH  shift, and go to state 91
-    ';'        shift, and go to state 92
+    OF_LENGTH  shift, and go to state 89
+    ';'        shift, and go to state 90
     '['        shift, and go to state 54
     '.'        shift, and go to state 55
 
@@ -862,7 +858,7 @@ State 51
 
    31 statement: '{' statement_list . '}'
 
-    '}'  shift, and go to state 93
+    '}'  shift, and go to state 91
 
 
 State 52
@@ -887,7 +883,7 @@ State 53
     '!'          shift, and go to state 43
 
     variable    go to state 44
-    expression  go to state 94
+    expression  go to state 92
     term        go to state 46
 
 
@@ -906,7 +902,7 @@ State 54
     '!'          shift, and go to state 43
 
     variable    go to state 44
-    expression  go to state 95
+    expression  go to state 93
     term        go to state 46
 
 
@@ -914,14 +910,14 @@ State 55
 
    34 variable: variable '.' . tIDENTIFIER
 
-    tIDENTIFIER  shift, and go to state 96
+    tIDENTIFIER  shift, and go to state 94
 
 
 State 56
 
     3 head: FUNC tIDENTIFIER '(' par_decl_list . ')' ':' type
 
-    ')'  shift, and go to state 97
+    ')'  shift, and go to state 95
 
 
 State 57
@@ -962,21 +958,21 @@ State 61
     ARRAY_OF     shift, and go to state 61
     RECORD_OF    shift, and go to state 62
 
-    type  go to state 98
+    type  go to state 96
 
 
 State 62
 
     9 type: RECORD_OF . '{' var_decl_list '}'
 
-    '{'  shift, and go to state 99
+    '{'  shift, and go to state 97
 
 
 State 63
 
    18 declaration: TYPE tIDENTIFIER '=' type . ';'
 
-    ';'  shift, and go to state 100
+    ';'  shift, and go to state 98
 
 
 State 64
@@ -1002,7 +998,7 @@ State 66
 
 State 67
 
-   59 term: tIDENTIFIER '(' . act_list ')'
+   58 term: tIDENTIFIER '(' . act_list ')'
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -1014,13 +1010,13 @@ State 67
     '('          shift, and go to state 42
     '!'          shift, and go to state 43
 
-    $default  reduce using rule 61 (act_list)
+    $default  reduce using rule 60 (act_list)
 
     variable    go to state 44
-    expression  go to state 101
+    expression  go to state 99
     term        go to state 46
-    act_list    go to state 102
-    exp_list    go to state 103
+    act_list    go to state 100
+    exp_list    go to state 101
 
 
 State 68
@@ -1037,67 +1033,23 @@ State 68
    45           | expression . LEQ expression
    46           | expression . AND expression
    47           | expression . '|' '|' expression
-   54 term: '|' expression . '|'
+   53 term: '|' expression . '|'
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    AND  shift, and go to state 81
-    '|'  shift, and go to state 104
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    AND  shift, and go to state 79
+    '|'  shift, and go to state 102
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
 
 State 69
-
-   50 term: tINTCONST .
-   51     | '-' tINTCONST .
-
-    EQ        reduce using rule 50 (term)
-    EQ        [reduce using rule 51 (term)]
-    NEQ       reduce using rule 50 (term)
-    NEQ       [reduce using rule 51 (term)]
-    LEQ       reduce using rule 50 (term)
-    LEQ       [reduce using rule 51 (term)]
-    GEQ       reduce using rule 50 (term)
-    GEQ       [reduce using rule 51 (term)]
-    LT        reduce using rule 50 (term)
-    LT        [reduce using rule 51 (term)]
-    GT        reduce using rule 50 (term)
-    GT        [reduce using rule 51 (term)]
-    AND       reduce using rule 50 (term)
-    AND       [reduce using rule 51 (term)]
-    THEN      reduce using rule 50 (term)
-    THEN      [reduce using rule 51 (term)]
-    DO        reduce using rule 50 (term)
-    DO        [reduce using rule 51 (term)]
-    '|'       reduce using rule 50 (term)
-    '|'       [reduce using rule 51 (term)]
-    '+'       reduce using rule 50 (term)
-    '+'       [reduce using rule 51 (term)]
-    '-'       reduce using rule 50 (term)
-    '-'       [reduce using rule 51 (term)]
-    '*'       reduce using rule 50 (term)
-    '*'       [reduce using rule 51 (term)]
-    '/'       reduce using rule 50 (term)
-    '/'       [reduce using rule 51 (term)]
-    ')'       reduce using rule 50 (term)
-    ')'       [reduce using rule 51 (term)]
-    ','       reduce using rule 50 (term)
-    ','       [reduce using rule 51 (term)]
-    ';'       reduce using rule 50 (term)
-    ';'       [reduce using rule 51 (term)]
-    ']'       reduce using rule 50 (term)
-    ']'       [reduce using rule 51 (term)]
-    $default  reduce using rule 50 (term)
-
-
-State 70
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1113,23 +1065,23 @@ State 70
    47           | expression . '|' '|' expression
    48           | '-' expression .
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    AND  shift, and go to state 81
-    '|'  shift, and go to state 83
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    AND  shift, and go to state 79
+    '|'  shift, and go to state 81
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
     $default  reduce using rule 48 (expression)
 
 
-State 71
+State 70
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1144,33 +1096,90 @@ State 71
    45           | expression . LEQ expression
    46           | expression . AND expression
    47           | expression . '|' '|' expression
-   52 term: '(' expression . ')'
+   51 term: '(' expression . ')'
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    AND  shift, and go to state 81
-    '|'  shift, and go to state 83
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
-    ')'  shift, and go to state 105
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    AND  shift, and go to state 79
+    '|'  shift, and go to state 81
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
+    ')'  shift, and go to state 103
+
+
+State 71
+
+   51 term: '(' . expression ')'
+
+    tINTCONST    shift, and go to state 35
+    tIDENTIFIER  shift, and go to state 36
+    TRUE         shift, and go to state 37
+    FALSE        shift, and go to state 38
+    _NULL        shift, and go to state 39
+    '|'          shift, and go to state 40
+    '-'          shift, and go to state 41
+    '('          shift, and go to state 42
+    '!'          shift, and go to state 43
+
+    variable    go to state 44
+    expression  go to state 104
+    term        go to state 46
 
 
 State 72
 
-   51 term: '-' . tINTCONST
+   52 term: '!' term .
 
-    tINTCONST  shift, and go to state 106
+    $default  reduce using rule 52 (term)
 
 
 State 73
 
-   52 term: '(' . expression ')'
+   40 expression: expression EQ . expression
+
+    tINTCONST    shift, and go to state 35
+    tIDENTIFIER  shift, and go to state 36
+    TRUE         shift, and go to state 37
+    FALSE        shift, and go to state 38
+    _NULL        shift, and go to state 39
+    '|'          shift, and go to state 40
+    '-'          shift, and go to state 41
+    '('          shift, and go to state 42
+    '!'          shift, and go to state 43
+
+    variable    go to state 44
+    expression  go to state 105
+    term        go to state 46
+
+
+State 74
+
+   41 expression: expression NEQ . expression
+
+    tINTCONST    shift, and go to state 35
+    tIDENTIFIER  shift, and go to state 36
+    TRUE         shift, and go to state 37
+    FALSE        shift, and go to state 38
+    _NULL        shift, and go to state 39
+    '|'          shift, and go to state 40
+    '-'          shift, and go to state 41
+    '('          shift, and go to state 42
+    '!'          shift, and go to state 43
+
+    variable    go to state 44
+    expression  go to state 106
+    term        go to state 46
+
+
+State 75
+
+   45 expression: expression LEQ . expression
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -1187,16 +1196,9 @@ State 73
     term        go to state 46
 
 
-State 74
+State 76
 
-   53 term: '!' term .
-
-    $default  reduce using rule 53 (term)
-
-
-State 75
-
-   40 expression: expression EQ . expression
+   44 expression: expression GEQ . expression
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -1213,9 +1215,9 @@ State 75
     term        go to state 46
 
 
-State 76
+State 77
 
-   41 expression: expression NEQ . expression
+   43 expression: expression LT . expression
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -1232,9 +1234,9 @@ State 76
     term        go to state 46
 
 
-State 77
+State 78
 
-   45 expression: expression LEQ . expression
+   42 expression: expression GT . expression
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -1251,9 +1253,9 @@ State 77
     term        go to state 46
 
 
-State 78
+State 79
 
-   44 expression: expression GEQ . expression
+   46 expression: expression AND . expression
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -1270,47 +1272,33 @@ State 78
     term        go to state 46
 
 
-State 79
-
-   43 expression: expression LT . expression
-
-    tINTCONST    shift, and go to state 35
-    tIDENTIFIER  shift, and go to state 36
-    TRUE         shift, and go to state 37
-    FALSE        shift, and go to state 38
-    _NULL        shift, and go to state 39
-    '|'          shift, and go to state 40
-    '-'          shift, and go to state 41
-    '('          shift, and go to state 42
-    '!'          shift, and go to state 43
-
-    variable    go to state 44
-    expression  go to state 112
-    term        go to state 46
-
-
 State 80
 
-   42 expression: expression GT . expression
+   28 statement: IF expression THEN . statement
+   29          | IF expression THEN . statement ELSE statement
 
-    tINTCONST    shift, and go to state 35
-    tIDENTIFIER  shift, and go to state 36
-    TRUE         shift, and go to state 37
-    FALSE        shift, and go to state 38
-    _NULL        shift, and go to state 39
-    '|'          shift, and go to state 40
-    '-'          shift, and go to state 41
-    '('          shift, and go to state 42
-    '!'          shift, and go to state 43
+    tIDENTIFIER  shift, and go to state 17
+    IF           shift, and go to state 18
+    WHILE        shift, and go to state 19
+    RETURN       shift, and go to state 20
+    WRITE        shift, and go to state 21
+    ALLOCATE     shift, and go to state 22
+    '{'          shift, and go to state 23
 
-    variable    go to state 44
-    expression  go to state 113
-    term        go to state 46
+    statement  go to state 112
+    variable   go to state 26
 
 
 State 81
 
-   46 expression: expression AND . expression
+   47 expression: expression '|' . '|' expression
+
+    '|'  shift, and go to state 113
+
+
+State 82
+
+   35 expression: expression '+' . expression
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -1327,33 +1315,47 @@ State 81
     term        go to state 46
 
 
-State 82
-
-   28 statement: IF expression THEN . statement
-   29          | IF expression THEN . statement ELSE statement
-
-    tIDENTIFIER  shift, and go to state 17
-    IF           shift, and go to state 18
-    WHILE        shift, and go to state 19
-    RETURN       shift, and go to state 20
-    WRITE        shift, and go to state 21
-    ALLOCATE     shift, and go to state 22
-    '{'          shift, and go to state 23
-
-    statement  go to state 115
-    variable   go to state 26
-
-
 State 83
 
-   47 expression: expression '|' . '|' expression
+   36 expression: expression '-' . expression
 
-    '|'  shift, and go to state 116
+    tINTCONST    shift, and go to state 35
+    tIDENTIFIER  shift, and go to state 36
+    TRUE         shift, and go to state 37
+    FALSE        shift, and go to state 38
+    _NULL        shift, and go to state 39
+    '|'          shift, and go to state 40
+    '-'          shift, and go to state 41
+    '('          shift, and go to state 42
+    '!'          shift, and go to state 43
+
+    variable    go to state 44
+    expression  go to state 115
+    term        go to state 46
 
 
 State 84
 
-   35 expression: expression '+' . expression
+   37 expression: expression '*' . expression
+
+    tINTCONST    shift, and go to state 35
+    tIDENTIFIER  shift, and go to state 36
+    TRUE         shift, and go to state 37
+    FALSE        shift, and go to state 38
+    _NULL        shift, and go to state 39
+    '|'          shift, and go to state 40
+    '-'          shift, and go to state 41
+    '('          shift, and go to state 42
+    '!'          shift, and go to state 43
+
+    variable    go to state 44
+    expression  go to state 116
+    term        go to state 46
+
+
+State 85
+
+   38 expression: expression '/' . expression
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -1370,28 +1372,39 @@ State 84
     term        go to state 46
 
 
-State 85
-
-   36 expression: expression '-' . expression
-
-    tINTCONST    shift, and go to state 35
-    tIDENTIFIER  shift, and go to state 36
-    TRUE         shift, and go to state 37
-    FALSE        shift, and go to state 38
-    _NULL        shift, and go to state 39
-    '|'          shift, and go to state 40
-    '-'          shift, and go to state 41
-    '('          shift, and go to state 42
-    '!'          shift, and go to state 43
-
-    variable    go to state 44
-    expression  go to state 118
-    term        go to state 46
-
-
 State 86
 
-   37 expression: expression '*' . expression
+   30 statement: WHILE expression DO . statement
+
+    tIDENTIFIER  shift, and go to state 17
+    IF           shift, and go to state 18
+    WHILE        shift, and go to state 19
+    RETURN       shift, and go to state 20
+    WRITE        shift, and go to state 21
+    ALLOCATE     shift, and go to state 22
+    '{'          shift, and go to state 23
+
+    statement  go to state 118
+    variable   go to state 26
+
+
+State 87
+
+   23 statement: RETURN expression ';' .
+
+    $default  reduce using rule 23 (statement)
+
+
+State 88
+
+   24 statement: WRITE expression ';' .
+
+    $default  reduce using rule 24 (statement)
+
+
+State 89
+
+   26 statement: ALLOCATE variable OF_LENGTH . expression ';'
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -1408,89 +1421,21 @@ State 86
     term        go to state 46
 
 
-State 87
-
-   38 expression: expression '/' . expression
-
-    tINTCONST    shift, and go to state 35
-    tIDENTIFIER  shift, and go to state 36
-    TRUE         shift, and go to state 37
-    FALSE        shift, and go to state 38
-    _NULL        shift, and go to state 39
-    '|'          shift, and go to state 40
-    '-'          shift, and go to state 41
-    '('          shift, and go to state 42
-    '!'          shift, and go to state 43
-
-    variable    go to state 44
-    expression  go to state 120
-    term        go to state 46
-
-
-State 88
-
-   30 statement: WHILE expression DO . statement
-
-    tIDENTIFIER  shift, and go to state 17
-    IF           shift, and go to state 18
-    WHILE        shift, and go to state 19
-    RETURN       shift, and go to state 20
-    WRITE        shift, and go to state 21
-    ALLOCATE     shift, and go to state 22
-    '{'          shift, and go to state 23
-
-    statement  go to state 121
-    variable   go to state 26
-
-
-State 89
-
-   23 statement: RETURN expression ';' .
-
-    $default  reduce using rule 23 (statement)
-
-
 State 90
-
-   24 statement: WRITE expression ';' .
-
-    $default  reduce using rule 24 (statement)
-
-
-State 91
-
-   26 statement: ALLOCATE variable OF_LENGTH . expression ';'
-
-    tINTCONST    shift, and go to state 35
-    tIDENTIFIER  shift, and go to state 36
-    TRUE         shift, and go to state 37
-    FALSE        shift, and go to state 38
-    _NULL        shift, and go to state 39
-    '|'          shift, and go to state 40
-    '-'          shift, and go to state 41
-    '('          shift, and go to state 42
-    '!'          shift, and go to state 43
-
-    variable    go to state 44
-    expression  go to state 122
-    term        go to state 46
-
-
-State 92
 
    25 statement: ALLOCATE variable ';' .
 
     $default  reduce using rule 25 (statement)
 
 
-State 93
+State 91
 
    31 statement: '{' statement_list '}' .
 
     $default  reduce using rule 31 (statement)
 
 
-State 94
+State 92
 
    27 statement: variable '=' expression . ';'
    35 expression: expression . '+' expression
@@ -1506,22 +1451,22 @@ State 94
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    AND  shift, and go to state 81
-    '|'  shift, and go to state 83
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
-    ';'  shift, and go to state 123
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    AND  shift, and go to state 79
+    '|'  shift, and go to state 81
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
+    ';'  shift, and go to state 120
 
 
-State 95
+State 93
 
    33 variable: variable '[' expression . ']'
    35 expression: expression . '+' expression
@@ -1537,60 +1482,60 @@ State 95
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    AND  shift, and go to state 81
-    '|'  shift, and go to state 83
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
-    ']'  shift, and go to state 124
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    AND  shift, and go to state 79
+    '|'  shift, and go to state 81
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
+    ']'  shift, and go to state 121
 
 
-State 96
+State 94
 
    34 variable: variable '.' tIDENTIFIER .
 
     $default  reduce using rule 34 (variable)
 
 
-State 97
+State 95
 
     3 head: FUNC tIDENTIFIER '(' par_decl_list ')' . ':' type
 
-    ':'  shift, and go to state 125
+    ':'  shift, and go to state 122
 
 
-State 98
+State 96
 
     8 type: ARRAY_OF type .
 
     $default  reduce using rule 8 (type)
 
 
-State 99
+State 97
 
     9 type: RECORD_OF '{' . var_decl_list '}'
 
     tIDENTIFIER  shift, and go to state 12
 
-    var_decl_list  go to state 126
+    var_decl_list  go to state 123
     var_type       go to state 14
 
 
-State 100
+State 98
 
    18 declaration: TYPE tIDENTIFIER '=' type ';' .
 
     $default  reduce using rule 18 (declaration)
 
 
-State 101
+State 99
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1604,100 +1549,93 @@ State 101
    45           | expression . LEQ expression
    46           | expression . AND expression
    47           | expression . '|' '|' expression
-   62 exp_list: expression .
-   63         | expression . ',' exp_list
+   61 exp_list: expression .
+   62         | expression . ',' exp_list
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    AND  shift, and go to state 81
-    '|'  shift, and go to state 83
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
-    ','  shift, and go to state 127
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    AND  shift, and go to state 79
+    '|'  shift, and go to state 81
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
+    ','  shift, and go to state 124
 
-    $default  reduce using rule 62 (exp_list)
+    $default  reduce using rule 61 (exp_list)
+
+
+State 100
+
+   58 term: tIDENTIFIER '(' act_list . ')'
+
+    ')'  shift, and go to state 125
+
+
+State 101
+
+   59 act_list: exp_list .
+
+    $default  reduce using rule 59 (act_list)
 
 
 State 102
 
-   59 term: tIDENTIFIER '(' act_list . ')'
+   47 expression: expression '|' . '|' expression
+   53 term: '|' expression '|' .
 
-    ')'  shift, and go to state 128
+    $default  reduce using rule 53 (term)
 
 
 State 103
 
-   60 act_list: exp_list .
-
-    $default  reduce using rule 60 (act_list)
-
-
-State 104
-
-   47 expression: expression '|' . '|' expression
-   54 term: '|' expression '|' .
-
-    $default  reduce using rule 54 (term)
-
-
-State 105
-
    39 expression: '(' expression ')' .
-   52 term: '(' expression ')' .
+   51 term: '(' expression ')' .
 
     EQ        reduce using rule 39 (expression)
-    EQ        [reduce using rule 52 (term)]
+    EQ        [reduce using rule 51 (term)]
     NEQ       reduce using rule 39 (expression)
-    NEQ       [reduce using rule 52 (term)]
+    NEQ       [reduce using rule 51 (term)]
     LEQ       reduce using rule 39 (expression)
-    LEQ       [reduce using rule 52 (term)]
+    LEQ       [reduce using rule 51 (term)]
     GEQ       reduce using rule 39 (expression)
-    GEQ       [reduce using rule 52 (term)]
+    GEQ       [reduce using rule 51 (term)]
     LT        reduce using rule 39 (expression)
-    LT        [reduce using rule 52 (term)]
+    LT        [reduce using rule 51 (term)]
     GT        reduce using rule 39 (expression)
-    GT        [reduce using rule 52 (term)]
+    GT        [reduce using rule 51 (term)]
     AND       reduce using rule 39 (expression)
-    AND       [reduce using rule 52 (term)]
+    AND       [reduce using rule 51 (term)]
     THEN      reduce using rule 39 (expression)
-    THEN      [reduce using rule 52 (term)]
+    THEN      [reduce using rule 51 (term)]
     DO        reduce using rule 39 (expression)
-    DO        [reduce using rule 52 (term)]
+    DO        [reduce using rule 51 (term)]
     '|'       reduce using rule 39 (expression)
-    '|'       [reduce using rule 52 (term)]
+    '|'       [reduce using rule 51 (term)]
     '+'       reduce using rule 39 (expression)
-    '+'       [reduce using rule 52 (term)]
+    '+'       [reduce using rule 51 (term)]
     '-'       reduce using rule 39 (expression)
-    '-'       [reduce using rule 52 (term)]
+    '-'       [reduce using rule 51 (term)]
     '*'       reduce using rule 39 (expression)
-    '*'       [reduce using rule 52 (term)]
+    '*'       [reduce using rule 51 (term)]
     '/'       reduce using rule 39 (expression)
-    '/'       [reduce using rule 52 (term)]
+    '/'       [reduce using rule 51 (term)]
     ')'       reduce using rule 39 (expression)
-    ')'       [reduce using rule 52 (term)]
+    ')'       [reduce using rule 51 (term)]
     ','       reduce using rule 39 (expression)
-    ','       [reduce using rule 52 (term)]
+    ','       [reduce using rule 51 (term)]
     ';'       reduce using rule 39 (expression)
-    ';'       [reduce using rule 52 (term)]
+    ';'       [reduce using rule 51 (term)]
     ']'       reduce using rule 39 (expression)
-    ']'       [reduce using rule 52 (term)]
+    ']'       [reduce using rule 51 (term)]
     $default  reduce using rule 39 (expression)
 
 
-State 106
-
-   51 term: '-' tINTCONST .
-
-    $default  reduce using rule 51 (term)
-
-
-State 107
+State 104
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1711,24 +1649,24 @@ State 107
    45           | expression . LEQ expression
    46           | expression . AND expression
    47           | expression . '|' '|' expression
-   52 term: '(' expression . ')'
+   51 term: '(' expression . ')'
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    AND  shift, and go to state 81
-    '|'  shift, and go to state 83
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
-    ')'  shift, and go to state 129
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    AND  shift, and go to state 79
+    '|'  shift, and go to state 81
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
+    ')'  shift, and go to state 126
 
 
-State 108
+State 105
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1744,19 +1682,19 @@ State 108
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
     $default  reduce using rule 40 (expression)
 
 
-State 109
+State 106
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1772,19 +1710,19 @@ State 109
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
     $default  reduce using rule 41 (expression)
 
 
-State 110
+State 107
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1800,15 +1738,15 @@ State 110
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
     $default  reduce using rule 45 (expression)
 
 
-State 111
+State 108
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1824,15 +1762,15 @@ State 111
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
     $default  reduce using rule 44 (expression)
 
 
-State 112
+State 109
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1848,15 +1786,15 @@ State 112
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
     $default  reduce using rule 43 (expression)
 
 
-State 113
+State 110
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1872,15 +1810,15 @@ State 113
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
     $default  reduce using rule 42 (expression)
 
 
-State 114
+State 111
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1896,31 +1834,31 @@ State 114
    46           | expression AND expression .
    47           | expression . '|' '|' expression
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
     $default  reduce using rule 46 (expression)
 
 
-State 115
+State 112
 
    28 statement: IF expression THEN statement .
    29          | IF expression THEN statement . ELSE statement
 
-    ELSE  shift, and go to state 130
+    ELSE  shift, and go to state 127
 
     $default  reduce using rule 28 (statement)
 
 
-State 116
+State 113
 
    47 expression: expression '|' '|' . expression
 
@@ -1935,11 +1873,11 @@ State 116
     '!'          shift, and go to state 43
 
     variable    go to state 44
-    expression  go to state 131
+    expression  go to state 128
     term        go to state 46
 
 
-State 117
+State 114
 
    35 expression: expression . '+' expression
    35           | expression '+' expression .
@@ -1955,13 +1893,13 @@ State 117
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
     $default  reduce using rule 35 (expression)
 
 
-State 118
+State 115
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -1977,13 +1915,13 @@ State 118
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
     $default  reduce using rule 36 (expression)
 
 
-State 119
+State 116
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -2002,7 +1940,7 @@ State 119
     $default  reduce using rule 37 (expression)
 
 
-State 120
+State 117
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -2021,14 +1959,14 @@ State 120
     $default  reduce using rule 38 (expression)
 
 
-State 121
+State 118
 
    30 statement: WHILE expression DO statement .
 
     $default  reduce using rule 30 (statement)
 
 
-State 122
+State 119
 
    26 statement: ALLOCATE variable OF_LENGTH expression . ';'
    35 expression: expression . '+' expression
@@ -2044,36 +1982,36 @@ State 122
    46           | expression . AND expression
    47           | expression . '|' '|' expression
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    AND  shift, and go to state 81
-    '|'  shift, and go to state 83
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
-    ';'  shift, and go to state 132
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    AND  shift, and go to state 79
+    '|'  shift, and go to state 81
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
+    ';'  shift, and go to state 129
 
 
-State 123
+State 120
 
    27 statement: variable '=' expression ';' .
 
     $default  reduce using rule 27 (statement)
 
 
-State 124
+State 121
 
    33 variable: variable '[' expression ']' .
 
     $default  reduce using rule 33 (variable)
 
 
-State 125
+State 122
 
     3 head: FUNC tIDENTIFIER '(' par_decl_list ')' ':' . type
 
@@ -2083,19 +2021,19 @@ State 125
     ARRAY_OF     shift, and go to state 61
     RECORD_OF    shift, and go to state 62
 
-    type  go to state 133
+    type  go to state 130
 
 
-State 126
+State 123
 
     9 type: RECORD_OF '{' var_decl_list . '}'
 
-    '}'  shift, and go to state 134
+    '}'  shift, and go to state 131
 
 
-State 127
+State 124
 
-   63 exp_list: expression ',' . exp_list
+   62 exp_list: expression ',' . exp_list
 
     tINTCONST    shift, and go to state 35
     tIDENTIFIER  shift, and go to state 36
@@ -2108,26 +2046,26 @@ State 127
     '!'          shift, and go to state 43
 
     variable    go to state 44
-    expression  go to state 101
+    expression  go to state 99
     term        go to state 46
-    exp_list    go to state 135
+    exp_list    go to state 132
 
 
-State 128
+State 125
 
-   59 term: tIDENTIFIER '(' act_list ')' .
+   58 term: tIDENTIFIER '(' act_list ')' .
 
-    $default  reduce using rule 59 (term)
-
-
-State 129
-
-   52 term: '(' expression ')' .
-
-    $default  reduce using rule 52 (term)
+    $default  reduce using rule 58 (term)
 
 
-State 130
+State 126
+
+   51 term: '(' expression ')' .
+
+    $default  reduce using rule 51 (term)
+
+
+State 127
 
    29 statement: IF expression THEN statement ELSE . statement
 
@@ -2139,11 +2077,11 @@ State 130
     ALLOCATE     shift, and go to state 22
     '{'          shift, and go to state 23
 
-    statement  go to state 136
+    statement  go to state 133
     variable   go to state 26
 
 
-State 131
+State 128
 
    35 expression: expression . '+' expression
    36           | expression . '-' expression
@@ -2159,49 +2097,49 @@ State 131
    47           | expression . '|' '|' expression
    47           | expression '|' '|' expression .
 
-    EQ   shift, and go to state 75
-    NEQ  shift, and go to state 76
-    LEQ  shift, and go to state 77
-    GEQ  shift, and go to state 78
-    LT   shift, and go to state 79
-    GT   shift, and go to state 80
-    '+'  shift, and go to state 84
-    '-'  shift, and go to state 85
-    '*'  shift, and go to state 86
-    '/'  shift, and go to state 87
+    EQ   shift, and go to state 73
+    NEQ  shift, and go to state 74
+    LEQ  shift, and go to state 75
+    GEQ  shift, and go to state 76
+    LT   shift, and go to state 77
+    GT   shift, and go to state 78
+    '+'  shift, and go to state 82
+    '-'  shift, and go to state 83
+    '*'  shift, and go to state 84
+    '/'  shift, and go to state 85
 
     $default  reduce using rule 47 (expression)
 
 
-State 132
+State 129
 
    26 statement: ALLOCATE variable OF_LENGTH expression ';' .
 
     $default  reduce using rule 26 (statement)
 
 
-State 133
+State 130
 
     3 head: FUNC tIDENTIFIER '(' par_decl_list ')' ':' type .
 
     $default  reduce using rule 3 (head)
 
 
-State 134
+State 131
 
     9 type: RECORD_OF '{' var_decl_list '}' .
 
     $default  reduce using rule 9 (type)
 
 
-State 135
+State 132
 
-   63 exp_list: expression ',' exp_list .
+   62 exp_list: expression ',' exp_list .
 
-    $default  reduce using rule 63 (exp_list)
+    $default  reduce using rule 62 (exp_list)
 
 
-State 136
+State 133
 
    29 statement: IF expression THEN statement ELSE statement .
 
