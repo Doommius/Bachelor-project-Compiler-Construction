@@ -1,3 +1,6 @@
+#ifndef __code_h
+#define __code_h
+
 #include "tree.h"
 
 
@@ -11,3 +14,4 @@ char *code_or_expression(expression *e);
 
 char *code_and_expression(expression *e);
 
+#endif
