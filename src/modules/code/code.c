@@ -1,49 +1,6 @@
 #include <string.h>
 #include "tree.h"
 
-char *eval_statement(statement *s) {
-
-    switch (s->kind) {
-    case statement_WRITE:
-    case statement_ALLOCATE:
-    case statement_ALLOCATE_LENGTH:
-    case statement_ASSIGNMENT:
-    case statement_IF:
-    case statement_IF_ELSE:
-    case statement_WHILE:
-    case statement_LIST:
-    }
-    return " ";
-}
-
-char *eval_expression(expression *e) {
-
-    switch (e->kind) {
-    case exp_PLUS:
-    case exp_MIN:
-    case exp_MULT:
-    case exp_DIV:
-    case exp_EQ:
-    case exp_NEQ:
-    case exp_GT:
-    case exp_LT:
-    case exp_GEQ:
-    case exp_LEQ:
-    case exp_AND:
-        return code_and_expression(e);
-        break;
-    case exp_OR:
-        return code_or_expression(e);
-        break;
-    case exp_TERM:
-    }
-    return " ";
-}
-char *code_GQ_statement(expression a, expression b) {
-    char output = "<CODE FOR e1 GOES HERE>";
-    return output;
-}
-
 char *code_or_expression(expression *e) {
     char output = eval_expression(e->val.ops.left);
     strcat(output, ("push  %eax           ;save value of e1 on the stack"));
@@ -70,4 +27,66 @@ char *code_and_expression(expression *e) {
     strcat(output, ("        ; Step 3: compute al & cl"));
     strcat(output, ("andb  %cl, %al        ;store AL & CL in AL"));
     return output;
+}
+
+char *code_GQ_statement(expression e) {
+    char output = "<CODE FOR e1 GOES HERE>";
+    return output;
+}
+
+char *eval_expression(expression *e) {
+    switch (e->kind) {
+    case exp_PLUS:
+        break;
+    case exp_MIN:
+        break;
+    case exp_MULT:
+        break;
+    case exp_DIV:
+        break;
+    case exp_EQ:
+        break;
+    case exp_NEQ:
+        break;
+    case exp_GT:
+        break;
+    case exp_LT:
+        break;
+    case exp_GEQ:
+        break;
+    case exp_LEQ:
+        break;
+    case exp_AND:
+        return code_and_expression(e);
+        break;
+    case exp_OR:
+        return code_or_expression(e);
+        break;
+    case exp_TERM:
+        break;
+    }
+    return " ";
+}
+
+char *eval_statement(statement *s) {
+
+    switch (s->kind) {
+    case statement_WRITE:
+        break;
+    case statement_ALLOCATE:
+        break;
+    case statement_ALLOCATE_LENGTH:
+        break;
+    case statement_ASSIGNMENT:
+        break;
+    case statement_IF:
+        break;
+    case statement_IF_ELSE:
+        break;
+    case statement_WHILE:
+        break;
+    case statement_LIST:
+        break;
+    }
+    return " ";
 }
