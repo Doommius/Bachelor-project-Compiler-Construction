@@ -1,0 +1,28 @@
+.\" Manpage for compiler.
+.TH man 1 "02 Mar 2018" "0.3-rc1" "compiler man page"
+.SH NAME
+compiler \- Compiler for Shere Khan programming language
+.SH SYNOPSIS
+compiler [@file | OPTIONS]
+.SH DESCRIPTION
+compiler is a compiler for the Shere Khan programming language. 
+.SH OPTIONS
+The compiler does not take any options. However, you can supply filename to compile
+.br
+.br
+.B -h 
+help
+.br
+.br
+.B @file
+input file to compile
+help
+.SH SEE ALSO
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Troels Blicher Petersen		(trpet15)
+.br 
+Morten Jæger				(mojae15) 
+.br 
+Mark Jervelund				(mjerv15)

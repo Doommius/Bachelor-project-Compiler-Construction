@@ -42,7 +42,7 @@ CFLAGS += -std=c11 -Wall -Wextra -pedantic -g	# some warnings about bad code
 # -L is a linker flag
 LDFLAGS += -Llib
 # Left empty if no libs are needed
-LDLIBS += -lm
+LDLIBS += -lm -lreadline
 
 all: $(EXE) $(TEST)
 
