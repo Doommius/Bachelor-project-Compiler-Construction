@@ -1,12 +1,9 @@
 #include <string.h>
 #include "tree.h"
 
+char *eval_statement(statement *s) {
 
-//TODO We need to add new lines, lots of them.
-
-char eval_statement(statement s) {
-
-    switch (s.kind) {
+    switch (s->kind) {
     case statement_WRITE:
     case statement_ALLOCATE:
     case statement_ALLOCATE_LENGTH:
@@ -19,7 +16,7 @@ char eval_statement(statement s) {
     return " ";
 }
 
-char eval_expression(expression* e) {
+char *eval_expression(expression *e) {
 
     switch (e->kind) {
     case exp_PLUS:
@@ -42,16 +39,15 @@ char eval_expression(expression* e) {
     }
     return " ";
 }
-char code_GQ_statement(expression *e) {
+char *code_GQ_statement(expression a, expression b) {
     char output = "<CODE FOR e1 GOES HERE>";
     return output;
 }
 
-
-char code_or_expression(expression *e) {
-    char output = eval_expression(e.val.ops.left);
+char *code_or_expression(expression *e) {
+    char output = eval_expression(e->val.ops.left);
     strcat(output, ("push  %eax           ;save value of e1 on the stack"));
-    strcat(output, eval_expression(e.val.ops.left));
+    strcat(output, eval_expression(e->val.ops.left));
     strcat(output, ("pop   %ecx           ;pop e1 from the stack into ecx"));
     strcat(output, ("orl   %ecx, %eax     ;compute e1 | e2, set ZF"));
     strcat(output, ("movl  $0, %eax       ;zero out EAX without changing ZF"));
@@ -59,10 +55,10 @@ char code_or_expression(expression *e) {
     return output;
 }
 
-char code_and_expression(expression* e) {
-    char output = eval_expression(e.val.ops.left);
+char *code_and_expression(expression *e) {
+    char output = eval_expression(e->val.ops.left);
     strcat(output, ("push  %eax            ;save value of e1 on the stack"));
-    strcat(output, (eval_expression(e.val.ops.right)));
+    strcat(output, (eval_expression(e->val.ops.right)));
     strcat(output, ("pop   %ecx            ;pop e1 from the stack into ECX"));
     strcat(output, ("; Step 1: SET CL = 1 iff e1 != 0"));
     strcat(output, ("cmpl  $0, %ecx        ;compare e1 to 0"));
@@ -75,4 +71,3 @@ char code_and_expression(expression* e) {
     strcat(output, ("andb  %cl, %al        ;store AL & CL in AL"));
     return output;
 }
-
