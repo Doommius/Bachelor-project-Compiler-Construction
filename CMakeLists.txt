@@ -5,15 +5,32 @@ set(CMAKE_CXX_STANDARD 11)            # Enable c++11 standard
 find_package(BISON)
 find_package(FLEX)
 
-FLEX_TARGET(Scanner src/modules/scanner/flex/exp.l ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.c)
+FLEX_TARGET(Scanner src/modules/scanner/flex/exp.l ${CMAKE_CURRENT_BINARY_DIR}/../src/lex.yy.c)
 
 #Bison Flags -v -r all usefull for debugging
-BISON_TARGET(Parser src/modules/parser/bison/exp.y ${CMAKE_CURRENT_BINARY_DIR}/y.tab.c)
+BISON_TARGET(Parser src/modules/parser/bison/exp.y ${CMAKE_CURRENT_BINARY_DIR}/../src/y.tab.c)
 
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
 include_directories(include)
-include_directories(src/in)
+include_directories(src/modules/code)
+include_directories(src/modules/code/include)
+include_directories(src/modules/error)
+include_directories(src/modules/error/include)
+include_directories(src/modules/optimizer)
+include_directories(src/modules/optimizer/include)
+include_directories(src/modules/parser)
+include_directories(src/modules/parser/include)
+include_directories(src/modules/pretty)
+include_directories(src/modules/pretty/include)
+include_directories(src/modules/resource)
+include_directories(src/modules/resource/include)
+include_directories(src/modules/symbol_tree)
+include_directories(src/modules/symbol_tree/include)
+include_directories(src/modules/typechecker)
+include_directories(src/modules/typechecker/include)
+include_directories(src/modules/weeder)
+include_directories(src/modules/weeder/include)
 
 set(SOURCE_FILES_compiler
 

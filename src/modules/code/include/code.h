@@ -5,7 +5,6 @@
 
 
 char *eval_statement(statement *s);
-testretyugio
 char *eval_expression(expression *e);
 
 char *code_GQ_statement(expression *e);
