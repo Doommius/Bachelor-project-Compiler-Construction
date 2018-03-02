@@ -26,6 +26,7 @@ body *theprogram;
 body *weeder(body *program){
     //TODO Skal nok vaere noget mere her
     program = weed_body(program);
+    return program;
 
 }
 
@@ -73,7 +74,7 @@ type *weed_type(type *type){
 }
 
 par_decl_list *weed_pdl(par_decl_list *pdl){
-    if (pdl->kind = pdl_EMPTY){
+    if (pdl->kind == pdl_EMPTY){
         return pdl;
     }
 
@@ -136,6 +137,8 @@ declaration *weed_decl(declaration *decl){
 }
 
 statement_list *weed_slist(statement_list *slist){
+
+    
 
 }
 
@@ -339,9 +342,22 @@ term *weed_term(term *term){
 }
 
 act_list *weed_alist(act_list *alist){
+    if (alist->kind == al_EMPTY){
+        return alist;
+    }
+    alist->list = weed_elist(alist->list);
+    return alist;
 
 }
 
 exp_list *weed_elist(exp_list *elist){
+
+    elist->expression = weed_expression(elist->expression);
+    
+    if (elist->kind == el_LIST){
+        elist->list = weed_elist(elist->list);
+    }
+
+    return elist;
 
 }
