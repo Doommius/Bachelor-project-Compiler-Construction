@@ -37,12 +37,12 @@ TC_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/scan_parse.c 
 CC = gcc
 
 CPPFLAGS += $(INC_DIR)							# -I is a preprocessor flag, not a compiler flag
-CFLAGS += -std=c11 -Wall -Wextra -pedantic -g	# some warnings about bad code
+CFLAGS += -std=gnu11 -Wall -Wextra -pedantic -g	# some warnings about bad code
 
 # -L is a linker flag
 LDFLAGS += -Llib
 # Left empty if no libs are needed
-LDLIBS += -lm
+LDLIBS += -lm -lreadline
 
 all: $(EXE) $(TEST)
 

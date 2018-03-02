@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+#include "helper.h"
 #include "symbol.h"
 #include "tree.h"
 #include "pretty.h"
@@ -9,12 +11,25 @@
 #include "weeder.h"
 #include "typechecker.h"
 
+#include <unistd.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
 int lineno;
 
 body *theprogram;
 
 int main(int argc, char **argv) {
-/*
+    int helpflag = 0;
+    int bflag = 0;
+    char *cvalue = NULL;
+    int index;
+    int c;
+
+    opterr = 0;
+
+	int files[argc];
+    /*
     //    char str[100]; // make sure that this size is enough to hold the single line
     int no_line = 1;
 
@@ -35,19 +50,57 @@ int main(int argc, char **argv) {
     } while (buf != "\0");
 
     dumpSymbolTable(table);
+		for(int i = 0; i < argc; ++i) {
+		printf("%s\n", argv[i]);
+	}
 */
 
- if (argc < 2) {
-        freopen("input.txt", "r", stdin);
-    } else {
-        freopen(argv[1], "r", stdin);
+    while ((c = getopt(argc, argv, "hc:")) != -1) {
+        switch (c) {
+        case 'h':
+            helpflag = 1;
+			files[optind-2] = 1;
+            break;
+        case 'c':
+            cvalue = optarg;
+			files[optind-3] = 1;
+			files[optind-2] = 1;
+            break;
+        case '?':
+            if (optopt == 'c')
+                fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+            else if (isprint(optopt))
+                fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+            else
+                fprintf(stderr,
+                        "Unknown option character `\\x%x'.\n",
+                        optopt);
+            return 1;
+        default:
+            abort();
+        }
+	}
+	if(helpflag) {
+		system("man ./manual");
+		return 0;
+	}
+
+    if (optind < argc ) {
+		for(int i = 1; i < argc; ++i) {
+			if(files[i] == 0) {
+				if(ends_with(argv[i], ".txt")) {
+					printf("%i, %s\n", i, argv[i]);
+					freopen(argv[i], "r", stdin);
+				}
+			}
+		}
     }
 
     lineno = 1;
     yyparse();
     prettyBody(theprogram);
     //weeder(theprogram);
-    
+
     printf("\n");
     return 1;
 }
