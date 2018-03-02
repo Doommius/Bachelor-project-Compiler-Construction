@@ -2,23 +2,6 @@ cmake_minimum_required(VERSION 3.6)   # CMake version check
 project(Compiler)                     # Create project "simple_example"
 set(CMAKE_CXX_STANDARD 11)            # Enable c++11 standard
 
-set(SOURCE_FILES_symboltable
-        include/memory.h
-        include/struct.h
-        src/modules/symbol_tree/include/symbol.h
-        src/memory.c
-        src/modules/symbol_tree/symbol.c)
-
-add_executable(symboltable
-        src/main.c
-        ${SOURCE_FILES_symboltable}
-        )
-
-add_executable(symboltable_test
-        src/tests.c
-        ${SOURCE_FILES_symboltable}
-        )
-
 find_package(BISON)
 find_package(FLEX)
 
@@ -31,17 +14,21 @@ BISON_TARGET(Parser litter/bison/exp.y ${CMAKE_CURRENT_BINARY_DIR}/../Scanner_An
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
 
-set(SOURCE_FILES_scanner_And_parser
-        src/scan_parse.c
-        src/modules/pretty/pretty.c
-        src/modules/pretty/include/pretty.h
-        src/modules/parser/tree.c
-        src/modules/parser/include/tree.h include/kind.h)
+set(SOURCE_FILES_compiler
+        src/main.c
+        include/kind.h
+        include/memory.h
+        src/memory.c
+        include/y.tab.h
+        src/modules/
 
-add_executable(litter
+
+        )
+
+add_executable(Compiler
         ${BISON_Parser_OUTPUTS}
         ${FLEX_Scanner_OUTPUTS}
-        ${SOURCE_FILES_scanner_And_parser}
+        ${SOURCE_FILES_compiler}
 
         )
 
