@@ -98,8 +98,13 @@ int main(int argc, char **argv) {
 
     lineno = 1;
     yyparse();
+    printf("Before weeding:\n");
     prettyBody(theprogram);
-    //weeder(theprogram);
+
+    weeder(theprogram);
+
+    printf("\nAfter weeding:\n");
+    prettyBody(theprogram);
 
     printf("\n");
     return 1;

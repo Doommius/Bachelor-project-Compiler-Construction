@@ -1,7 +1,13 @@
 # Test of lazy OR operator
 # If the OR operator is lazy, the test will terminate
-var b : bool;
+var b : int;
 
+b = 5*3;
+
+if (true || false) then write 0;
+
+
+(*
 func c () : bool
   var d : int;
   d = 0;
@@ -17,3 +23,4 @@ end c
 b = -(-a+b);
 
 if ( c() || c() || ||a+c|+b|>0 ) then if (2<0) then write 0; else write 1; else write 2;
+*)
