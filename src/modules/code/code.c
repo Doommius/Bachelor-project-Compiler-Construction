@@ -1,5 +1,6 @@
 #include <string.h>
 #include "tree.h"
+#include "code.h"
 
 char *code_or_expression(expression *e) {
     char output = eval_expression(e->val.ops.left);
@@ -29,7 +30,7 @@ char *code_and_expression(expression *e) {
     return output;
 }
 
-char *code_GQ_statement(expression e) {
+char *code_GQ_statement(expression *e) {
     char output = "<CODE FOR e1 GOES HERE>";
     return output;
 }
