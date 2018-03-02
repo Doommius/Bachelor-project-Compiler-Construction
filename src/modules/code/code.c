@@ -5,13 +5,21 @@ char *eval_statement(statement *s) {
 
     switch (s->kind) {
     case statement_WRITE:
+		break;
     case statement_ALLOCATE:
+		break;
     case statement_ALLOCATE_LENGTH:
+		break;
     case statement_ASSIGNMENT:
+		break;
     case statement_IF:
+		break;
     case statement_IF_ELSE:
+		break;
     case statement_WHILE:
+		break;
     case statement_LIST:
+		break;
     }
     return " ";
 }
