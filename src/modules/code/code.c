@@ -1,5 +1,8 @@
 #include <string.h>
-#include "../parser/include/tree.h"
+#include "tree.h"
+
+
+//TODO We need to add new lines, lots of them.
 
 char eval_statement(statement s) {
 
@@ -16,9 +19,9 @@ char eval_statement(statement s) {
     return " ";
 }
 
-char eval_expression(expression e) {
+char eval_expression(expression* e) {
 
-    switch (e.kind) {
+    switch (e->kind) {
     case exp_PLUS:
     case exp_MIN:
     case exp_MULT:
@@ -39,13 +42,13 @@ char eval_expression(expression e) {
     }
     return " ";
 }
-char code_GQ_statement(expression a, expression b) {
+char code_GQ_statement(expression *e) {
     char output = "<CODE FOR e1 GOES HERE>";
     return output;
 }
 
 
-char code_or_expression(expression e) {
+char code_or_expression(expression *e) {
     char output = eval_expression(e.val.ops.left);
     strcat(output, ("push  %eax           ;save value of e1 on the stack"));
     strcat(output, eval_expression(e.val.ops.left));
@@ -56,7 +59,7 @@ char code_or_expression(expression e) {
     return output;
 }
 
-char code_and_expression(expression e) {
+char code_and_expression(expression* e) {
     char output = eval_expression(e.val.ops.left);
     strcat(output, ("push  %eax            ;save value of e1 on the stack"));
     strcat(output, (eval_expression(e.val.ops.right)));
