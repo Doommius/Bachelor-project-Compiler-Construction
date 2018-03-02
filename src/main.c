@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 
     opterr = 0;
 
-	int files[argc];
+    int files[argc];
     /*
     //    char str[100]; // make sure that this size is enough to hold the single line
     int no_line = 1;
@@ -59,12 +59,12 @@ int main(int argc, char **argv) {
         switch (c) {
         case 'h':
             helpflag = 1;
-			files[optind-2] = 1;
+            files[optind - 2] = 1;
             break;
         case 'c':
             cvalue = optarg;
-			files[optind-3] = 1;
-			files[optind-2] = 1;
+            files[optind - 3] = 1;
+            files[optind - 2] = 1;
             break;
         case '?':
             if (optopt == 'c')
@@ -79,21 +79,21 @@ int main(int argc, char **argv) {
         default:
             abort();
         }
-	}
-	if(helpflag) {
-		system("man ./manual");
-		return 0;
-	}
+    }
+    if (helpflag) {
+        system("man ./manual");
+        return 0;
+    }
 
-    if (optind < argc ) {
-		for(int i = 1; i < argc; ++i) {
-			if(files[i] == 0) {
-				if(ends_with(argv[i], ".txt")) {
-					printf("%i, %s\n", i, argv[i]);
-					freopen(argv[i], "r", stdin);
-				}
-			}
-		}
+    if (optind < argc) {
+        for (int i = 1; i < argc; ++i) {
+            if (files[i] == 0) {
+                if (ends_with(argv[i], ".txt")) {
+                    printf("%i, %s\n", i, argv[i]);
+                    freopen(argv[i], "r", stdin);
+                }
+            }
+        }
     }
 
     lineno = 1;
