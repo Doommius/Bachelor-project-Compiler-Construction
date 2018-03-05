@@ -5,12 +5,7 @@
 
 // asdasdas
 char *eval_statement(statement *s);
-asda
 
-asdasdasd
-asdasdasasd
-
-asdasd
 char *eval_expression(expression *e);
 
 char *code_GQ_statement(expression *e);
