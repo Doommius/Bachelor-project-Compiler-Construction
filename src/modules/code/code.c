@@ -30,11 +30,84 @@ char *code_and_expression(expression *e) {
     return output;
 }
 
-char *code_GQ_statement(expression *e) {
-    char output = "<CODE FOR e1 GOES HERE>";
+char *code_General_statement(expression *e, char jumpif) {
+    char output = eval_expression(e->val.ops.left);
+    strcat(output, ("push  %eax            ;save value of e1 on the stack"));
+    strcat(output, (eval_expression(e->val.ops.right)));
+    strcat(output, ("pop   %ecx            ;pop e1 from the stack into ECX"));
+    strcat(output, ("cmp ecx, eax          ;values are now at EAX and ECX"));
+    strcat(output, ("jge INSERT jumpif here;Jump to flag if expression is false"));
     return output;
 }
 
+
+char *code_GEQ_statement(expression *e) {
+    char output = eval_expression(e->val.ops.left);
+    strcat(output, ("push  %eax            ;save value of e1 on the stack"));
+    strcat(output, (eval_expression(e->val.ops.right)));
+    strcat(output, ("pop   %ecx            ;pop e1 from the stack into ECX"));
+    strcat(output, ("cmp ecx, eax          ;values are now at EAX and ECX"));
+    strcat(output, ("jge FLAG               ;Jump to flag if expression is false"));
+    return output;
+}
+
+
+
+
+char *code_LEQ_statement(expression *e) {
+    char output = eval_expression(e->val.ops.left);
+    strcat(output, ("push  %eax            ;save value of e1 on the stack"));
+    strcat(output, (eval_expression(e->val.ops.right)));
+    strcat(output, ("pop   %ecx            ;pop e1 from the stack into ECX"));
+    strcat(output, ("cmp ecx, eax          ;values are now at EAX and ECX"));
+    strcat(output, ("jle FLAG               ;Jump to flag if expression is false"));
+    return output;
+}
+
+char *code_LT_statement(expression *e) {
+    char output = eval_expression(e->val.ops.left);
+    strcat(output, ("push  %eax            ;save value of e1 on the stack"));
+    strcat(output, (eval_expression(e->val.ops.right)));
+    strcat(output, ("pop   %ecx            ;pop e1 from the stack into ECX"));
+    strcat(output, ("cmp ecx, eax          ;values are now at EAX and ECX"));
+    strcat(output, ("jl FLAG               ;Jump to flag if expression is false"));
+    return output;
+}
+char *code_GT_statement(expression *e) {
+    char output = eval_expression(e->val.ops.left);
+    strcat(output, ("push  %eax            ;save value of e1 on the stack"));
+    strcat(output, (eval_expression(e->val.ops.right)));
+    strcat(output, ("pop   %ecx            ;pop e1 from the stack into ECX"));
+    strcat(output, ("cmp ecx, eax          ;values are now at EAX and ECX"));
+    strcat(output, ("jg FLAG               ;Jump to flag if expression is false"));
+    return output;
+}
+
+char *code_NEQ_statement(expression *e) {
+    char output = eval_expression(e->val.ops.left);
+    strcat(output, ("push  %eax            ;save value of e1 on the stack"));
+    strcat(output, (eval_expression(e->val.ops.right)));
+    strcat(output, ("pop   %ecx            ;pop e1 from the stack into ECX"));
+    strcat(output, ("cmp ecx, eax          ;values are now at EAX and ECX"));
+    strcat(output, ("jne FLAG               ;Jump to flag if expression is false"));
+    return output;
+}
+
+char *code_EQ_statement(expression *e) {
+    char output = eval_expression(e->val.ops.left);
+    strcat(output, ("push  %eax            ;save value of e1 on the stack"));
+    strcat(output, (eval_expression(e->val.ops.right)));
+    strcat(output, ("pop   %ecx            ;pop e1 from the stack into ECX"));
+    strcat(output, ("cmp ecx, eax          ;values are now at EAX and ECX"));
+    strcat(output, ("je FLAG               ;Jump to flag if expression is false"));
+    return output;
+}
+
+
+
+
+
+//TODO Lots
 char *eval_expression(expression *e) {
     switch (e->kind) {
     case exp_PLUS:
@@ -46,16 +119,22 @@ char *eval_expression(expression *e) {
     case exp_DIV:
         break;
     case exp_EQ:
+        code_EQ_statement(e);
         break;
     case exp_NEQ:
+        code_NEQ_statement(e);
         break;
     case exp_GT:
+        code_GT_statement(e);
         break;
     case exp_LT:
+        code_LT_statement(e);
         break;
     case exp_GEQ:
+        code_GEQ_statement(e);
         break;
     case exp_LEQ:
+        code_LEQ_statement(e);
         break;
     case exp_AND:
         return code_and_expression(e);
