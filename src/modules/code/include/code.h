@@ -1,13 +1,13 @@
+#ifndef __code_h
+#define __code_h
+
 #include "tree.h"
 
+void eval_statement(statement *s);
+void eval_expression(expression *e);
+void code_GEQ_statement(expression *e);
+void code_or_expression(expression *e);
+void code_and_expression(expression *e);
+linked_list *buildcode(statement_list input);
 
-char *eval_statement(statement *s);
-
-char *eval_expression(expression *e);
-
-char *code_GQ_statement(expression *a, expression *b);
-
-char *code_or_expression(expression *e);
-
-char *code_and_expression(expression *e);
-
+#endif
