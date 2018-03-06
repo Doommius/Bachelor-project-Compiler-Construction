@@ -1,3 +1,6 @@
+#ifndef __pretty_h
+#define __pretty_h
+
 #include "tree.h"
 
 void prettyFunc(function *f);
@@ -35,3 +38,5 @@ void prettyAL(act_list *al);
 void prettyEL(exp_list *el);
 
 void indent();
+
+#endif

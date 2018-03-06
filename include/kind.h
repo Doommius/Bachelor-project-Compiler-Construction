@@ -1,5 +1,5 @@
-#ifndef COMPILER_KIND_H
-#define COMPILER_KIND_H
+#ifndef __compiler_kind_h
+#define __compiler_kind_h
 
 typedef enum { exp_PLUS,
                exp_MIN,

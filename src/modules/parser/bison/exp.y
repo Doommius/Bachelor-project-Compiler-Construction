@@ -4,7 +4,7 @@
 
 %{
 #include <stdio.h>
-#include "../src/modules/parser/include/tree.h"
+#include "tree.h"
 #include "y.tab.h"
 extern char *yytext;
 //extern EXP *theexpression;
