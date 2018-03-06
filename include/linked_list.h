@@ -2,8 +2,8 @@
 // Created by jervelund on 3/6/18.
 //
 
-#ifndef COMPILER_LINKED_LIST_H
-#define COMPILER_LINKED_LIST_H
+#ifndef __linked_list_h
+#define __linked_list_h
 
 
 
