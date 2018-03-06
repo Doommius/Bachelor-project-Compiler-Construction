@@ -14,6 +14,8 @@ void code_or_expression(expression *e);
 
 void code_and_expression(expression *e);
 
+void code_general_expression(expression *e);
+
 linked_list *buildcode(statement_list input);
 
 #endif
