@@ -13,7 +13,7 @@ typedef enum { exp_PLUS,
                exp_LEQ,
                exp_AND,
                exp_OR,
-               exp_TERM} EXP_kind;
+               exp_TERM } EXP_kind;
 
 typedef enum { term_VAR,
                term_LIST,
@@ -67,5 +67,25 @@ typedef enum { al_LIST,
 typedef enum { el_EXP,
                el_LIST } EL_kind;
 
+typedef enum { jmp, //unconditional jump
+               je,  //jump equal
+               jne, //Jump not equal
+               jg,  //jump greater
+               jge, //jump greater or equal
+               jl,  //Jump less
+               jle, //Jump less or equal
+
+               push,
+               pop,
+
+               orl, //or less ?
+
+
+               movl,
+               setne,
+               cmpl,
+               andb,
+               cmp
+} ASM_kind;
 
 #endif //COMPILER_KIND_H

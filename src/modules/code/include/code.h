@@ -4,17 +4,17 @@
 #include "tree.h"
 #include "linked_list.h"
 
-void eval_statement(statement *s);
+void eval_statement(linked_list *list,statement *s);
 
-void eval_expression(expression *e);
+void eval_expression(linked_list *list,expression *e);
 
-void code_GEQ_statement(expression *e);
+void code_GEQ_statement(linked_list *list,expression *e);
 
-void code_or_expression(expression *e);
+void code_or_expression(linked_list *list,expression *e);
 
-void code_and_expression(expression *e);
+void code_and_expression(linked_list *list,expression *e);
 
-void code_general_expression(expression *e);
+void code_general_expression(linked_list *list,expression *e);
 
 linked_list *buildcode(statement_list input);
 
