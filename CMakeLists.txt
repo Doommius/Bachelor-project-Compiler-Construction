@@ -37,10 +37,12 @@ set(SOURCE_FILES_compiler
         src/main.c
         src/memory.c
         src/auxiliary.c
+        src/linked_list.c
 
         include/kind.h
         include/memory.h
         include/auxiliary.h
+        include/linked_list.h
 
         src/modules/code/code.c
         src/modules/code/include/code.h
