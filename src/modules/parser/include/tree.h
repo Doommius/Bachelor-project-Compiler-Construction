@@ -2,6 +2,7 @@
 #define __tree_h
 
 #include "kind.h"
+#include "symbol.h"
 
 typedef struct function {
     int lineno;

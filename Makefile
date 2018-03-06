@@ -8,20 +8,20 @@ SRC_DIR = src
 INC_DIR = -Iinclude/
 OBJ_DIR = build
 MOD_DIR = src/modules
-INC_ALL = -Iinclude/ $(INC)
+INC_ALL = -Iinclude/ $(INC_MOD)
 
 MODULES = $(filter-out $(MOD_DIR)/README.md, $(wildcard $(MOD_DIR)/*))
 
 MAIN_DIR = main
 TEST_DIR = tests
 
-INC_TEST = $(addprefix -I, $(wildcard $(MOD_DIR)/*/include/))
+INC_MOD = $(addprefix -I, $(wildcard $(MOD_DIR)/*/include/))
 
 SRC = $(filter-out $(wildcard $(SRC_DIR)/tests.c), \
 				$(wildcard $(SRC_DIR)/*.c \
 				$(MOD_DIR)/*/*.c ) )
 INC = 	$(INC_DIR) \
-		$(INC_TEST)
+		$(INC_MOD)
 OBJRT 	= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 OBJMOD 	= $(OBJRT:$(MOD_DIR)/*/%.c=$(OBJ_DIR)/modules/*/%.o)
 OBJ = $(OBJMOD)
@@ -36,7 +36,7 @@ TC_SRC = $(filter-out $(wildcard src/main.c) $(wildcard $(SRC_DIR)/scan_parse.c 
 
 CC = gcc
 
-CPPFLAGS += $(INC_DIR)							# -I is a preprocessor flag, not a compiler flag
+CPPFLAGS += $(INC)								# -I is a preprocessor flag, not a compiler flag
 CFLAGS += -std=c11 -Wall -Wextra -pedantic -g	# some warnings about bad code
 
 # -L is a linker flag

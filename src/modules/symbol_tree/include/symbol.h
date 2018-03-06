@@ -1,3 +1,6 @@
+#ifndef __symbol_h
+#define __symbol_h
+
 #define HashSize 317
 /* SYMBOL will be extended later.
 Function calls will take more parameters later.
@@ -28,3 +31,5 @@ void dumpSymbolTable(SymbolTable *t);
 SYMBOL *checkLocal(SymbolTable *t, char *name);
 
 void printSymbol(SYMBOL *symbol);
+
+#endif
