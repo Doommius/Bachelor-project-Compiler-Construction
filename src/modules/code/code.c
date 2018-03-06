@@ -28,7 +28,7 @@ void code_and_expression(expression *e) {
     Linked_List_InsertAtTail(("setne %al             ;set AL to 1 iff e2 != 0"));
     Linked_List_InsertAtTail(("        ; Step 3: compute al & cl"));
     Linked_List_InsertAtTail(("andb  %cl, %al        ;store AL & CL in AL"));
-    return ;
+    return;
 }
 
 //todo
@@ -42,7 +42,6 @@ void code_General_statement(expression *e, char jumpif) {
     return;
 }
 
-
 void code_GEQ_statement(expression *e) {
     eval_expression(e->val.ops.left);
     Linked_List_InsertAtTail(("push  %eax            ;save value of e1 on the stack"));
@@ -52,7 +51,6 @@ void code_GEQ_statement(expression *e) {
     Linked_List_InsertAtTail(("jge FLAG               ;Jump to flag if expression is false"));
     return;
 }
-
 
 void code_LEQ_statement(expression *e) {
     eval_expression(e->val.ops.left);
@@ -104,44 +102,43 @@ void code_EQ_statement(expression *e) {
     return;
 }
 
-
 //TODO Lots
 void eval_expression(expression *e) {
     switch (e->kind) {
-        case exp_PLUS:
-            break;
-        case exp_MIN:
-            break;
-        case exp_MULT:
-            break;
-        case exp_DIV:
-            break;
-        case exp_EQ:
-            code_EQ_statement(e);
-            break;
-        case exp_NEQ:
-            code_NEQ_statement(e);
-            break;
-        case exp_GT:
-            code_GT_statement(e);
-            break;
-        case exp_LT:
-            code_LT_statement(e);
-            break;
-        case exp_GEQ:
-            code_GEQ_statement(e);
-            break;
-        case exp_LEQ:
-            code_LEQ_statement(e);
-            break;
-        case exp_AND:
-            return code_and_expression(e);
-            break;
-        case exp_OR:
-            return code_or_expression(e);
-            break;
-        case exp_TERM:
-            break;
+    case exp_PLUS:
+        break;
+    case exp_MIN:
+        break;
+    case exp_MULT:
+        break;
+    case exp_DIV:
+        break;
+    case exp_EQ:
+        code_EQ_statement(e);
+        break;
+    case exp_NEQ:
+        code_NEQ_statement(e);
+        break;
+    case exp_GT:
+        code_GT_statement(e);
+        break;
+    case exp_LT:
+        code_LT_statement(e);
+        break;
+    case exp_GEQ:
+        code_GEQ_statement(e);
+        break;
+    case exp_LEQ:
+        code_LEQ_statement(e);
+        break;
+    case exp_AND:
+        code_and_expression(e);
+        break;
+    case exp_OR:
+        code_or_expression(e);
+        break;
+    case exp_TERM:
+        break;
     }
     return;
 }
@@ -150,24 +147,24 @@ void eval_expression(expression *e) {
 void eval_statement(statement *s) {
 
     switch (s->kind) {
-        case statement_WRITE:
-            break;
-        case statement_ALLOCATE:
-            break;
-        case statement_ALLOCATE_LENGTH:
-            break;
-        case statement_ASSIGNMENT:
-            break;
-        case statement_IF:
-            break;
-        case statement_IF_ELSE:
-            break;
-        case statement_WHILE:
-            break;
-        case statement_LIST:
-            break;
-        case statement_RETURN:
-            break;
+    case statement_WRITE:
+        break;
+    case statement_ALLOCATE:
+        break;
+    case statement_ALLOCATE_LENGTH:
+        break;
+    case statement_ASSIGNMENT:
+        break;
+    case statement_IF:
+        break;
+    case statement_IF_ELSE:
+        break;
+    case statement_WHILE:
+        break;
+    case statement_LIST:
+        break;
+    case statement_RETURN:
+        break;
     }
     return;
 }
