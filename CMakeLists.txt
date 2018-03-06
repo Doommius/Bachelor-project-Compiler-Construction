@@ -33,7 +33,6 @@ include_directories(src/modules/weeder)
 include_directories(src/modules/weeder/include)
 
 set(SOURCE_FILES_compiler
-
         src/main.c
         src/memory.c
         src/auxiliary.c
