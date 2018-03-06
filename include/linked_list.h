@@ -1,19 +1,30 @@
 #ifndef __linked_list_h
 #define __linked_list_h
 
-typedef struct linked_list {
+#include "kind.h"
+
+typedef struct asm_node {
     int id;
-    char *data;
-    struct linked_list *prev;
-    struct linked_list *next;
+    ASM_kind kind;
+    char *arg1;
+    char *arg2;
+    char *arg3;
+    int linenumber;
+    char *comment;
+
+} asm_node;
+
+typedef struct linked_list {
+  int index;
+  void* data;
+  struct linked_list *prev;
+  struct linked_list *next;
 } linked_list;
 
-linked_list *linked_list_head;
+asm_node *new_asm_node(int linenumber, ASM_kind kind, char *arg1, char *arg2, char *arg3, char *comment);
 
-linked_list *linked_list_new_node(char *content);
+void linked_list_insert_head(linked_list *list, void* node);
 
-void linked_list_insert_head(char *content);
-
-void linked_list_insert_tail(char *content);
+void linked_list_insert_tail(linked_list *list, void* node);
 
 #endif //COMPILER_LINKED_LIST_H

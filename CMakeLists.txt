@@ -33,7 +33,6 @@ include_directories(src/modules/weeder)
 include_directories(src/modules/weeder/include)
 
 set(SOURCE_FILES_compiler
-
         src/main.c
         src/memory.c
         src/auxiliary.c
@@ -66,7 +65,10 @@ set(SOURCE_FILES_compiler
         src/modules/symbol_tree/include/symbol.h
 
         src/modules/typechecker/typechecker.c
+        src/modules/typechecker/setup.c
         src/modules/typechecker/include/typechecker.h
+        src/modules/typechecker/include/setup.h
+
 
         src/modules/weeder/weeder.c
         src/modules/weeder/include/weeder.h
