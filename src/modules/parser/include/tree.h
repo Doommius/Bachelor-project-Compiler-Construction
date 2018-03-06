@@ -2,8 +2,10 @@
 #define __tree_h
 
 #include "kind.h"
+#include "symbol.h"
 
 typedef struct function {
+    SymbolTable *table;
     int lineno;
     struct head *head;
     struct body *body;
@@ -12,6 +14,7 @@ typedef struct function {
 } function;
 
 typedef struct head {
+    SymbolTable *table;
     int lineno;
     char *id;
     struct par_decl_list *list;
@@ -20,11 +23,13 @@ typedef struct head {
 } head;
 
 typedef struct tail {
+    SymbolTable *table;
     int lineno;
     char *id;
 } tail;
 
 typedef struct type {
+    SymbolTable *table;
     int lineno;
     TYPE_kind kind;
     union {
@@ -35,12 +40,14 @@ typedef struct type {
 } type;
 
 typedef struct par_decl_list {
+    SymbolTable *table;
     int lineno;
     PDL_kind kind;
     struct var_decl_list *list;
 } par_decl_list;
 
 typedef struct var_decl_list {
+    SymbolTable *table;
     int lineno;
     VDL_kind kind;
     struct var_decl_list *list;
@@ -48,18 +55,21 @@ typedef struct var_decl_list {
 } var_decl_list;
 
 typedef struct var_type {
+    SymbolTable *table;
     int lineno;
     char *id;
     struct type *type;
 } var_type;
 
 typedef struct body {
+    SymbolTable *table;
     int lineno;
     struct decl_list *d_list;
     struct statement_list *s_list;
 } body;
 
 typedef struct decl_list {
+    SymbolTable *table;
     int lineno;
     DL_kind kind;
     struct declaration *decl;
@@ -67,6 +77,7 @@ typedef struct decl_list {
 } decl_list;
 
 typedef struct declaration {
+    SymbolTable *table;
     int lineno;
     DECL_kind kind;
     union {
@@ -81,6 +92,7 @@ typedef struct declaration {
 } declaration;
 
 typedef struct statement_list {
+    SymbolTable *table;
     int lineno;
     SL_kind kind;
     struct statement *statement;
@@ -89,6 +101,7 @@ typedef struct statement_list {
 } statement_list;
 
 typedef struct statement {
+    SymbolTable *table;
     int lineno;
     STATEMENT_kind kind;
     union {
@@ -121,6 +134,7 @@ typedef struct statement {
 } statement;
 
 typedef struct variable {
+    SymbolTable *table;
     int lineno;
     char *id;
     Var_kind kind;
@@ -137,6 +151,7 @@ typedef struct variable {
 } variable;
 
 typedef struct expression {
+    SymbolTable *table;
     int lineno;
     EXP_kind kind;
     union {
@@ -151,6 +166,7 @@ typedef struct expression {
 } expression;
 
 typedef struct term {
+    SymbolTable *table;
     int lineno;
     TERM_kind kind;
     union {
@@ -166,6 +182,7 @@ typedef struct term {
 } term;
 
 typedef struct act_list {
+    SymbolTable *table;
     int lineno;
     AL_kind kind;
     struct exp_list *list;

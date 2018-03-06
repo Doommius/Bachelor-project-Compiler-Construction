@@ -128,6 +128,7 @@ void prettySL(statement_list *sl) {
     case sl_LIST:
         prettySTMT(sl->statement);
         prettySL(sl->list);
+        break;
     }
 }
 

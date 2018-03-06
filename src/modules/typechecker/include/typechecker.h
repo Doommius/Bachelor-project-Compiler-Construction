@@ -3,6 +3,9 @@
 #include "tree.h"
 
 
+int typecheck(body *program);
+
+
 
 
 #endif

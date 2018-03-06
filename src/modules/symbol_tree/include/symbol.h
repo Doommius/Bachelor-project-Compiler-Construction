@@ -2,6 +2,7 @@
 /* SYMBOL will be extended later.
 Function calls will take more parameters later.
 */
+
 typedef struct SYMBOL {
     char *name;
     int value;
