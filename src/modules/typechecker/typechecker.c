@@ -6,8 +6,8 @@
 
 int typecheck(body *program){
 
-    SymbolTable *table;
-    table = initSymbolTable();
+    symbol_table *table;
+    table = init_symbol_table();
 
     setup_body(program, table);
 

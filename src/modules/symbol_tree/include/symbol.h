@@ -12,25 +12,25 @@ typedef struct SYMBOL {
     struct SYMBOL *next;
 } SYMBOL;
 
-typedef struct SymbolTable {
+typedef struct symbol_table {
     SYMBOL *table[HashSize];
-    struct SymbolTable *next;
-} SymbolTable;
+    struct symbol_table *next;
+} symbol_table;
 
-int Hash(char *str);
+int hash(char *str);
 
-SymbolTable *initSymbolTable();
+symbol_table *init_symbol_table();
 
-SymbolTable *scopeSymbolTable(SymbolTable *t);
+symbol_table *scope_symbol_table(symbol_table *t);
 
-SYMBOL *putSymbol(SymbolTable *t, char *name, int value);
+SYMBOL *put_symbol(symbol_table *t, char *name, int value);
 
-SYMBOL *getSymbol(SymbolTable *t, char *name);
+SYMBOL *get_symbol(symbol_table *t, char *name);
 
-void dumpSymbolTable(SymbolTable *t);
+void dump_symbol_table(symbol_table *t);
 
-SYMBOL *checkLocal(SymbolTable *t, char *name);
+SYMBOL *check_local(symbol_table *t, char *name);
 
-void printSymbol(SYMBOL *symbol);
+void print_symbol(SYMBOL *symbol);
 
 #endif

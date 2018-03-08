@@ -1,6 +1,6 @@
 // First file!
 #include <stdio.h>
-#include "modules/symbol_tree/include/symbol.h"
+#include "symbol.h"
 #include <string.h>
 
 #define ANSI_COLOR_RED "\x1b[31m"
@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 
     printf("Testing hash function\n");
     totaltests++;
-    int i = (Hash(testString));
+    int i = (hash(testString));
     if (i == 199) {
         printf(ANSI_COLOR_GREEN "Test %i - Hash function test PASSED\n" ANSI_COLOR_RESET "\n", totaltests);
         testpassed++;
@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 
     printf("Testing init table function\n");
     totaltests++;
-    SymbolTable *table = initSymbolTable();
+    symbol_table *table = init_symbol_table();
     if (table != NULL) {
         printf(ANSI_COLOR_GREEN "Test %i - Table constructed PASSED\n" ANSI_COLOR_RESET "\n", totaltests);
         testpassed++;
@@ -45,9 +45,9 @@ int main(int argc, char **argv) {
     printf("\n");
     printf("Testing putsymbol function\n");
     totaltests++;
-    SYMBOL *symbol = putSymbol(table, testString, Hash(testString));
+    SYMBOL *symbol = put_symbol(table, testString, hash(testString));
     if (symbol != NULL) {
-        if (symbol->value == Hash(testString) && (strcmp(symbol->name, testString) == 0)) {
+        if (symbol->value == hash(testString) && (strcmp(symbol->name, testString) == 0)) {
             printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly made.\n" ANSI_COLOR_RESET "\n", totaltests);
             testpassed++;
         } else {
@@ -63,9 +63,9 @@ int main(int argc, char **argv) {
     printf("\n");
     printf("Testing getSymbol function\n");
     totaltests++;
-    SYMBOL *symbol2 = getSymbol(table, testString);
+    SYMBOL *symbol2 = get_symbol(table, testString);
     if (symbol2 != NULL) {
-        if (symbol2->value == Hash(testString) && (strcmp(symbol2->name, testString) == 0)) {
+        if (symbol2->value == hash(testString) && (strcmp(symbol2->name, testString) == 0)) {
             printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly returned.\n" ANSI_COLOR_RESET "\n", totaltests);
             testpassed++;
         }
@@ -77,9 +77,9 @@ int main(int argc, char **argv) {
     printf("\n");
     printf("Testing putsymbol function again\n");
     totaltests++;
-    symbol = putSymbol(table, testString, Hash(testString));
+    symbol = put_symbol(table, testString, hash(testString));
     if (symbol != NULL) {
-        if (symbol->value == Hash(testString) && (strcmp(symbol->name, testString) == 0)) {
+        if (symbol->value == hash(testString) && (strcmp(symbol->name, testString) == 0)) {
             printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly made.\n" ANSI_COLOR_RESET "\n", totaltests);
             testpassed++;
         } else {
@@ -95,9 +95,9 @@ int main(int argc, char **argv) {
     printf("\n");
     printf("Testing searching for a symbol, that is not in the table, but the hash for the symbol exists.\n");
     totaltests++;
-    SYMBOL *symbol3 = putSymbol(table, testString2, Hash(testString2));
+    SYMBOL *symbol3 = put_symbol(table, testString2, hash(testString2));
 
-    symbol = getSymbol(table, testString3);
+    symbol = get_symbol(table, testString3);
 
     if (symbol3 != NULL) {
         if (symbol == NULL) {
@@ -111,11 +111,11 @@ int main(int argc, char **argv) {
 
     printf("Testing putSymbol function with a symbol which hash already is in the table\n");
     totaltests++;
-    SYMBOL *symbol4 = putSymbol(table, testString3, Hash(testString3));
+    SYMBOL *symbol4 = put_symbol(table, testString3, hash(testString3));
 
     if (symbol3 != NULL && symbol4 != NULL) {
-        if (symbol3->value == Hash(testString2) && (strcmp(symbol3->name, testString2) == 0)) {
-            if (symbol4->value == Hash(testString3) && (strcmp(symbol4->name, testString3) == 0)) {
+        if (symbol3->value == hash(testString2) && (strcmp(symbol3->name, testString2) == 0)) {
+            if (symbol4->value == hash(testString3) && (strcmp(symbol4->name, testString3) == 0)) {
                 printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly made.\n" ANSI_COLOR_RESET "\n", totaltests);
                 testpassed++;
             }
@@ -129,9 +129,9 @@ int main(int argc, char **argv) {
         returnvalue = -1;
     }
 
-    printf("Testing scopeSymbolTable function\n");
+    printf("Testing scopesymbol_table function\n");
     totaltests++;
-    SymbolTable *newTable = scopeSymbolTable(table);
+    symbol_table *newTable = scope_symbol_table(table);
     if (newTable != NULL) {
         printf(ANSI_COLOR_GREEN "Test %i - Table constructed PASSED\n" ANSI_COLOR_RESET "\n", totaltests);
         testpassed++;
@@ -143,9 +143,9 @@ int main(int argc, char **argv) {
     printf("\n");
     printf("Testing putsymbol function in new table\n");
     totaltests++;
-    SYMBOL *symbol5 = putSymbol(newTable, testString, Hash(testString));
+    SYMBOL *symbol5 = put_symbol(newTable, testString, hash(testString));
     if (symbol5 != NULL) {
-        if (symbol5->value == Hash(testString) && (strcmp(symbol5->name, testString) == 0)) {
+        if (symbol5->value == hash(testString) && (strcmp(symbol5->name, testString) == 0)) {
             printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly made.\n" ANSI_COLOR_RESET "\n", totaltests);
             testpassed++;
         } else {
@@ -167,7 +167,7 @@ int main(int argc, char **argv) {
         printf(ANSI_COLOR_RED "test FAILED %i\n" ANSI_COLOR_RESET "\n", totaltests - testpassed);
     }
 
-    dumpSymbolTable(newTable);
+    dump_symbol_table(newTable);
 
     return returnvalue;
 }
