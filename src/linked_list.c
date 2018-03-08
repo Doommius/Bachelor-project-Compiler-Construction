@@ -32,7 +32,11 @@ linked_list *init_linked_list(void *data) {
 }
 
 /**
+ * @brief Adds an element to the front of the linked list list_ref
  * 
+ * @param list_ref is a reference pointer to the list pointer
+ * @param data the data to save at that position
+ * @return linked_list* 
  */
 linked_list *linked_list_insert_head(linked_list **list_ref, void *data) {
 
