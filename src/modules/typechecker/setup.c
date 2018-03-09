@@ -17,8 +17,10 @@ void setup_body(body *body, symbol_table *table){
 
     body->table = table;
 
+    printf("Setting up declaration list\n");
     setup_dlist(body->d_list, table);
 
+    printf("Setting up statement list\n");
     setup_slist(body->s_list, table);
 
 }

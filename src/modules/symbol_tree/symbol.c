@@ -67,7 +67,7 @@ SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st) {
         return localCheck;
     } else {
         int hashValue = hash(name);
-        printf("Putting symbol with name: %s, value: %d, type: %d, table: %p, hash: %d\n", name, value, st->type, hashValue);
+        printf("Putting symbol with name: %s, value: %d, type: %d, table: %p, hash: %d\n", name, value, st->type, t, hashValue);
 
         SYMBOL *symbol = Malloc(sizeof(SYMBOL));
         symbol->name = name;
