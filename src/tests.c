@@ -91,4 +91,6 @@ int main(int argc, char **argv) {
 
 
 	printf("GET 7: %s\n\n", linked_list_get(list, 7)->data);
+
+	symboltable_test();
 }

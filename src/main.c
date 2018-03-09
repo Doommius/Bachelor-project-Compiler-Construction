@@ -28,31 +28,6 @@ int main(int argc, char **argv) {
     opterr = 0;
 
     int files[argc];
-    /*
-    //    char str[100]; // make sure that this size is enough to hold the single line
-    int no_line = 1;
-
-    symbol_table*table = initSymbolTable();
-    //    char str[100]; // make sure that this size is enough to hold the single line
-    char buf[100];
-    do {
-        fgets(buf, sizeof buf, stdin);
-        if (buf[strlen(buf) - 1] == '\n') {
-            char *str;
-            str = malloc((strlen(buf) - 1));
-            strcpy(str, buf);
-            str[strlen(buf) - 1] = 0;
-            SYMBOL *symbol = putSymbol(table, str, Hash(str));
-        } else {
-            break;
-        }
-    } while (buf != "\0");
-
-    dumpSymbolTable(table);
-		for(int i = 0; i < argc; ++i) {
-		printf("%s\n", argv[i]);
-	}
-*/
 
     while ((c = getopt(argc, argv, "hc:")) != -1) {
         switch (c) {

@@ -4,9 +4,11 @@
 #include "symbol.h"
 #include "memory.h"
 
-/*
- * Computes the hash function as seen below.
- *
+/**
+ * @brief Computes the hash function as seen below.
+ * 
+ * @param str 
+ * @return int 
  */
 int hash(char *str){
     unsigned int length;
@@ -26,10 +28,12 @@ int hash(char *str){
     return (k % HashSize);
 }
 
-/*
-initSymbolTable returns a pointer to a new initialized hash table (of type
-        SymbolTable)
-*/
+/**
+ * @brief Initializes the symbol table
+ * 
+ * @return symbol_table* Returns a pointer to a new initialized hash table (of 
+ * type SymbolTable)
+ */
 symbol_table *init_symbol_table() {
 
     int i = 0;
@@ -42,10 +46,11 @@ symbol_table *init_symbol_table() {
     return table;
 }
 
-/*
- *
- * scopeSymbolTable takes a pointer to a hash table t as argument and returns
- * a new hash table with a pointer to t in its next field.
+/**
+ * @brief 
+ * 
+ * @param t Pointer to a hash table
+ * @return symbol_table* Returns a new hash table pointing to t.
  */
 symbol_table *scope_symbol_table(symbol_table *t) {
     symbol_table *newTable = init_symbol_table();
@@ -53,10 +58,17 @@ symbol_table *scope_symbol_table(symbol_table *t) {
     return newTable;
 }
 
-/*
- * putSymbol takes a hash table and a string, name, as arguments and inserts name into the hash table together with the associated value value. A pointer
- * to the SYMBOL value which stores name is returned.
-*/
+/**
+ * @brief put_symbol takes a hash table and a string, name, as arguments and 
+ * inserts name into the hash table together with the associated value value. 
+ * A pointer to the SYMBOL value which stores name is returned.
+ * 
+ * @param t Pointer to hash table.
+ * @param name 
+ * @param value 
+ * @param st 
+ * @return SYMBOL* 
+ */
 SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st) {
     if (t == NULL) {
         return NULL;
