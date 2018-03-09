@@ -142,11 +142,12 @@ unsigned int linked_list_length(linked_list *list) {
 }
 
 /**
- * @brief Gets the
+ * @brief Gets the ith element of a linked list. It is optimized for low cycles,
+ * especially if the element is very close to the previously gotten element.
  * 
- * @param list 
- * @param index 
- * @return linked_list* 
+ * @param list The list to find the ith element on.
+ * @param index Index is the ith element to find.
+ * @return linked_list* Returns the ith element.
  */
 linked_list *linked_list_get(linked_list *list, int index) {
     linked_list *pseudo_list = list;
@@ -154,7 +155,7 @@ linked_list *linked_list_get(linked_list *list, int index) {
     int current_pos = list->meta->current_pos;
     int length = list->meta->length;
 
-	if (index > length || index ) {
+	if (index > length || index < 0) {
 		printf("Error: Out of bounds");
 		return -1;
 	} else if (index == 0) {
@@ -173,41 +174,40 @@ linked_list *linked_list_get(linked_list *list, int index) {
     } else if (index > current_pos && length - index >= index - current_pos) {
         move = abs(index - current_pos);
         printf("D move: %i\n", move);
-        return linked_list_iterator(move, index, list, pseudo_list->meta->current_element, 0);
+        return linked_list_iterator(move, index, pseudo_list->meta->current_element, 0);
     } else if (index <= current_pos && length - index <= index - current_pos) {
         move = abs(index - current_pos);
         printf("E move: %i\n", move);
-        return linked_list_iterator(move, index, list, pseudo_list->meta->current_element, 1);
+        return linked_list_iterator(move, index, pseudo_list->meta->current_element, 1);
     } else if (index <= current_pos / 2) {
         move = abs(index);
         printf("F move: %i\n", move);
-        return linked_list_iterator(move, index, list, pseudo_list->meta->head, 0);
+        return linked_list_iterator(move, index, pseudo_list->meta->head, 0);
     } else if (index > current_pos / 2 && index < current_pos) {
         move = abs(index - current_pos);
         printf("G move: %i\n", move);
-        return linked_list_iterator(move, index, list, pseudo_list->meta->current_element, 1);
+        return linked_list_iterator(move, index, pseudo_list->meta->current_element, 1);
     } else if (index > current_pos && index <= length / 2 + current_pos / 2) {
         move = abs(index - current_pos);
         printf("H move: %i\n", move);
-        return linked_list_iterator(move, index, list, pseudo_list->meta->current_element, 0);
+        return linked_list_iterator(move, index, pseudo_list->meta->current_element, 0);
     } else if (index > current_pos && index > length / 2 + current_pos / 2) {
         move = abs(length - index);
         printf("I move: %i\n", move);
-        return linked_list_iterator(move, index, list, pseudo_list->meta->head, 1);
+        return linked_list_iterator(move, index, pseudo_list->meta->head, 1);
     }
 }
 
 /**
  * @brief 
  * 
- * @param move 
- * @param index 
- * @param list 
- * @param pseudo_list 
- * @param d 
- * @return linked_list* 
+ * @param move How many steps to move
+ * @param index To update the meta data about the current position
+ * @param pseudo_list The list to find the ith element and update the meta data on.
+ * @param d Direction to move. 0 for next, 1 for previous
+ * @return linked_list* Return the ith element
  */
-linked_list *linked_list_iterator(int move, int index, linked_list *list, linked_list *pseudo_list, int d) {
+linked_list *linked_list_iterator(int move, int index,  linked_list *pseudo_list, int d) {
     switch (d) {
     case 0:
         for (int i = 0; i < move; ++i) {
@@ -220,7 +220,7 @@ linked_list *linked_list_iterator(int move, int index, linked_list *list, linked
         }
         break;
     }
-    list->meta->current_pos = index;
-    list->meta->current_element = pseudo_list;
+    pseudo_list->meta->current_pos = index;
+    pseudo_list->meta->current_element = pseudo_list;
     return pseudo_list;
 }

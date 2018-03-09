@@ -80,9 +80,9 @@ int main(int argc, char **argv) {
 	printf("Length: %i\n\n", list->meta->length);
 
 	printf("GET 8: %s\n\n", linked_list_get(list, 8)->data);
-	// for(int i = 0; i < list->meta->length; ++i) {
-	// 	printf("GET %i: %s\n\n", i, linked_list_get(list, i)->data);
-	// }
+	for(int i = 9; i >= 0; --i) {
+		printf("GET %i: %s\n\n", i, linked_list_get(list, i)->data);
+	}
 	printf("GET 6: %s\n\n", linked_list_get(list, 6)->data);
 	printf("GET 1: %s\n\n", linked_list_get(list, 1)->data);
 
