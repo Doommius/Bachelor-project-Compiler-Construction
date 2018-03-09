@@ -59,7 +59,7 @@ typedef enum { statement_RETURN,
 
 typedef enum { var_ID,
                var_EXP,
-               var_VID } Var_kind;
+               var_RECORD } Var_kind;
 
 typedef enum { al_LIST,
                al_EMPTY } AL_kind;

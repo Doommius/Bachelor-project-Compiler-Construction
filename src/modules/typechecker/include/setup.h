@@ -17,7 +17,9 @@ void setup_pdl(par_decl_list *pdl, symbol_table *table);
 
 void setup_vdl(var_decl_list *vdl, symbol_table *table);
 
-void setup_dlist(decl_list *dlist, symbol_table *table);
+void setup_vtype(var_type *vtype, symbol_table*table);
+
+void setup_dlist(decl_list *dlist, symbol_table*table);
 
 void setup_decl(declaration *decl, symbol_table *table);
 
