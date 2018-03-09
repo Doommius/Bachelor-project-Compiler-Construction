@@ -2,7 +2,7 @@
 
 EXE = compiler
 
-TEST = test
+TEST = programtest
 
 SRC_DIR = src
 INC_DIR = -Iinclude/
