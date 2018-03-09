@@ -35,7 +35,7 @@ linked_list* init_linked_list();
 
 linked_list* linked_list_insert_head(linked_list **list, void* node);
 
-void linked_list_insert_tail(linked_list *list, void* node);
+linked_list* linked_list_insert_tail(linked_list *list, void* node);
 
 linked_list* linked_list_get_head(linked_list *list);
 

@@ -79,9 +79,10 @@ int main(int argc, char **argv) {
 
 	printf("Length: %i\n\n", list->meta->length);
 
-	for(int i = 0; i < list->meta->length; ++i) {
-		printf("GET %i: %s\n\n", i, linked_list_get(list, i)->data);
-	}
-	printf("GET 0: %s\n\n", linked_list_get(list, 0)->data);
 	printf("GET 6: %s\n\n", linked_list_get(list, 6)->data);
+	// for(int i = 0; i < list->meta->length; ++i) {
+	// 	printf("GET %i: %s\n\n", i, linked_list_get(list, i)->data);
+	// }
+	printf("GET 1: %s\n\n", linked_list_get(list, 1)->data);
+	printf("GET 1: %s\n\n", linked_list_get(list, 1)->data);
 }
