@@ -22,8 +22,8 @@ int main(int argc, char **argv) {
 
 	linked_list *head;
 
-	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
-	linked_list_insert_head(&list, "Hoved 1");
+	// printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
+	// linked_list_insert_head(&list, "Hoved 1");
 
 
 	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
@@ -37,14 +37,22 @@ int main(int argc, char **argv) {
 
 
 
+	// printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
+
+	// head = linked_list_insert_head(&list, "Hoved 2");
+
 	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
 
-	head = linked_list_insert_head(&list, "Hoved 2");
-
 	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
-
-		printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
 	linked_list_insert_tail(list, "Hale 2");
+	linked_list_insert_tail(list, "Hale 3");
+	linked_list_insert_tail(list, "Hale 4");
+	linked_list_insert_tail(list, "Hale 5");
+	linked_list_insert_tail(list, "Hale 6");
+	linked_list_insert_tail(list, "Hale 7");
+	linked_list_insert_tail(list, "Hale 8");
+	linked_list_insert_tail(list, "Hale 9");
+
 	// printf("---%s\n", list->meta->head->data);
 	// printf("---%s\n", list->meta->tail->data);
 	
@@ -65,9 +73,15 @@ int main(int argc, char **argv) {
 	// }
 	// list = head;
 	for(int i = 0; i < 20; ++i) {
-		printf("%s\n", list->data);
+		printf("%s\n\n", list->data);
 		list = list->next;
 	}
 
-	printf("Length: %i\n", list->meta->length);
+	printf("Length: %i\n\n", list->meta->length);
+
+	for(int i = 0; i < list->meta->length; ++i) {
+		printf("GET %i: %s\n\n", i, linked_list_get(list, i)->data);
+	}
+	printf("GET 0: %s\n\n", linked_list_get(list, 0)->data);
+	printf("GET 8: %s\n\n", linked_list_get(list, 8)->data);
 }
