@@ -126,10 +126,6 @@ linked_list *linked_list_get(linked_list *list, int index) {
 	} else if (index > current_pos / 2 && index < current_pos) {
 		move = abs(index - current_pos);
 		printf("G move: %i\n", move);
-		return linked_list_iterator(move, index, list, pseudo_list->meta->current_element, 1);
-	}  else if (index > current_pos && length - index < index - current_pos / 2) {
-		move = abs(length - index -1);
-		printf("H move: %i\n", move);
 		return linked_list_iterator(move, index, list, pseudo_list->meta->tail, 1);
 	}
 }

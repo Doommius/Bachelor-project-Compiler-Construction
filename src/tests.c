@@ -83,5 +83,9 @@ int main(int argc, char **argv) {
 		printf("GET %i: %s\n\n", i, linked_list_get(list, i)->data);
 	}
 	printf("GET 0: %s\n\n", linked_list_get(list, 0)->data);
+<<<<<<< HEAD
 	printf("GET 6: %s\n\n", linked_list_get(list, 6)->data);
+=======
+	printf("GET 8: %s\n\n", linked_list_get(list, 8)->data);
+>>>>>>> 8440c21d1664f0f7142a7110873334e431576809
 }
