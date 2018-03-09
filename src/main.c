@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <getopt.h>
 
+#include "main.h"
 #include "auxiliary.h"
 #include "symbol.h"
 #include "tree.h"
@@ -86,7 +87,7 @@ int main(int argc, char **argv) {
     if (optind < argc) {
         for (int i = 1; i < argc; ++i) {
             if (files[i] == 0) {
-                if (ends_with(argv[i], ".txt")) {
+                if (ends_with(argv[i], ".src")) {
                     freopen(argv[i], "r", stdin);
                 }
             }
@@ -98,7 +99,10 @@ int main(int argc, char **argv) {
     printf("Before weeding:\n");
     prettyBody(theprogram);
 
-    weeder(theprogram);
+    //weeder(theprogram);
+
+    printf("Starting typechecking\n");
+    typecheck(theprogram);
 
     printf("\nAfter weeding:\n");
     prettyBody(theprogram);

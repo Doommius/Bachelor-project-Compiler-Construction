@@ -3,6 +3,7 @@
 #include "setup.h"
 #include "symbol.h"
 #include "memory.h"
+#include "error.h"
 
 /**
  * 
@@ -30,44 +31,111 @@ void setup_function(function *function, symbol_table *table){
     nextTable = scope_symbol_table(table);
     function->table = nextTable;
     function->tail->table = nextTable;
-    setup_head(function->head, table);
+    setup_head(function->head, nextTable, table);
     setup_body(function->body, nextTable);
-
-
-
+    
+    SYMBOL *s;
+    s = get_symbol(table, function->head->id);
+    if (s == NULL || s->type->type != symbol_FUNCTION){
+        print_error("Function does not exist", 0, function->lineno);
+    }
+    s->type->val.func_type.func = function;
 
 
 }
 
-void setup_head(head *head, symbol_table *table){
+void setup_head(head *head, symbol_table *table, symbol_table *outer_scope){
 
-}
+    head->table = table;
+    symbol_type *st;
+    st = NEW(symbol_type);
+    st->type = symbol_FUNCTION;
+    put_symbol(outer_scope, head->id, 0, st);
+    head->args = setup_pdl(head->list, table);
 
-void setup_tail(tail *tail, symbol_table *table){
+    printf("Number of args for function %s: %d\n", head->id, head->args);
+
+    setup_type(head->type, outer_scope);
+    st->val.func_type.pdl = head->list;
 
 }
 
 void setup_type(type *type, symbol_table*table){
     type->table = table;
+    symbol_type *st;
+
+    switch(type->kind){
+
+        case (type_ID):
+            st = NEW(symbol_type);
+            st->type = symbol_ID;
+            type->type = st;
+            break;
+
+        case (type_INT):
+            st = NEW(symbol_type);
+            st->type = symbol_INT;
+            type->type = st;
+            break;
+
+        case (type_BOOl):
+            st = NEW(symbol_type);
+            st->type = symbol_BOOL;
+            type->type = st;
+            break;
+
+        case (type_ARRAY):
+            st = NEW(symbol_type);
+            st->type = symbol_ARRAY;
+            type->type = st;
+            setup_type(type->val.type, table);
+            break;
+
+        case (type_RECORD):
+            st = NEW(symbol_type);
+            st->type = symbol_RECORD;
+            type->type =  st;
+            setup_vdl(type->val.list, scope_symbol_table(st));
+            break;
+    }
 
 
 }
 
-void setup_pdl(par_decl_list *pdl, symbol_table*table){
+int setup_pdl(par_decl_list *pdl, symbol_table*table){
     pdl->table = table;
-    
+    int args;
+    args = 0;
+    if (pdl->kind != pdl_EMPTY){
+        args = args + setup_vdl(pdl->list, table);
+    }
+    return args;
 }
 
-void setup_vdl(var_decl_list *vdl, symbol_table *table){
+int setup_vdl(var_decl_list *vdl, symbol_table *table){
     
     vdl->table = table;
-
-    
+    int args;
+    args = 1;
+    setup_vtype(vdl->vartype, table);
+    if (vdl->kind == vdl_LIST){
+        args = args + setup_vdl(vdl->list, table);
+    }
+    return args;
 }
 
 void setup_vtype(var_type *vtype, symbol_table*table){
 
     vtype->table = table;
+    symbol_type *st;
+    st = NEW(symbol_type);
+    st->type = symbol_UNKNOWN; // Sikkert ikke rigtigt
+
+    SYMBOL *s;
+    s = put_symbol(table, vtype->id, 0, st);
+    vtype->symbol = s;
+
+    setup_type(vtype->type, table);
 
 
 }

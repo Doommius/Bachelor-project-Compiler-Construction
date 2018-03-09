@@ -19,6 +19,7 @@ typedef struct head {
     char *id;
     struct par_decl_list *list;
     struct type *type;
+    int args;
 
 } head;
 
@@ -30,6 +31,7 @@ typedef struct tail {
 
 typedef struct type {
     struct symbol_table*table;
+    struct symbol_type *type;
     int lineno;
     TYPE_kind kind;
     union {
@@ -56,6 +58,7 @@ typedef struct var_decl_list {
 
 typedef struct var_type {
     struct symbol_table*table;
+    struct SYMBOL *symbol;
     int lineno;
     char *id;
     struct type *type;

@@ -7,15 +7,13 @@ void setup_body(body *body, symbol_table *table);
 
 void setup_function(function *function, symbol_table *table);
 
-void setup_head(head *head, symbol_table *table);
-
-void setup_tail(tail *tail, symbol_table *table);
+void setup_head(head *head, symbol_table *table, symbol_table *outer_scope);
 
 void setup_type(type *type, symbol_table *table);
 
-void setup_pdl(par_decl_list *pdl, symbol_table *table);
+int setup_pdl(par_decl_list *pdl, symbol_table *table);
 
-void setup_vdl(var_decl_list *vdl, symbol_table *table);
+int setup_vdl(var_decl_list *vdl, symbol_table *table);
 
 void setup_vtype(var_type *vtype, symbol_table*table);
 

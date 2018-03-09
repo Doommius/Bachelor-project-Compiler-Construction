@@ -14,12 +14,14 @@ typedef enum { symbol_ID,
                symbol_RECORD,
                symbol_ARRAY,
                symbol_NULL,
-               symbol_FUNCTION } SYMBOL_type;
+               symbol_FUNCTION,
+               symbol_UNKNOWN } SYMBOL_type;
 
 typedef struct SYMBOL {
     char *name;
     int value;
     struct SYMBOL *next;
+    struct symbol_type *type;
 } SYMBOL;
 
 typedef struct symbol_table {
@@ -44,9 +46,9 @@ typedef struct symbol_type {
 
 int hash(char *str);
 
-symbol_table *init_symbol_table();
+struct symbol_table *init_symbol_table();
 
-symbol_table *scope_symbol_table(symbol_table *t);
+struct symbol_table *scope_symbol_table(symbol_table *t);
 
 SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st);
 
