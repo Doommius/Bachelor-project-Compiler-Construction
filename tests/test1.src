@@ -1,5 +1,5 @@
 # Parsing and code generation of expressions, associativity
-func test(n: int): int
+func test(n: int, a:int): int
    return 2;
 end test
 

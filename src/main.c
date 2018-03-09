@@ -74,7 +74,10 @@ int main(int argc, char **argv) {
     printf("Before weeding:\n");
     prettyBody(theprogram);
 
-    weeder(theprogram);
+    //weeder(theprogram);
+
+    printf("Starting typechecking\n");
+    typecheck(theprogram);
 
     printf("\nAfter weeding:\n");
     prettyBody(theprogram);
