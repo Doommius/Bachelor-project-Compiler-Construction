@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <getopt.h>
 
+#include "main.h"
 #include "auxiliary.h"
 #include "symbol.h"
 #include "tree.h"
