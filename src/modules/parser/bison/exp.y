@@ -200,7 +200,7 @@ variable:tIDENTIFIER
             | variable '[' expression ']'
         {$$ = make_Var_exp($1, $3);}
             | variable '.' tIDENTIFIER
-        {$$ = make_Var_varid($1, $3);}
+        {$$ = make_Var_record($1, $3);}
 ;
 
 expression:expression '+' expression

@@ -154,8 +154,8 @@ variable *weed_variable(variable *variable){
             variable->val.exp.var = weed_variable(variable->val.exp.var);
             break;
 
-        case (var_VID):
-            variable->val.varid.var = weed_variable(variable->val.exp.var);
+        case (var_RECORD):
+            variable->val.record.var = weed_variable(variable->val.exp.var);
             break;
 
         default:

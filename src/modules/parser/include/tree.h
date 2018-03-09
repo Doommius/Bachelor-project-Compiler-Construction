@@ -146,7 +146,7 @@ typedef struct variable {
         struct {
             struct variable *var;
             char *id;
-        } varid;
+        } record;
     } val;
 } variable;
 
@@ -189,6 +189,7 @@ typedef struct act_list {
 } act_list;
 
 typedef struct exp_list {
+    SymbolTable *table;
     int lineno;
     EL_kind kind;
     struct expression *expression;
@@ -239,7 +240,7 @@ statement *make_STMT_list(statement_list *sl);
 
 variable *make_Var_id(char *id);
 variable *make_Var_exp(variable *var, expression *expression);
-variable *make_Var_varid(variable *var, char *id);
+variable *make_Var_record(variable *var, char *id);
 
 expression *make_EXP(EXP_kind kind, expression *left, expression *right);
 expression *make_EXP_term(term *term);
