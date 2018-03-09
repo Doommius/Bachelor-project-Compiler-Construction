@@ -29,6 +29,8 @@ typedef struct linked_list {
   struct linked_list_meta *meta;
 } linked_list;
 
+typedef enum {NEXT, PREV} direction;
+
 asm_node *new_asm_node(int linenumber, ASM_kind kind, char *arg1, char *arg2, char *arg3, char *comment);
 
 linked_list* init_linked_list();
@@ -45,6 +47,6 @@ unsigned int linked_list_length(linked_list *list);
 
 linked_list *linked_list_get(linked_list *list, int index);
 
-linked_list *linked_list_iterator(int move, int index,  linked_list *pseudo_list, int d);
+linked_list *linked_list_iterator(int move, int index,  linked_list *pseudo_list, direction d);
 
 #endif //COMPILER_LINKED_LIST_H
