@@ -1,3 +1,10 @@
+/**
+ * @brief Compiler program.
+ * 
+ * @file main.c
+ * @author Morten Jæger, Mark Jervelund & Troels Blicher Petersen
+ * @date 2018-03-09
+ */
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

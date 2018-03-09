@@ -1,3 +1,11 @@
+/**
+ * @brief Various helper functions.
+ * 
+ * @file auxiliary.c
+ * @author Morten Jæger, Mark Jervelund & Troels Blicher Petersen
+ * @date 2018-03-09
+ */
+
 #include <stdlib.h>
 #include "auxiliary.h"
 

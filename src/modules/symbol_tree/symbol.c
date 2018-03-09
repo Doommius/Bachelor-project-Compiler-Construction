@@ -1,3 +1,11 @@
+/**
+ * @brief Symbol table using hashing.
+ * 
+ * @file symbol.c
+ * @author Morten Jæger, Mark Jervelund & Troels Blicher Petersen
+ * @date 2018-03-09
+ */
+
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>

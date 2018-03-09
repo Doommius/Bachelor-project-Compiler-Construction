@@ -1,3 +1,11 @@
+/**
+ * @brief 
+ * 
+ * @file typechecker.c
+ * @author Morten Jæger, Mark Jervelund & Troels Blicher Petersen
+ * @date 2018-03-09
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "typechecker.h"

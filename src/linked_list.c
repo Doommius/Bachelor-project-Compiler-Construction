@@ -1,5 +1,5 @@
 /**
- * @brief 
+ * @brief Responsible for linked lists.
  * 
  * @file linked_list.c
  * @author Troels Blicher Petersen

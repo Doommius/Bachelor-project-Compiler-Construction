@@ -1,4 +1,10 @@
-// First file!
+/**
+ * @brief Main file for differents tests.
+ * 
+ * @file tests.c
+ * @author Morten Jæger, Mark Jervelund & Troels Blicher Petersen
+ * @date 2018-03-09
+ */
 #include <stdio.h>
 #include <string.h>
 #include "symbol.h"

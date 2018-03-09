@@ -1,3 +1,11 @@
+/**
+ * @brief 
+ * 
+ * @file setup.c
+ * @author Morten Jæger
+ * @date 2018-03-09
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "setup.h"

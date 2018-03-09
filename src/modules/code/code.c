@@ -1,3 +1,11 @@
+/**
+ * @brief Assembly code generator for the x86 architecture.
+ * 
+ * @file code.c
+ * @author Morten Jæger, Mark Jervelund & Troels Blicher Petersen
+ * @date 2018-03-09
+ */
+
 #include <string.h>
 #include "linked_list.h"
 #include "tree.h"
