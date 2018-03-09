@@ -1,4 +1,4 @@
 #!bin/bash
 make clean
-make all
-./compiler
+make
+./compiler $1
