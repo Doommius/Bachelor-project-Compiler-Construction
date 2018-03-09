@@ -66,15 +66,18 @@ SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st) {
     if (localCheck != NULL) {
         return localCheck;
     } else {
+        int hashValue = hash(name);
+        printf("Putting symbol with name: %s, value: %d, type: %d, table: %p, hash: %d\n", name, value, st->type, hashValue);
 
         SYMBOL *symbol = Malloc(sizeof(SYMBOL));
         symbol->name = name;
         symbol->value = value;
+        symbol->type = st;
         symbol->next = Malloc(sizeof(SYMBOL));
 
         //Placed in front of the list
-        symbol->next = t->table[value];
-        t->table[value] = symbol;
+        symbol->next = t->table[hashValue];
+        t->table[hashValue] = symbol;
         return symbol;
     }
 }
@@ -90,7 +93,9 @@ SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st) {
     */
 SYMBOL *get_symbol(symbol_table *t, char *name) {
     //    First check if t is null
+    printf("Getting symbol %s, from table %p\n", name, t);
     if (t == NULL) {
+        printf("Table is null\n");
         return NULL;
     }
 
@@ -98,12 +103,16 @@ SYMBOL *get_symbol(symbol_table *t, char *name) {
 
     //Symbol in local table?
     if (localCheck != NULL) {
+        printf("Trying local check\n");
         return localCheck;
     }
 
     if (t->next != NULL) {
+        printf("Checing next\n");
         get_symbol(t->next, name);
     }
+
+    dump_symbol_table(t);
 
     //Symbol does not exists
     return NULL;
