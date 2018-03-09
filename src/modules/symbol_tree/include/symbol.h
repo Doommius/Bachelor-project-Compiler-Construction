@@ -28,7 +28,7 @@ typedef struct symbol_table {
 } symbol_table;
 
 
-typedef struct symbolType {
+typedef struct symbol_type {
     SYMBOL_type type;
     union {
         struct type *array_type;
@@ -40,7 +40,7 @@ typedef struct symbolType {
             struct function *func;
         } func_type;
     } val;
-} symbolType;
+} symbol_type;
 
 int hash(char *str);
 
@@ -48,7 +48,7 @@ symbol_table *init_symbol_table();
 
 symbol_table *scope_symbol_table(symbol_table *t);
 
-SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbolType *st);
+SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st);
 
 SYMBOL *get_symbol(symbol_table *t, char *name);
 

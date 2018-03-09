@@ -27,7 +27,7 @@ void setup_body(body *body, symbol_table *table){
 void setup_function(function *function, symbol_table *table){
 
     symbol_table*nextTable;
-    nextTable = scopeSymbolTable(table);
+    nextTable = scope_symbol_table(table);
     function->table = nextTable;
     function->tail->table = nextTable;
     setup_head(function->head, table);
@@ -84,13 +84,14 @@ void setup_dlist(decl_list *dlist, symbol_table *table){
 void setup_decl(declaration *decl, symbol_table *table){
 
     decl->table = table;
+
+    symbol_type *st;
     switch (decl->kind){
 
         case (decl_TYPE):
-            symbolType *st;
-            st = NEW(symbolType);
+            st = NEW(symbol_type);
             st->type = symbol_ID;
-            putSymbol(table, decl->val.type.id, 0, st);
+            put_symbol(table, decl->val.type.id, 0, st);
             setup_type(decl->val.type.type, table);
             break;
 

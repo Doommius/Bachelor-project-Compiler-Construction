@@ -57,7 +57,7 @@ symbol_table *scope_symbol_table(symbol_table *t) {
  * putSymbol takes a hash table and a string, name, as arguments and inserts name into the hash table together with the associated value value. A pointer
  * to the SYMBOL value which stores name is returned.
 */
-SYMBOL *put_symbol(symbol_table *t, char *name, int value) {
+SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st) {
     if (t == NULL) {
         return NULL;
     }

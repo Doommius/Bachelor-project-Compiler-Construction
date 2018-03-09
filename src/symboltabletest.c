@@ -45,7 +45,7 @@ int symboltable_test() {
     printf("\n");
     printf("Testing putsymbol function\n");
     totaltests++;
-    SYMBOL *symbol = put_symbol(table, testString, hash(testString));
+    SYMBOL *symbol = put_symbol(table, testString, hash(testString), NULL);
     if (symbol != NULL) {
         if (symbol->value == hash(testString) && (strcmp(symbol->name, testString) == 0)) {
             printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly made.\n" ANSI_COLOR_RESET "\n", totaltests);
@@ -77,7 +77,7 @@ int symboltable_test() {
     printf("\n");
     printf("Testing putsymbol function again\n");
     totaltests++;
-    symbol = put_symbol(table, testString, hash(testString));
+    symbol = put_symbol(table, testString, hash(testString), NULL);
     if (symbol != NULL) {
         if (symbol->value == hash(testString) && (strcmp(symbol->name, testString) == 0)) {
             printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly made.\n" ANSI_COLOR_RESET "\n", totaltests);
@@ -95,7 +95,7 @@ int symboltable_test() {
     printf("\n");
     printf("Testing searching for a symbol, that is not in the table, but the hash for the symbol exists.\n");
     totaltests++;
-    SYMBOL *symbol3 = put_symbol(table, testString2, hash(testString2));
+    SYMBOL *symbol3 = put_symbol(table, testString2, hash(testString2), NULL);
 
     symbol = get_symbol(table, testString3);
 
@@ -111,7 +111,7 @@ int symboltable_test() {
 
     printf("Testing putSymbol function with a symbol which hash already is in the table\n");
     totaltests++;
-    SYMBOL *symbol4 = put_symbol(table, testString3, hash(testString3));
+    SYMBOL *symbol4 = put_symbol(table, testString3, hash(testString3), NULL);
 
     if (symbol3 != NULL && symbol4 != NULL) {
         if (symbol3->value == hash(testString2) && (strcmp(symbol3->name, testString2) == 0)) {
@@ -143,7 +143,7 @@ int symboltable_test() {
     printf("\n");
     printf("Testing putsymbol function in new table\n");
     totaltests++;
-    SYMBOL *symbol5 = put_symbol(newTable, testString, hash(testString));
+    SYMBOL *symbol5 = put_symbol(newTable, testString, hash(testString), NULL);
     if (symbol5 != NULL) {
         if (symbol5->value == hash(testString) && (strcmp(symbol5->name, testString) == 0)) {
             printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly made.\n" ANSI_COLOR_RESET "\n", totaltests);
