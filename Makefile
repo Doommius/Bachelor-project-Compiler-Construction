@@ -88,8 +88,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 clean:
 	rm -rf $(OBJ_DIR)/*
+	$(RM) include/y.tab.h
 
 clean-all:
 	rm -rf $(OBJ_DIR)/*
 	$(RM) $(EXE)
 	$(RM) $(TEST)
+	$(RM) include/y.tab.h

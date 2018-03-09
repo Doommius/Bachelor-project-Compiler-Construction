@@ -1,7 +1,9 @@
 // First file!
 #include <stdio.h>
-#include "modules/symbol_tree/include/symbol.h"
 #include <string.h>
+#include "symbol.h"
+#include "symboltabletest.h"
+#include "linked_list.h"
 
 #define ANSI_COLOR_RED "\x1b[31m"
 #define ANSI_COLOR_GREEN "\x1b[32m"
@@ -15,159 +17,71 @@
 #define testString3 "tets"
 
 int main(int argc, char **argv) {
-    int returnvalue = 1;
-    int testpassed = 0;
-    int totaltests = 0;
+    //symboltable_test();
+	linked_list *list = init_linked_list("Hej");
 
-    printf("Testing hash function\n");
-    totaltests++;
-    int i = (Hash(testString));
-    if (i == 199) {
-        printf(ANSI_COLOR_GREEN "Test %i - Hash function test PASSED\n" ANSI_COLOR_RESET "\n", totaltests);
-        testpassed++;
-    } else {
-        printf(ANSI_COLOR_RED "Test %i - Hash functon test FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-        returnvalue = -1;
-    }
-    printf("\n");
+	linked_list *head;
 
-    printf("Testing init table function\n");
-    totaltests++;
-    SymbolTable *table = initSymbolTable();
-    if (table != NULL) {
-        printf(ANSI_COLOR_GREEN "Test %i - Table constructed PASSED\n" ANSI_COLOR_RESET "\n", totaltests);
-        testpassed++;
-    } else {
-        printf(ANSI_COLOR_RED "Test %i - Table construction FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-        returnvalue = -1;
-    }
+	// printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
+	// linked_list_insert_head(&list, "Hoved 1");
 
-    printf("\n");
-    printf("Testing putsymbol function\n");
-    totaltests++;
-    SYMBOL *symbol = putSymbol(table, testString, Hash(testString));
-    if (symbol != NULL) {
-        if (symbol->value == Hash(testString) && (strcmp(symbol->name, testString) == 0)) {
-            printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly made.\n" ANSI_COLOR_RESET "\n", totaltests);
-            testpassed++;
-        } else {
-            printf(ANSI_COLOR_RED "Test %i - Symbol creation FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-            printf("Symbol was made but data was wrong");
-            returnvalue = -1;
-        }
-    } else {
-        printf(ANSI_COLOR_RED "Test %i - Symbol creation FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-        returnvalue = -1;
-    }
 
-    printf("\n");
-    printf("Testing getSymbol function\n");
-    totaltests++;
-    SYMBOL *symbol2 = getSymbol(table, testString);
-    if (symbol2 != NULL) {
-        if (symbol2->value == Hash(testString) && (strcmp(symbol2->name, testString) == 0)) {
-            printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly returned.\n" ANSI_COLOR_RESET "\n", totaltests);
-            testpassed++;
-        }
-    } else {
-        printf(ANSI_COLOR_RED "Test %i - Symbol return FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-        returnvalue = -1;
-    }
+	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
+	// printf("- -%s\n", list->meta->head->data);
+	// printf("- -%s\n", list->meta->tail->data);
 
-    printf("\n");
-    printf("Testing putsymbol function again\n");
-    totaltests++;
-    symbol = putSymbol(table, testString, Hash(testString));
-    if (symbol != NULL) {
-        if (symbol->value == Hash(testString) && (strcmp(symbol->name, testString) == 0)) {
-            printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly made.\n" ANSI_COLOR_RESET "\n", totaltests);
-            testpassed++;
-        } else {
-            printf(ANSI_COLOR_RED "Test %i - Symbol creation FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-            printf("Symbol was made but data was wrong");
-            returnvalue = -1;
-        }
-    } else {
-        printf(ANSI_COLOR_RED "Test %i - Symbol creation FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-        returnvalue = -1;
-    }
+	// printf("Test %s\n", list->data);
 
-    printf("\n");
-    printf("Testing searching for a symbol, that is not in the table, but the hash for the symbol exists.\n");
-    totaltests++;
-    SYMBOL *symbol3 = putSymbol(table, testString2, Hash(testString2));
+	// printf("Loop start\n");
+	linked_list_insert_tail(list, "Hale 1");
 
-    symbol = getSymbol(table, testString3);
 
-    if (symbol3 != NULL) {
-        if (symbol == NULL) {
-            printf(ANSI_COLOR_GREEN "Test %i - NULL successfully received.\n" ANSI_COLOR_RESET "\n", totaltests);
-            testpassed++;
-        }
-    } else {
-        printf(ANSI_COLOR_RED "Test %i - Symbol search failed\n" ANSI_COLOR_RESET "\n", totaltests);
-        returnvalue = -1;
-    }
 
-    printf("Testing putSymbol function with a symbol which hash already is in the table\n");
-    totaltests++;
-    SYMBOL *symbol4 = putSymbol(table, testString3, Hash(testString3));
+	// printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
 
-    if (symbol3 != NULL && symbol4 != NULL) {
-        if (symbol3->value == Hash(testString2) && (strcmp(symbol3->name, testString2) == 0)) {
-            if (symbol4->value == Hash(testString3) && (strcmp(symbol4->name, testString3) == 0)) {
-                printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly made.\n" ANSI_COLOR_RESET "\n", totaltests);
-                testpassed++;
-            }
-        } else {
-            printf(ANSI_COLOR_RED "Test %i - Symbol creation FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-            printf("Symbol was made but data was wrong");
-            returnvalue = -1;
-        }
-    } else {
-        printf(ANSI_COLOR_RED "Test %i - Symbol creation FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-        returnvalue = -1;
-    }
+	// head = linked_list_insert_head(&list, "Hoved 2");
 
-    printf("Testing scopeSymbolTable function\n");
-    totaltests++;
-    SymbolTable *newTable = scopeSymbolTable(table);
-    if (newTable != NULL) {
-        printf(ANSI_COLOR_GREEN "Test %i - Table constructed PASSED\n" ANSI_COLOR_RESET "\n", totaltests);
-        testpassed++;
-    } else {
-        printf(ANSI_COLOR_RED "Test %i - Table construction FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-        returnvalue = -1;
-    }
+	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
 
-    printf("\n");
-    printf("Testing putsymbol function in new table\n");
-    totaltests++;
-    SYMBOL *symbol5 = putSymbol(newTable, testString, Hash(testString));
-    if (symbol5 != NULL) {
-        if (symbol5->value == Hash(testString) && (strcmp(symbol5->name, testString) == 0)) {
-            printf(ANSI_COLOR_GREEN "Test %i - Symbol correctly made.\n" ANSI_COLOR_RESET "\n", totaltests);
-            testpassed++;
-        } else {
-            printf(ANSI_COLOR_RED "Test %i - Symbol creation FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-            printf("Symbol was made but data was wrong");
-            returnvalue = -1;
-        }
-    } else {
-        printf(ANSI_COLOR_RED "Test %i - Symbol creation FAILED\n" ANSI_COLOR_RESET "\n", totaltests);
-        returnvalue = -1;
-    }
+	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
+	linked_list_insert_tail(list, "Hale 2");
+	linked_list_insert_tail(list, "Hale 3");
+	linked_list_insert_tail(list, "Hale 4");
+	linked_list_insert_tail(list, "Hale 5");
+	linked_list_insert_tail(list, "Hale 6");
+	linked_list_insert_tail(list, "Hale 7");
+	linked_list_insert_tail(list, "Hale 8");
+	linked_list_insert_tail(list, "Hale 9");
 
-    printf("\n \n");
+	// printf("---%s\n", list->meta->head->data);
+	// printf("---%s\n", list->meta->tail->data);
+	
+	// printf("--%s\n", list->data);
+	// printf("--%s\n", list->next->data);
+	// printf("--%s\n", list->next->next->data);
+	// printf("--%s\n", list->next->next->next->data);
+	// printf("--%s\n", list->next->next->next->next->data);
+	// printf("--%s\n", list->next->next->next->next->next->data);
+	
+	// printf("---%s\n", list->next->next->next->next->prev->data);
+	
 
-    printf("Tests PASSED %i\n", testpassed);
-    printf("\n \n");
+	printf("\nLoop start\n");
+	// while(list->next != list->meta->head) {
+	// 	printf("%s\n", list->data);
+	// 	list = list->next;
+	// }
+	// list = head;
+	for(int i = 0; i < 20; ++i) {
+		printf("%s\n\n", list->data);
+		list = list->next;
+	}
 
-    if (totaltests - testpassed != 0) {
-        printf(ANSI_COLOR_RED "test FAILED %i\n" ANSI_COLOR_RESET "\n", totaltests - testpassed);
-    }
+	printf("Length: %i\n\n", list->meta->length);
 
-    dumpSymbolTable(newTable);
-
-    return returnvalue;
+	for(int i = 0; i < list->meta->length; ++i) {
+		printf("GET %i: %s\n\n", i, linked_list_get(list, i)->data);
+	}
+	printf("GET 0: %s\n\n", linked_list_get(list, 0)->data);
+	printf("GET 6: %s\n\n", linked_list_get(list, 6)->data);
 }

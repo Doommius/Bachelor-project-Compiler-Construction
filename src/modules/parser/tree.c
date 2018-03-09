@@ -415,6 +415,7 @@ exp_list *make_ExpL_exp(expression *expression) {
     el->lineno = lineno;
     el->kind = el_EXP;
     el->expression = expression;
+    el->list = NULL;
     return el;
 }
 
@@ -447,13 +448,13 @@ variable *make_Var_exp(variable *var, expression *expression) {
     return v;
 }
 
-variable *make_Var_varid(variable *var, char *id) {
+variable *make_Var_record(variable *var, char *id) {
     variable *v;
     v = NEW(variable);
     v->lineno = lineno;
-    v->kind = var_VID;
-    v->val.varid.var = var;
-    v->val.varid.id = id;
+    v->kind = var_RECORD;
+    v->val.record.var = var;
+    v->val.record.id = id;
     return v;
 }
 

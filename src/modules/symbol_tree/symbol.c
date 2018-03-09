@@ -8,7 +8,7 @@
  * Computes the hash function as seen below.
  *
  */
-int Hash(char *str){
+int hash(char *str){
     unsigned int length;
     length = (unsigned)strlen(str);
 
@@ -30,10 +30,10 @@ int Hash(char *str){
 initSymbolTable returns a pointer to a new initialized hash table (of type
         SymbolTable)
 */
-SymbolTable *initSymbolTable() {
+symbol_table *init_symbol_table() {
 
     int i = 0;
-    SymbolTable *table = Malloc(sizeof(SYMBOL) * HashSize);
+    symbol_table *table = Malloc(sizeof(SYMBOL) * HashSize);
     table->next = NULL;
     while (i < HashSize) {
         table->table[i] = NULL;
@@ -47,8 +47,8 @@ SymbolTable *initSymbolTable() {
  * scopeSymbolTable takes a pointer to a hash table t as argument and returns
  * a new hash table with a pointer to t in its next field.
  */
-SymbolTable *scopeSymbolTable(SymbolTable *t) {
-    SymbolTable *newTable = initSymbolTable();
+symbol_table *scope_symbol_table(symbol_table *t) {
+    symbol_table *newTable = init_symbol_table();
     newTable->next = t;
     return newTable;
 }
@@ -57,11 +57,11 @@ SymbolTable *scopeSymbolTable(SymbolTable *t) {
  * putSymbol takes a hash table and a string, name, as arguments and inserts name into the hash table together with the associated value value. A pointer
  * to the SYMBOL value which stores name is returned.
 */
-SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
+SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st) {
     if (t == NULL) {
         return NULL;
     }
-    SYMBOL *localCheck = checkLocal(t, name);
+    SYMBOL *localCheck = check_local(t, name);
     //Symbol already exists
     if (localCheck != NULL) {
         return localCheck;
@@ -88,13 +88,13 @@ SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
     NULL is returned. If name is found, return a pointer to the SYMBOL value in
     which name is stored
     */
-SYMBOL *getSymbol(SymbolTable *t, char *name) {
+SYMBOL *get_symbol(symbol_table *t, char *name) {
     //    First check if t is null
     if (t == NULL) {
         return NULL;
     }
 
-    SYMBOL *localCheck = checkLocal(t, name);
+    SYMBOL *localCheck = check_local(t, name);
 
     //Symbol in local table?
     if (localCheck != NULL) {
@@ -102,7 +102,7 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
     }
 
     if (t->next != NULL) {
-        getSymbol(t->next, name);
+        get_symbol(t->next, name);
     }
 
     //Symbol does not exists
@@ -115,7 +115,7 @@ SYMBOL *getSymbol(SymbolTable *t, char *name) {
  * Hash tables are printed one at a time. The printing should be formatted in a nice
  * way and is intended to be used for debugging (of other parts of the compiler).
 */
-void dumpSymbolTable(SymbolTable *t) {
+void dump_symbol_table(symbol_table *t) {
     if (t == NULL) {
         return;
     }
@@ -124,20 +124,20 @@ void dumpSymbolTable(SymbolTable *t) {
 
     for (int i = 0; i < HashSize; i++) {
         if (t->table[i] != NULL) {
-            printSymbol(t->table[i]);
+            print_symbol(t->table[i]);
             printf("\n");
         }
     }
     printf("\n");
 
-    dumpSymbolTable(t->next);
+    dump_symbol_table(t->next);
 }
 
 /*
  * Check the current table we are in for a value
  */
-SYMBOL *checkLocal(SymbolTable *t, char *name) {
-    int hashValue = Hash(name);
+SYMBOL *check_local(symbol_table *t, char *name) {
+    int hashValue = hash(name);
 
     SYMBOL *symbol = t->table[hashValue];
     if (symbol == NULL) {
@@ -155,6 +155,6 @@ SYMBOL *checkLocal(SymbolTable *t, char *name) {
     return NULL;
 }
 
-void printSymbol(SYMBOL *symbol) {
+void print_symbol(SYMBOL *symbol) {
     printf("(%s, %i)", symbol->name, symbol->value);
 }

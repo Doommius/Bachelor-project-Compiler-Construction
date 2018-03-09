@@ -228,9 +228,9 @@ void prettyVar(variable *v) {
         printf("]");
         break;
 
-    case var_VID:
-        prettyVar(v->val.varid.var);
-        printf(".%s", v->val.varid.id);
+    case var_RECORD:
+        prettyVar(v->val.record.var);
+        printf(".%s", v->val.record.id);
         break;
     }
 }
