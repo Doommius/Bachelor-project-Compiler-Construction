@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
     if (optind < argc) {
         for (int i = 1; i < argc; ++i) {
             if (files[i] == 0) {
-                if (ends_with(argv[i], ".txt")) {
+                if (ends_with(argv[i], ".src")) {
                     freopen(argv[i], "r", stdin);
                 }
             }
