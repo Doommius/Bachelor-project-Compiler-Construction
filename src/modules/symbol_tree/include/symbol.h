@@ -21,7 +21,7 @@ typedef struct SYMBOL {
     char *name;
     int value;
     struct SYMBOL *next;
-    struct symbol_type *type;
+    struct symbol_type *stype;
 } SYMBOL;
 
 typedef struct symbol_table {

@@ -6,6 +6,7 @@
 
 typedef struct function {
     struct symbol_table*table;
+    struct symbol_type *stype;
     int lineno;
     struct head *head;
     struct body *body;
@@ -15,6 +16,7 @@ typedef struct function {
 
 typedef struct head {
     struct symbol_table*table;
+    struct symbol_type *stype;
     int lineno;
     char *id;
     struct par_decl_list *list;
@@ -31,7 +33,8 @@ typedef struct tail {
 
 typedef struct type {
     struct symbol_table*table;
-    struct symbol_type *type;
+    struct symbol_type *stype;
+    int recursive_type;
     int lineno;
     TYPE_kind kind;
     union {
@@ -107,6 +110,8 @@ typedef struct statement {
     struct symbol_table*table;
     int lineno;
     STATEMENT_kind kind;
+    struct function *function;
+    int contains_ret;
     union {
         struct expression *ret;
         struct expression *wrt;
@@ -138,6 +143,7 @@ typedef struct statement {
 
 typedef struct variable {
     struct symbol_table*table;
+    struct symbol_type *stype;
     int lineno;
     char *id;
     Var_kind kind;
@@ -155,6 +161,7 @@ typedef struct variable {
 
 typedef struct expression {
     struct symbol_table*table;
+    struct symbol_type *stype;
     int lineno;
     EXP_kind kind;
     union {
@@ -170,6 +177,7 @@ typedef struct expression {
 
 typedef struct term {
     struct symbol_table*table;
+    struct symbol_type *stype;
     int lineno;
     TERM_kind kind;
     union {

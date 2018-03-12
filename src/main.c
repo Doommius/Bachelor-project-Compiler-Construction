@@ -78,16 +78,16 @@ int main(int argc, char **argv) {
 
     lineno = 1;
     yyparse();
-    printf("Before weeding:\n");
-    prettyBody(theprogram);
+    
+    weeder_init(theprogram);
+ 
 
-    //weeder(theprogram);
-
-    printf("Starting typechecking\n");
+    printf("\nStarting typechecking\n\n");
     typecheck(theprogram);
 
-    printf("\nAfter weeding:\n");
+    printf("\nAfter typechecking\n\n");
     prettyBody(theprogram);
+
 
     printf("\n");
     return 1;

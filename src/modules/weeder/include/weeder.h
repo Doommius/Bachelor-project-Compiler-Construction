@@ -3,7 +3,9 @@
 
 #include "tree.h"
 
-body *weeder(body *program);
+body *weeder_init(body *program);
+
+body *weeder(body *body);
 
 body *weed_body(body *body);
 

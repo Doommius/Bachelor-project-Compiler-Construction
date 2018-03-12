@@ -12,6 +12,7 @@
 #include "error.h"
 #include "symbol.h"
 #include "setup.h"
+#include "pickup.h"
 
 int typecheck(body *program){
 
@@ -20,6 +21,12 @@ int typecheck(body *program){
 
     printf("Starting Setup\n");
     setup_body(program, table);
+
+    printf("Starting pickup\n");
+    pickup_body(program);
+
+    printf("Starting check\n");
+    check_body(program);
 
     return 0;
 }

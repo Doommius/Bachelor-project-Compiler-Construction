@@ -87,12 +87,12 @@ SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st) {
         return localCheck;
     } else {
         int hashValue = hash(name);
-        printf("Putting symbol with name: %s, value: %d, type: %d, table: %p, hash: %d\n", name, value, st->type, t, hashValue);
+        //pretty("Putting symbol with name: %s, value: %d, type: %d, table: %p, hash: %d\n", name, value, st->type, t, hashValue);
 
         SYMBOL *symbol = Malloc(sizeof(SYMBOL));
         symbol->name = name;
         symbol->value = value;
-        symbol->type = st;
+        symbol->stype = st;
         symbol->next = Malloc(sizeof(SYMBOL));
 
         //Placed in front of the list
@@ -113,9 +113,9 @@ SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st) {
     */
 SYMBOL *get_symbol(symbol_table *t, char *name) {
     //    First check if t is null
-    printf("Getting symbol %s, from table %p\n", name, t);
+    //pretty("Getting symbol %s, from table %p\n", name, t);
     if (t == NULL) {
-        printf("Table is null\n");
+        //pretty("Table is null\n");
         return NULL;
     }
 
@@ -123,16 +123,14 @@ SYMBOL *get_symbol(symbol_table *t, char *name) {
 
     //Symbol in local table?
     if (localCheck != NULL) {
-        printf("Trying local check\n");
+        //pretty("Trying local check, type: %d\n", localCheck->stype->type);
         return localCheck;
     }
 
     if (t->next != NULL) {
-        printf("Checing next\n");
-        get_symbol(t->next, name);
+        //pretty("Checking next\n");
+        return get_symbol(t->next, name);
     }
-
-    dump_symbol_table(t);
 
     //Symbol does not exists
     return NULL;
@@ -170,10 +168,12 @@ SYMBOL *check_local(symbol_table *t, char *name) {
 
     SYMBOL *symbol = t->table[hashValue];
     if (symbol == NULL) {
+        //pretty("Local symbol is null\n");
         return NULL;
     } else {
         while (symbol != NULL) {
             if (strcmp(name, symbol->name) == 0) {
+                //pretty("Compared %s and %s, success\n", name, symbol->name);
                 return symbol;
             }
             symbol = symbol->next;
