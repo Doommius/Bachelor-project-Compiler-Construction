@@ -16,3 +16,9 @@ lex.yy.c
 tests/exp
 .vscode
 y.output
+
+# checkwrap
+# execwrap
+# gccwrap
+# check.py
+# checkdir.py
