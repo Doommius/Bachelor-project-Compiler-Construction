@@ -1,14 +1,9 @@
 # Typecheck and code generation, returning records from functions
 
-func a(x : int, y : int) : recordType
-  var p2 : recordType;
-  allocate p2;
-  p2.x = x;
-  p2.y = y;
-  return p2;
-end a
 
-if (false && true) then 
+if (false) then 
 write 2;
+else
+write 1;
 
 
