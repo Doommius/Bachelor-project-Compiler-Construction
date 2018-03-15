@@ -7,6 +7,7 @@
  */
 
 #include <string.h>
+#include "tree.h"
 #include "linked_list.h"
 #include "tree.h"
 #include "code.h"
@@ -18,7 +19,13 @@ void code_or_expression(linked_list *list, expression *e) {
     linked_list_insert_tail(list, new_asm_node(e->lineno, pop, "%ecx", "", "", "pop e1 from the stack into ecx"));
     linked_list_insert_tail(list, new_asm_node(e->lineno, orl, "%ecx", "%eax", "", "compute e1 | e2, set ZF"));
     linked_list_insert_tail(list, new_asm_node(e->lineno, movl, "$0", "%eax", "", "zero out EAX without changing ZF"));
-    linked_list_insert_tail(list, new_asm_node(e->lineno, setne, "%al", "", "", "set AL register (the lower byte of EAX) to 1 iff e1 | e2 != 0"));
+    linked_list_insert_tail(list,
+                            new_asm_node(e->lineno,
+                                         setne,
+                                         "%al",
+                                         "",
+                                         "",
+                                         "set AL register (the lower byte of EAX) to 1 iff e1 | e2 != 0"));
 
     return;
 }
@@ -33,7 +40,8 @@ void code_and_expression(linked_list *list, expression *e) {
     linked_list_insert_tail(list, new_asm_node(e->lineno, setne, "%cl", "", "", "set CL to 1 iff e1 != 0"));
     //; Step 2: SET AL = 1 iff e2 != 0")); //TODO DEBUG
     linked_list_insert_tail(list, new_asm_node(e->lineno, cmpl, "$0", "%eax", "", "compare e2 to 0"));
-    linked_list_insert_tail(list, new_asm_node(e->lineno, movl, "$0", "%eax", "", "zero EAX register before storing result"));
+    linked_list_insert_tail(list,
+                            new_asm_node(e->lineno, movl, "$0", "%eax", "", "zero EAX register before storing result"));
     linked_list_insert_tail(list, new_asm_node(e->lineno, setne, "%al", "", "", "set AL to 1 iff e2 != 0"));
     //; Step 3: compute al & cl")); //TODO Debug
     linked_list_insert_tail(list, new_asm_node(e->lineno, andb, "%cl", "%al", "", "store AL & CL in AL"));
@@ -41,15 +49,16 @@ void code_and_expression(linked_list *list, expression *e) {
 }
 
 //todo
-void code_general_statement(linked_list *list, expression *e, ASM_kind kind) {
-    eval_expression(list,e->val.ops.left);
+void code_general_expression(linked_list *list, expression *e, ASM_kind kind) {
+    eval_expression(list, e->val.ops.left);
 
     linked_list_insert_tail(list, new_asm_node(e->lineno, push, "%eax", "", "", "save value of e1 on the stack"));
-    eval_expression(list,e->val.ops.right);
+    eval_expression(list, e->val.ops.right);
     linked_list_insert_tail(list, new_asm_node(e->lineno, pop, "%ecx", "", "", "pop e1 from the stack into ecx"));
     linked_list_insert_tail(list, new_asm_node(e->lineno, cmp, "ecx", "eax", "", "values are now at EAX and ECX"));
     linked_list_insert_tail(list, new_asm_node(e->lineno, cmp, "ecx", "eax", "", "values are now at EAX and ECX"));
-    linked_list_insert_tail(list, new_asm_node(e->lineno, kind, "lable", "eax", "", "Jump to flag if expression is true"));
+    linked_list_insert_tail(list,
+                            new_asm_node(e->lineno, kind, "lable", "eax", "", "Jump to flag if expression is true"));
     return;
 }
 //
@@ -114,33 +123,90 @@ void code_general_statement(linked_list *list, expression *e, ASM_kind kind) {
 //}
 
 //TODO Lots
+
+void code_plus_expression(linked_list *list, expression *e) {
+
+    eval_expression(list, e->val.ops.left);
+
+    linked_list_insert_tail(list, new_asm_node(e->lineno, push, "eax", "", "", "save value of e1 on the stack"));
+    eval_expression(list, e->val.ops.right);
+    linked_list_insert_tail(list, new_asm_node(e->lineno, pop, "ecx", "", "", "pop e1 from the stack into ecx"));
+    linked_list_insert_tail(list, new_asm_node(e->lineno, add, "ecx", "eax", "", "add ECX and EAX are store result at EAX"));
+
+}
+
+void code_sub_expression(linked_list *list, expression *e) {
+
+    eval_expression(list, e->val.ops.left);
+
+    linked_list_insert_tail(list, new_asm_node(e->lineno, push, "eax", "", "", "save value of e1 on the stack"));
+    eval_expression(list, e->val.ops.right);
+    linked_list_insert_tail(list, new_asm_node(e->lineno, pop, "ecx", "", "", "pop e1 from the stack into ecx"));
+    linked_list_insert_tail(list, new_asm_node(e->lineno, sub, "ecx", "eax", "", "add ECX and EAX are store result at EAX"));
+
+}
+
+
+void code_div_expression(linked_list *list, expression *e) {
+
+    eval_expression(list, e->val.ops.left);
+
+    linked_list_insert_tail(list, new_asm_node(e->lineno, push, "eax", "", "", "save value of e1 on the stack"));
+    eval_expression(list, e->val.ops.right);
+    linked_list_insert_tail(list, new_asm_node(e->lineno, pop, "ecx", "", "", "pop e1 from the stack into ecx"));
+    //linked_list_insert_tail(list, new_asm_node(e->lineno, div, "ecx", "eax", "", "add ECX and EAX are store result at EAX"));
+
+}
+
+void code_mul_expression(linked_list *list, expression *e) {
+
+    eval_expression(list, e->val.ops.left);
+
+    linked_list_insert_tail(list, new_asm_node(e->lineno, push, "eax", "", "", "save value of e1 on the stack"));
+    eval_expression(list, e->val.ops.right);
+    linked_list_insert_tail(list, new_asm_node(e->lineno, pop, "ecx", "", "", "pop e1 from the stack into ecx"));
+    linked_list_insert_tail(list, new_asm_node(e->lineno, mul, "ecx", "eax", "", "add ECX and EAX are store result at EAX"));
+
+}
+
+void code_term_expression(linked_list *list, expression *e) {
+    e->val;
+
+}
+
+
+void code_term_expression(linked_list *pList, expression *pExpression);
 void eval_expression(linked_list *list, expression *e) {
     switch (e->kind) {
     case exp_PLUS:
+        code_plus_expression(list, e);
         break;
     case exp_MIN:
+        code_sub_expression(list, e);
         break;
     case exp_MULT:
+        code_mul_expression(list, e);
         break;
     case exp_DIV:
+        code_div_expression(list,e);
         break;
     case exp_EQ:
-        code_general_statement(list,e, je);
+        code_general_expression(list, e, je);
         break;
     case exp_NEQ:
-        code_general_statement(list,e, jne);
+        code_general_expression(list, e, jne);
         break;
     case exp_GT:
-        code_general_statement(list,e, jg);
+        code_general_expression(list, e, jg);
         break;
     case exp_LT:
-        code_general_statement(list,e, jl);
+        code_general_expression(list, e, jl);
         break;
     case exp_GEQ:
-        code_general_statement(list,e, jge);
+        code_general_expression(list, e, jge);
         break;
     case exp_LEQ:
-        code_general_statement(list,e, jle);
+        code_general_expression(list, e, jle);
         break;
     case exp_AND:
         code_and_expression(list, e);
@@ -149,10 +215,38 @@ void eval_expression(linked_list *list, expression *e) {
         code_or_expression(list, e);
         break;
     case exp_TERM:
+        eval_term(list, e->val.term);
+
         break;
     }
     return;
 }
+
+//TODO Lots
+void eval_term(linked_list *list, term *t) {
+
+    switch (t->kind) {
+    case term_VAR:break;
+    case term_LIST:break;
+    case term_PAR:break;
+    case term_NOT:break;
+    case term_ABS:break;
+    case term_NUM:
+        linked_list_insert_tail(list, new_asm_node(t->lineno, mov, "BYTE","1", "eax",  "setting eax to True"));
+        break;
+    case term_TRUE:
+        linked_list_insert_tail(list, new_asm_node(t->lineno, mov, "BYTE","1", "eax",  "setting eax to True"));
+        break;
+    case term_FALSE:
+        linked_list_insert_tail(list, new_asm_node(t->lineno, mov, "BYTE","0", "eax",  "setting eax to False"));
+        break;
+    case term_NULL:
+        linked_list_insert_tail(list, new_asm_node(t->lineno, mov, "\0", "eax", "", "setting eax to null"));
+        break;
+    }
+    return;
+}
+
 
 //TODO Lots
 void eval_statement(linked_list *list, statement *s) {

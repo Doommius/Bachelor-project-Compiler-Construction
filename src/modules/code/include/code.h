@@ -14,7 +14,9 @@ void code_or_expression(linked_list *list,expression *e);
 
 void code_and_expression(linked_list *list,expression *e);
 
-void code_general_expression(linked_list *list,expression *e);
+void code_general_expression(linked_list *list, expression *e, ASM_kind kind);
+
+void code_plus_expression(linked_list *list, expression *e);
 
 linked_list *buildcode(statement_list input);
 

@@ -414,6 +414,7 @@ void prettyTerm(term *t) {
 
     if (types){
         //printf("\nCalling printStype in term");
+		// Haps
         printf(" : ");
         prettyStype(t->stype, t->lineno);
     }
