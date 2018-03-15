@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "debug.h"
 #include "tree.h"
 #include "check.h"
 #include "memory.h"
@@ -70,7 +71,9 @@ void check_stmt(statement *stmt){
 
         case (statement_ALLOCATE):
             check_var(stmt->val.allocate.variable);
+#ifdef debugflag
             printf("Allocating type: %d\n", stmt->val.allocate.variable->stype->type);
+#endif
             if ( (stmt->val.allocate.variable->stype->type != symbol_ARRAY) && (stmt->val.allocate.variable->stype->type != symbol_RECORD)){
                 print_error("Wrong allocate type", 0, stmt->lineno);
             }
@@ -186,9 +189,13 @@ void check_exp(expression *exp){
         case (exp_MIN):
         case (exp_MULT):        // Subject ot change, could be made to work with strings, f.x. "Hi"*2 could be: "HiHi"
         case (exp_DIV):
+#ifdef debugflag
             printf("Checking left expression, Arithmetic\n");
+#endif
             check_exp(exp->val.ops.left);
+#ifdef debugflag
             printf("Checking right expression, Arithmetic\n");
+#endif
             check_exp(exp->val.ops.right);
             if (exp->val.ops.left->stype->type == symbol_INT && exp->val.ops.right->stype->type == symbol_INT){
 
@@ -203,14 +210,20 @@ void check_exp(expression *exp){
         
         case (exp_EQ):
         case (exp_NEQ):
+#ifdef debugflag
             printf("Checking left expression, EQ/NEQ\n");
+#endif
             check_exp(exp->val.ops.left);
+#ifdef debugflag
             printf("Checking right expression, EQ/NEQ\n");
+#endif
             check_exp(exp->val.ops.right);
 
             // Should check stype->type->val.func_type.ret_type if comparing a function
             if ((exp->val.ops.left->stype->type == symbol_RECORD) && (exp->val.ops.right->stype->type == symbol_NULL)){
+#ifdef debugflag
                 printf("Left type is record, and right type is NULL\n");
+#endif
                 st = NEW(symbol_type);
                 st->type = symbol_BOOL;
                 exp->stype = st;
@@ -218,16 +231,21 @@ void check_exp(expression *exp){
             }
 
             if ((exp->val.ops.left->stype->type == symbol_NULL) && (exp->val.ops.right->stype->type == symbol_RECORD)){
+#ifdef debugflag
                 printf("Left type is NULL, and right type is record\n");
+#endif
                 st = NEW(symbol_type);
                 st->type = symbol_BOOL;
                 exp->stype = st;
                 break;
             }
-            
+#ifdef debugflag
             printf("Left sides type: %d, Right sides type: %d\n", exp->val.ops.left->stype->type, exp->val.ops.right->stype->type);
+#endif
             if (exp->val.ops.left->stype->type == exp->val.ops.right->stype->type){
+#ifdef debugflag
                 printf("Checked if type is the same\n");
+#endif
                 st = NEW(symbol_type);
                 st->type = symbol_BOOL;
                 exp->stype = st;
@@ -241,9 +259,13 @@ void check_exp(expression *exp){
         case (exp_LEQ):
         case (exp_LT):
         case (exp_GT):
+#ifdef debugflag
             printf("Checking left expression, GEQ/LEQ/LT/GT\n");
+#endif
             check_exp(exp->val.ops.left);
+#ifdef debugflag
             printf("Checking right expression, GEQ/LEQ/LT/GT\n");
+#endif
             check_exp(exp->val.ops.right);
             if (exp->val.ops.left->stype->type == symbol_INT && exp->val.ops.right->stype->type == symbol_INT){
 
@@ -258,9 +280,13 @@ void check_exp(expression *exp){
 
         case (exp_AND):
         case (exp_OR):
+#ifdef debugflag
             printf("Checking left expression, AND/OR\n");
+#endif
             check_exp(exp->val.ops.left);
+#ifdef debugflag
             printf("Checking right expression, AND/OR\n");
+#endif
             check_exp(exp->val.ops.right);
 
             if (exp->val.ops.left->stype->type == symbol_BOOL && exp->val.ops.right->stype->type == symbol_BOOL){
@@ -296,8 +322,9 @@ void check_term(term *term){
         case (term_VAR):
             check_var(term->val.variable);
             term->stype = term->val.variable->stype;
-
+#ifdef debugflag
             printf("Term type: %d\n", term->stype->type);
+#endif
             break;
 
         case (term_LIST):
@@ -326,7 +353,9 @@ void check_term(term *term){
 
         case (term_ABS):
             check_exp(term->val.expression);
+#ifdef debugflag
             printf("Type of expression: %d\n", term->val.expression->stype->type);
+#endif
             if ((term->val.expression->stype->type != symbol_INT) && (term->val.expression->stype->type != symbol_ARRAY)){
                 print_error("Absolute value must be used on integer or array", 0 , term->lineno);
             }
@@ -385,7 +414,9 @@ int check_function_args(par_decl_list *pdl, act_list *alist){
     struct symbol_type *st2;
 
     if (pdl->kind == pdl_EMPTY){
+#ifdef debugflag
         printf("PDL is empty\n");
+#endif
         if (alist->kind == al_EMPTY){
             return 1;
         } else {
@@ -406,8 +437,9 @@ int check_function_args(par_decl_list *pdl, act_list *alist){
 
         st1 = temp->stype;
         st2 = elist->expression->stype;
-
+#ifdef debugflag
         printf("ST1s type: %d, ST2s type: %d\n", st1->type, st2->type);
+#endif
 
         if (!compare_stype(st1, st2)){
             print_error("Function argument type mismatch", 0, alist->lineno);
@@ -427,12 +459,16 @@ int check_function_args(par_decl_list *pdl, act_list *alist){
 int compare_stype(symbol_type *stype1, symbol_type *stype2){
 
     if (stype1 == NULL || stype2 == NULL){
+#ifdef debugflag
         printf("Both NULL, return 0\n");
+#endif
         return 0;
     }
 
     if (stype1->type == stype2->type){
+#ifdef debugflag
         printf("Both equal, return 1\n");
+#endif
         return 1;
     }
 
@@ -443,8 +479,9 @@ int compare_stype(symbol_type *stype1, symbol_type *stype2){
     if (stype1->type == symbol_RECORD && stype2->type == symbol_RECORD){
         return compare_record(stype1, stype2);
     }
-
+#ifdef debugflag
     printf("Not equal, return 0\n");
+#endif
 
     return 0;
 

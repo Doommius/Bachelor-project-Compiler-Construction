@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <getopt.h>
+#include "debug.h"
 
 #include "main.h"
 #include "auxiliary.h"
@@ -82,12 +83,14 @@ int main(int argc, char **argv) {
     weeder_init(theprogram);
     // types = 0;
     // prettyProgram(theprogram);
- 
 
+#ifdef debugflag
     printf("\nStarting typechecking\n\n");
+#endif
     typecheck(theprogram);
-
+#ifdef debugflag
     printf("\nAfter typechecking\n\n");
+#endif
     types = 1;
     prettyProgram(theprogram);
 
