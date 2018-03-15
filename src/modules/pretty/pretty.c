@@ -14,10 +14,12 @@
 int indent_depth;
 int exp_depth;
 int types;
+int inside_par;
 
 void prettyProgram(body *body){
     indent_depth = 0;
     exp_depth = 0;
+    inside_par = 0;
     prettyBody(body);
 }
 
@@ -259,7 +261,12 @@ void prettyVar(variable *v) {
 void prettyEXP(expression *e) {
     exp_depth++;
 
-    if(exp_depth > 1){
+    if (e->kind == exp_TERM){
+        prettyTerm(e->val.term);
+        return;
+    }
+
+    if(exp_depth > 1 && inside_par == 0){
         printf("(");
     }
     switch (e->kind) {
@@ -336,13 +343,10 @@ void prettyEXP(expression *e) {
         prettyEXP(e->val.ops.right);
         break;
 
-    case exp_TERM:
-        prettyTerm(e->val.term);
-        break;
-
     }
-    if(exp_depth > 1){
+    if(exp_depth > 1 && inside_par == 0){
         printf(")");
+        
     }
     exp_depth--;
 
@@ -368,9 +372,16 @@ void prettyTerm(term *t) {
         break;
 
     case term_PAR:
-        printf("(");
+        if (exp_depth > 1){
+            printf("(");
+        }
+        inside_par = 1;
         prettyEXP(t->val.expression);
-        printf(")");
+        inside_par = 0;
+
+        if (exp_depth > 1){
+            printf("(");
+        }
         break;
 
     case term_NOT:
@@ -401,12 +412,12 @@ void prettyTerm(term *t) {
         break;
     }
 
-    // if (types){
-    //     //printf("\nCalling printStype in term");
-	// 	// Haps
-    //     printf(" : ");
-    //     prettyStype(t->stype, t->lineno);
-    // }
+    if (types){
+        //printf("\nCalling printStype in term");
+		// Haps
+        printf(" : ");
+        prettyStype(t->stype, t->lineno);
+    }
     
 }
 

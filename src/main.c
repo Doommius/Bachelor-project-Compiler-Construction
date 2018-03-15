@@ -80,6 +80,8 @@ int main(int argc, char **argv) {
     yyparse();
     
     weeder_init(theprogram);
+    // types = 0;
+    // prettyProgram(theprogram);
  
 
     printf("\nStarting typechecking\n\n");
