@@ -1,3 +1,10 @@
+/**
+ * @brief Compiler program.
+ * 
+ * @file main.c
+ * @author Morten Jæger, Mark Jervelund & Troels Blicher Petersen
+ * @date 2018-03-09
+ */
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,31 +35,6 @@ int main(int argc, char **argv) {
     opterr = 0;
 
     int files[argc];
-    /*
-    //    char str[100]; // make sure that this size is enough to hold the single line
-    int no_line = 1;
-
-    symbol_table*table = initSymbolTable();
-    //    char str[100]; // make sure that this size is enough to hold the single line
-    char buf[100];
-    do {
-        fgets(buf, sizeof buf, stdin);
-        if (buf[strlen(buf) - 1] == '\n') {
-            char *str;
-            str = malloc((strlen(buf) - 1));
-            strcpy(str, buf);
-            str[strlen(buf) - 1] = 0;
-            SYMBOL *symbol = putSymbol(table, str, Hash(str));
-        } else {
-            break;
-        }
-    } while (buf != "\0");
-
-    dumpSymbolTable(table);
-		for(int i = 0; i < argc; ++i) {
-		printf("%s\n", argv[i]);
-	}
-*/
 
     while ((c = getopt(argc, argv, "hc:")) != -1) {
         switch (c) {
@@ -96,16 +78,19 @@ int main(int argc, char **argv) {
 
     lineno = 1;
     yyparse();
-    printf("Before weeding:\n");
-    prettyBody(theprogram);
+    
+    weeder_init(theprogram);
+    // types = 0;
+    // prettyProgram(theprogram);
+ 
 
-    //weeder(theprogram);
-
-    printf("Starting typechecking\n");
+    printf("\nStarting typechecking\n\n");
     typecheck(theprogram);
 
-    printf("\nAfter weeding:\n");
-    prettyBody(theprogram);
+    printf("\nAfter typechecking\n\n");
+    types = 1;
+    prettyProgram(theprogram);
+
 
     printf("\n");
     return 1;

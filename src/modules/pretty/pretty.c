@@ -1,9 +1,27 @@
+/**
+ * @brief 
+ * 
+ * @file pretty.c
+ * @author Morten Jæger, Mark Jervelund & Troels Blicher Petersen
+ * @date 2018-03-09
+ */
 #include <stdio.h>
 #include "pretty.h"
 #include "tree.h"
+#include "symbol.h"
+#include "error.h"
 
 int indent_depth;
 int exp_depth;
+int types;
+int inside_par;
+
+void prettyProgram(body *body){
+    indent_depth = 0;
+    exp_depth = 0;
+    inside_par = 0;
+    prettyBody(body);
+}
 
 void prettyFunc(function *f) {
     prettyHead(f->head);
@@ -23,13 +41,20 @@ void prettyHead(head *h) {
 
 void prettyTail(tail *t) {
     indent();
-    printf("end %s\n", t->id);
+    printf("end %s", t->id);
+    if(types){
+        prettySymbol(t->table, t->id, t->lineno);
+    }
+    printf("\n");
 }
 
 void prettyType(type *t) {
     switch (t->kind) {
     case type_ID:
         printf("%s", t->val.id);
+        if (types){
+            prettyStype(t->stype, t->lineno);
+        }
         break;
 
     case type_INT:
@@ -41,38 +66,36 @@ void prettyType(type *t) {
         break;
 
     case type_ARRAY:
-        printf("array of");
+        printf("array of ");
+        prettyType(t->val.type);
         break;
 
     case type_RECORD:
-        printf("record of");
+        printf("record of { ");
         prettyVDL(t->val.list);
+        printf(" }");
         break;
     }
 }
 
 void prettyPDL(par_decl_list *pdl) {
-    switch (pdl->kind) {
-    case pdl_LIST:
-        prettyVDL(pdl->list);
-        break;
 
-    case pdl_EMPTY:
-        break;
+    if (pdl->kind == pdl_LIST){
+        prettyVDL(pdl->list);
     }
 }
 
 void prettyVDL(var_decl_list *vdl) {
     switch (vdl->kind) {
-    case vdl_LIST:
-        prettyVT(vdl->vartype);
-        printf(",");
-        prettyVDL(vdl->list);
-        break;
+        case vdl_LIST:
+            prettyVT(vdl->vartype);
+            printf(", ");
+            prettyVDL(vdl->list);
+            break;
 
-    case vdl_TYPE:
-        prettyVT(vdl->vartype);
-        break;
+        case vdl_TYPE:
+            prettyVT(vdl->vartype);
+            break;
     }
 }
 
@@ -236,6 +259,16 @@ void prettyVar(variable *v) {
 }
 
 void prettyEXP(expression *e) {
+    exp_depth++;
+
+    if (e->kind == exp_TERM){
+        prettyTerm(e->val.term);
+        return;
+    }
+
+    if(exp_depth > 1 && inside_par == 0){
+        printf("(");
+    }
     switch (e->kind) {
 
     case exp_MULT:
@@ -310,11 +343,19 @@ void prettyEXP(expression *e) {
         prettyEXP(e->val.ops.right);
         break;
 
-    case exp_TERM:
-        prettyTerm(e->val.term);
-        break;
-
     }
+    if(exp_depth > 1 && inside_par == 0){
+        printf(")");
+        
+    }
+    exp_depth--;
+
+    if (types){
+       // printf("\nCalling printStype in expression");
+        printf( " : ");
+        prettyStype(e->stype, e->lineno);
+    }
+   
 }
 
 void prettyTerm(term *t) {
@@ -331,9 +372,16 @@ void prettyTerm(term *t) {
         break;
 
     case term_PAR:
-        printf("(");
+        if (exp_depth > 1){
+            printf("(");
+        }
+        inside_par = 1;
         prettyEXP(t->val.expression);
-        printf(")");
+        inside_par = 0;
+
+        if (exp_depth > 1){
+            printf("(");
+        }
         break;
 
     case term_NOT:
@@ -363,6 +411,13 @@ void prettyTerm(term *t) {
         printf("%i", t->val.num);
         break;
     }
+
+    if (types){
+        //printf("\nCalling printStype in term");
+        printf(" : ");
+        prettyStype(t->stype, t->lineno);
+    }
+    
 }
 
 void prettyAL(act_list *al) {
@@ -399,4 +454,69 @@ void indent() {
         printf(" ");
         spaces++;
     }
+}
+
+void prettySymbol(symbol_table *table, char *id, int line){
+
+    SYMBOL *s;
+    s = get_symbol(table, id);
+    if (s == NULL || s->stype == NULL){
+        print_error("Symbol is not recognized", 0, line);
+    }
+    printf(" : ");
+    prettyStype(s->stype, line);
+}
+
+void prettyStype(symbol_type *stype, int line){
+   // printf("\nPrintSType of type: %d: ", stype->type);
+    if (stype->printed){
+        return;
+    }
+    stype->printed = 1;
+    switch(stype->type){
+
+        case (symbol_ID):
+            prettyType(stype->val.id_type);
+            break;
+
+        case (symbol_INT):
+            printf("int");
+            break;
+
+        case (symbol_BOOL):
+            printf("boolean");
+            break;
+
+        case (symbol_RECORD):
+            printf("record of {");
+            prettyVDL(stype->val.record_type);
+            printf("}");
+            break;
+
+        case (symbol_ARRAY):
+            printf("array[");
+            prettyStype(stype->val.array_type->stype, line);
+            printf("]");
+            break;
+
+        case (symbol_FUNCTION):
+            printf("function(");
+            prettyPDL(stype->val.func_type.pdl);
+            printf(") : ");
+            prettyStype(stype->val.func_type.ret_type->stype, line);
+            break;
+        
+        case (symbol_NULL):
+            printf("NULL");
+            break;
+
+        // Should never happen
+        case (symbol_UNKNOWN):
+            printf("unknown");
+            print_error("Unknown symbol type", 0, line);
+            break;
+
+    }
+    stype->printed = 0;
+
 }

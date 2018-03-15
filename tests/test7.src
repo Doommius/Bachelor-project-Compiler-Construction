@@ -1,0 +1,4 @@
+var a = record of {x: int}
+var b = record of {x: int}
+
+if(a == b) then write 1; else write 2;

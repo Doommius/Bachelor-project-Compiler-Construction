@@ -1,3 +1,10 @@
+/**
+ * @brief 
+ * 
+ * @file tree.c
+ * @author Morten Jæger, Mark Jervelund & Troels Blicher Petersen
+ * @date 2018-03-09
+ */
 #include "memory.h"
 #include "tree.h"
 #include <stdio.h>

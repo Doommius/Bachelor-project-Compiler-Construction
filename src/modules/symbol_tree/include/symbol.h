@@ -21,7 +21,7 @@ typedef struct SYMBOL {
     char *name;
     int value;
     struct SYMBOL *next;
-    struct symbol_type *type;
+    struct symbol_type *stype;
 } SYMBOL;
 
 typedef struct symbol_table {
@@ -42,6 +42,7 @@ typedef struct symbol_type {
             struct function *func;
         } func_type;
     } val;
+    int printed;
 } symbol_type;
 
 int hash(char *str);

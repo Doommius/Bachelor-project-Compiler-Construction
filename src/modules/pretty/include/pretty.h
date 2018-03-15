@@ -3,6 +3,10 @@
 
 #include "tree.h"
 
+extern int types;
+
+void prettyProgram(body *body);
+
 void prettyFunc(function *f);
 
 void prettyHead(head *h);
@@ -38,5 +42,9 @@ void prettyAL(act_list *al);
 void prettyEL(exp_list *el);
 
 void indent();
+
+void prettySymbol(symbol_table *table, char *id, int line);
+
+void prettyStype(symbol_type *stype, int line); 
 
 #endif
