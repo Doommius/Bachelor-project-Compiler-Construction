@@ -47,7 +47,10 @@ void check_slist(statement_list *slist){
 }
 
 void check_stmt(statement *stmt){
+#ifdef debugflag
     printf("Checking statement, kind: %d\n", stmt->kind);
+#endif
+
     
     switch(stmt->kind){
 
@@ -129,7 +132,9 @@ void check_stmt(statement *stmt){
 }
 
 void check_var(variable *var){
+#ifdef debugflag
     printf("Checking variable, kind: %d\n", var->kind);
+#endif
 
     SYMBOL *s;
     switch (var->kind){
@@ -170,8 +175,9 @@ void check_var(variable *var){
 }
 
 void check_exp(expression *exp){
-
+#ifdef debugflag
     printf("Checking expression, kind %d\n", exp->kind);
+#endif
     symbol_type *st;
 
     switch(exp->kind){
@@ -278,7 +284,9 @@ void check_exp(expression *exp){
 }
 
 void check_term(term *term){
+#ifdef debugflag
     printf("Checking term, kind: %d\n", term->kind);
+#endif
 
     SYMBOL *s;
     symbol_type *st;
