@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "debug.h"
-#include <include/check.h>
+#include <check.h>
 #include "typechecker.h"
 #include "error.h"
 #include "symbol.h"

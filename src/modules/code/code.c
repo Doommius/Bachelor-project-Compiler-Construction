@@ -7,7 +7,7 @@
  */
 
 #include <string.h>
-#include <include/tree.h>
+#include <tree.h>
 #include "linked_list.h"
 #include "tree.h"
 #include "code.h"
