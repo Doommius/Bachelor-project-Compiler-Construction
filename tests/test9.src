@@ -1,0 +1,11 @@
+# Parsing and code generation of expressions, associativity
+func test(n: int): int
+	var n : int;
+	n = 1;
+   if n >= 0 || true then
+      return -1;
+   else
+      return n;
+end test
+
+write test(1);
