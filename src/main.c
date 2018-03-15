@@ -81,17 +81,10 @@ int main(int argc, char **argv) {
     yyparse();
     
     weeder_init(theprogram);
-<<<<<<< HEAD
-     types = 0;
-    prettyProgram(theprogram);
- 
-/*
-=======
     // types = 0;
     // prettyProgram(theprogram);
 
 #ifdef debugflag
->>>>>>> 235e2bf80a0aa288b7cb868ba372805629726ac1
     printf("\nStarting typechecking\n\n");
 #endif
     typecheck(theprogram);
