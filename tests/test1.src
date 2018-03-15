@@ -3,5 +3,5 @@ func test(n: int, a:int): int
    return 2;
 end test
 
-write test();
+write test(2,2);
 

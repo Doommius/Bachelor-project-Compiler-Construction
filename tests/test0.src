@@ -1,21 +1,10 @@
 # Test of lazy OR operator
 # If the OR operator is lazy, the test will terminate
+
 func c () : bool
   var d : int;
   d = 0;
-  (*
-  while ( !b ) do
-  {
-    d = d + 1;
-    b = false;
-  }*)
+ 
   b = false;
   return true;
 end c
-
-var b : int;
-
-b = 5*3;
-
-if (true || false) then write 0;
-

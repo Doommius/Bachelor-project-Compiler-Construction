@@ -401,11 +401,12 @@ void prettyTerm(term *t) {
         break;
     }
 
-    if (types){
-        //printf("\nCalling printStype in term");
-        printf(" : ");
-        prettyStype(t->stype, t->lineno);
-    }
+    // if (types){
+    //     //printf("\nCalling printStype in term");
+	// 	// Haps
+    //     printf(" : ");
+    //     prettyStype(t->stype, t->lineno);
+    // }
     
 }
 
