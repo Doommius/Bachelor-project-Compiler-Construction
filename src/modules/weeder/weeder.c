@@ -46,7 +46,6 @@ body *weed_body(body *body){
 }
 
 function *weed_function(function *func){
-    ////printf("Weeding function\n");
     stack_push(function_stack, func);
 
     func->body = weed_body(func->body);
@@ -153,7 +152,7 @@ declaration *weed_decl(declaration *decl){
 }
 
 statement_list *weed_slist(statement_list *slist){
-    printf("Weeding slist\n");
+    //printf("Weeding slist\n");
 
     if (slist == NULL){
         return NULL;
@@ -175,7 +174,7 @@ statement_list *weed_slist(statement_list *slist){
 }
 
 statement *weed_stmt(statement *stmt){
-    printf("Weeding statement, kind: %d\n", stmt->kind);
+    //printf("Weeding statement, kind: %d\n", stmt->kind);
 
     struct function *f;
 
@@ -313,7 +312,7 @@ variable *weed_variable(variable *variable){
 }
 
 expression *weed_expression(expression *expression){
-    printf("Weeding expression, kind: %d\n", expression->kind);
+    //printf("Weeding expression, kind: %d\n", expression->kind);
 
     struct expression *left_exp;
     struct expression *right_exp;
@@ -326,9 +325,9 @@ expression *weed_expression(expression *expression){
 
 
     if (expression->kind == exp_TERM){
-        printf("Weeding single term of kind: %d, expression kind: %d\n", expression->val.term->kind, expression->kind);
+        //printf("Weeding single term of kind: %d, expression kind: %d\n", expression->val.term->kind, expression->kind);
         expression->val.term = weed_term(expression->val.term);
-        printf("New term kind: %d\n", expression->val.term->kind);
+        //printf("New term kind: %d\n", expression->val.term->kind);
         return expression;
     }
 
@@ -501,14 +500,14 @@ expression *weed_expression(expression *expression){
         //printf("Reduced something\n");
         expression->kind = exp_TERM;
         expression->val.term = temp;
-        printf("Done with expression, new kind: %d\n", expression->val.term->kind);
+        //printf("Done with expression, new kind: %d\n", expression->val.term->kind);
     }
 
     return expression;
 }
 
 term *weed_term(term *term){
-    printf("Weeding term, kind: %d\n", term->kind);
+    //printf("Weeding term, kind: %d\n", term->kind);
     struct expression *e;
 
     switch(term->kind){

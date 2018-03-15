@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
 #endif
     types = 1;
     prettyProgram(theprogram);
-*/
+
 
     printf("\n");
     return 1;
