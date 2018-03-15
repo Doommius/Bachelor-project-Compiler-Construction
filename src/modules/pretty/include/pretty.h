@@ -3,6 +3,10 @@
 
 #include "tree.h"
 
+extern int types;
+
+void prettyProgram(body *body);
+
 void prettyFunc(function *f);
 
 void prettyHead(head *h);

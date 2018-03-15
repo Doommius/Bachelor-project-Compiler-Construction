@@ -42,6 +42,7 @@ typedef struct symbol_type {
             struct function *func;
         } func_type;
     } val;
+    int printed;
 } symbol_type;
 
 int hash(char *str);

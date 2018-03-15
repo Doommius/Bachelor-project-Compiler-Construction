@@ -203,6 +203,22 @@ void check_exp(expression *exp){
             check_exp(exp->val.ops.right);
 
             // Should check stype->type->val.func_type.ret_type if comparing a function
+            if ((exp->val.ops.left->stype->type == symbol_RECORD) && (exp->val.ops.right->stype->type == symbol_NULL)){
+                printf("Left type is record, and right type is NULL\n");
+                st = NEW(symbol_type);
+                st->type = symbol_BOOL;
+                exp->stype = st;
+                break;
+            }
+
+            if ((exp->val.ops.left->stype->type == symbol_NULL) && (exp->val.ops.right->stype->type == symbol_RECORD)){
+                printf("Left type is NULL, and right type is record\n");
+                st = NEW(symbol_type);
+                st->type = symbol_BOOL;
+                exp->stype = st;
+                break;
+            }
+            
             printf("Left sides type: %d, Right sides type: %d\n", exp->val.ops.left->stype->type, exp->val.ops.right->stype->type);
             if (exp->val.ops.left->stype->type == exp->val.ops.right->stype->type){
                 printf("Checked if type is the same\n");
@@ -302,7 +318,8 @@ void check_term(term *term){
 
         case (term_ABS):
             check_exp(term->val.expression);
-            if ((term->val.expression->stype->type != symbol_INT) ||(term->val.expression->stype->type != symbol_ARRAY)){
+            printf("Type of expression: %d\n", term->val.expression->stype->type);
+            if ((term->val.expression->stype->type != symbol_INT) && (term->val.expression->stype->type != symbol_ARRAY)){
                 print_error("Absolute value must be used on integer or array", 0 , term->lineno);
             }
             st = NEW(symbol_type);
@@ -360,10 +377,15 @@ int check_function_args(par_decl_list *pdl, act_list *alist){
     struct symbol_type *st2;
 
     if (pdl->kind == pdl_EMPTY){
+        printf("PDL is empty\n");
         if (alist->kind == al_EMPTY){
             return 1;
         } else {
             print_error("Too many function arguments", 0, alist->lineno);
+        }
+    } else {
+        if (alist->kind == al_EMPTY){
+            print_error("Too few function arguments", 0, alist->lineno);
         }
     }
 

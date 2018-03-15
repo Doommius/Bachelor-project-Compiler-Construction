@@ -86,7 +86,8 @@ int main(int argc, char **argv) {
     typecheck(theprogram);
 
     printf("\nAfter typechecking\n\n");
-    prettyBody(theprogram);
+    types = 1;
+    prettyProgram(theprogram);
 
 
     printf("\n");

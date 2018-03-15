@@ -1,9 +1,19 @@
-# Code generation, realistic example of recursive code
-func factorial(n: int): int
-   if (n == 0) || (n == 1) then
-      return 1;
-   else
-      return n * factorial(n-1);
-end factorial
+# Typecheck and code generation, returning records from functions
+type recordType = record of {
+                    x: int,
+                    y: bool
+                  };
 
-write factorial(5);
+func a(x : int, y : bool) : recordType
+  var p2 : recordType;
+  allocate p2;
+  p2.x = x;
+  p2.y = y;
+  return p2;
+end a
+
+var p1 : recordType;
+var b : int;
+var c : bool;
+
+if (p1.y || c) then write p1.x + b;

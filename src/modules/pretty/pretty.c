@@ -13,6 +13,13 @@
 
 int indent_depth;
 int exp_depth;
+int types;
+
+void prettyProgram(body *body){
+    indent_depth = 0;
+    exp_depth = 0;
+    prettyBody(body);
+}
 
 void prettyFunc(function *f) {
     prettyHead(f->head);
@@ -33,7 +40,9 @@ void prettyHead(head *h) {
 void prettyTail(tail *t) {
     indent();
     printf("end %s", t->id);
-    prettySymbol(t->table, t->id, t->lineno);
+    if(types){
+        prettySymbol(t->table, t->id, t->lineno);
+    }
     printf("\n");
 }
 
@@ -41,7 +50,9 @@ void prettyType(type *t) {
     switch (t->kind) {
     case type_ID:
         printf("%s", t->val.id);
-        prettySymbol(t->table, t->val.id, t->lineno);
+        if (types){
+            prettyStype(t->stype, t->lineno);
+        }
         break;
 
     case type_INT:
@@ -74,15 +85,15 @@ void prettyPDL(par_decl_list *pdl) {
 
 void prettyVDL(var_decl_list *vdl) {
     switch (vdl->kind) {
-    case vdl_LIST:
-        prettyVT(vdl->vartype);
-        printf(", ");
-        prettyVDL(vdl->list);
-        break;
+        case vdl_LIST:
+            prettyVT(vdl->vartype);
+            printf(", ");
+            prettyVDL(vdl->list);
+            break;
 
-    case vdl_TYPE:
-        prettyVT(vdl->vartype);
-        break;
+        case vdl_TYPE:
+            prettyVT(vdl->vartype);
+            break;
     }
 }
 
@@ -246,6 +257,11 @@ void prettyVar(variable *v) {
 }
 
 void prettyEXP(expression *e) {
+    exp_depth++;
+
+    if(exp_depth > 1){
+        printf("(");
+    }
     switch (e->kind) {
 
     case exp_MULT:
@@ -325,8 +341,17 @@ void prettyEXP(expression *e) {
         break;
 
     }
-    printf( ": ");
-    prettyStype(e->stype, e->lineno);
+    if(exp_depth > 1){
+        printf(")");
+    }
+    exp_depth--;
+
+    if (types){
+       // printf("\nCalling printStype in expression");
+        printf( " : ");
+        prettyStype(e->stype, e->lineno);
+    }
+   
 }
 
 void prettyTerm(term *t) {
@@ -376,8 +401,12 @@ void prettyTerm(term *t) {
         break;
     }
 
-    printf(" : ");
-    prettyStype(t->stype, t->lineno);
+    if (types){
+        //printf("\nCalling printStype in term");
+        printf(" : ");
+        prettyStype(t->stype, t->lineno);
+    }
+    
 }
 
 void prettyAL(act_list *al) {
@@ -428,7 +457,11 @@ void prettySymbol(symbol_table *table, char *id, int line){
 }
 
 void prettyStype(symbol_type *stype, int line){
-
+   // printf("\nPrintSType of type: %d: ", stype->type);
+    if (stype->printed){
+        return;
+    }
+    stype->printed = 1;
     switch(stype->type){
 
         case (symbol_ID):
@@ -472,8 +505,7 @@ void prettyStype(symbol_type *stype, int line){
             print_error("Unknown symbol type", 0, line);
             break;
 
-
-
     }
+    stype->printed = 0;
 
 }
