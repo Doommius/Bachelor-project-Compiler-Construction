@@ -93,11 +93,7 @@ int main(int argc, char **argv) {
 #endif
     types = 1;
     prettyProgram(theprogram);
-<<<<<<< HEAD
-=======
-
->>>>>>> e42ee18d0065070b14913a443b7823e5ed7a52b5
-
+	
     printf("\n");
     return 1;
 }
