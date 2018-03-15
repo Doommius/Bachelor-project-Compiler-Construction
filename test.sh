@@ -6,10 +6,12 @@ make
 echo "+-------------+"
 echo "|    Tests    |"
 echo "+-------------+"
-for i in {0..6}
+for file in ./tests/*.src
 do
-	echo "test$i.src"
-	./compiler tests/test$i.src
+	echo "+--------------------"
+	echo "| TEST: "$file
+	echo "+--------------------"
+	./compiler $file
 done
 
 echo "+-------------+"
@@ -18,7 +20,7 @@ echo "+-------------+"
 for file in ./examples/*.src
 do
 	echo "+--------------------"
-	echo "| "$file
+	echo "| EXAMPLE: "$file
 	echo "+--------------------"
 	./compiler $file
 done
