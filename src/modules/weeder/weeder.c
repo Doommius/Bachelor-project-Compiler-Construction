@@ -169,7 +169,7 @@ statement_list *weed_slist(statement_list *slist){
 }
 
 statement *weed_stmt(statement *stmt){
-    ////printf("Weeding statement\n");
+    printf("Weeding statement, kind: %d\n", stmt->kind);
 
     struct function *f;
 
@@ -307,7 +307,7 @@ variable *weed_variable(variable *variable){
 }
 
 expression *weed_expression(expression *expression){
-    //printf("Weeding expression, kind: %d\n", expression->kind);
+    printf("Weeding expression, kind: %d\n", expression->kind);
 
     struct expression *left_exp;
     struct expression *right_exp;
@@ -324,31 +324,17 @@ expression *weed_expression(expression *expression){
         return expression;
     }
 
-
-    //printf("Weeding left expression\n");
     expression->val.ops.left = weed_expression(expression->val.ops.left);
-    //printf("Weeding right expression\n");
     expression->val.ops.right = weed_expression(expression->val.ops.right);
 
     left_exp = expression->val.ops.left;
     right_exp = expression->val.ops.right;
 
     if ((left_exp->kind == exp_TERM) && (right_exp->kind == exp_TERM)){
-        //printf("Folding two terms\n");
         left_term = left_exp->val.term;
         right_term = right_exp->val.term;
-
-
-        //printf("Left term\n");
-        //prettyTerm(left_term);
-
-        //printf("\n\nRight term\n");
-        //prettyTerm(right_term);
-        //printf("\n\n");
-
         
         if ((left_term->kind == term_NUM) && (right_term->kind == term_NUM)){
-            //printf("Folding two numbers\n");
             //We have an expression with two constants
             switch(expression->kind){
 
@@ -425,10 +411,10 @@ expression *weed_expression(expression *expression){
         //TODO Optimize this please, to many comparisons I think, or maybe put advanced patterns into a function for itself?
         if (temp == NULL){
 
-            //printf("Folding booleans\n");
             if (expression->kind == exp_AND){
 
                 if ((left_term->kind == term_FALSE) || (right_term->kind == term_FALSE)){
+                    printf("Making false term\n");
                     temp = make_Term_boolean(0);
                 }
                 if ((left_term->kind == term_TRUE) && (right_term->kind == term_TRUE)){
@@ -438,6 +424,7 @@ expression *weed_expression(expression *expression){
                 //Advanced patterns
 
                 if (left_exp->kind == exp_TERM){
+                    printf("kommer vi herind1\n");
                     if (left_exp->val.term->kind == term_TRUE){
                         return expression->val.ops.right;
                     }
@@ -447,6 +434,7 @@ expression *weed_expression(expression *expression){
                 }
 
                 if (right_exp->kind == exp_TERM){
+                    printf("kommer vi herind2\n");
                     if (right_exp->val.term->kind == term_TRUE){
                         return expression->val.ops.left;
                     }
@@ -499,7 +487,7 @@ expression *weed_expression(expression *expression){
 }
 
 term *weed_term(term *term){
-    //printf("Weeding term, kind: %d\n", term->kind);
+    printf("Weeding term, kind: %d\n", term->kind);
     struct expression *e;
 
     switch(term->kind){

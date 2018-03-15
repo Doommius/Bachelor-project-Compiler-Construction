@@ -1,9 +1,4 @@
 # Typecheck and code generation, returning records from functions
-type recordType = record of {
-                    x: int,
-                    y: int,
-                    z : recordType
-                  };
 
 func a(x : int, y : int) : recordType
   var p2 : recordType;
@@ -13,8 +8,7 @@ func a(x : int, y : int) : recordType
   return p2;
 end a
 
-var p1 : recordType;
+if (false && true) then 
+write 2;
 
-p1 = a(10,2);
 
-write p1.x / p1.y;
