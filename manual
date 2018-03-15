@@ -16,7 +16,10 @@ help
 .br
 .B @file
 input file to compile
-help
+.br
+.br 
+.B @text
+raw text of input to compile
 .SH SEE ALSO
 .SH BUGS
 No known bugs.
