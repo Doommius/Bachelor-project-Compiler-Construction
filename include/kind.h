@@ -80,7 +80,10 @@ typedef enum { jmp, //unconditional jump
 
                orl, //or less ?
 
-
+               add,
+               sub,
+               mul,
+               mov,
                movl,
                setne,
                cmpl,

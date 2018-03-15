@@ -8,10 +8,9 @@
  * Computes the hash function as seen below.
  *
  */
-int hash(char *str){
-    unsigned int length;
+int hash(char *str) {
+    int length;
     length = (unsigned)strlen(str);
-
     int k = (int)str[0];
     int i;
     int pointer = 1;
@@ -20,7 +19,6 @@ int hash(char *str){
         k = k << 1;
         i = (int)str[pointer];
         k = i + k;
-
         pointer++;
     }
     return (k % HashSize);
