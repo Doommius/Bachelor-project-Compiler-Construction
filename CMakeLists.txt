@@ -37,11 +37,15 @@ set(SOURCE_FILES_compiler
         src/memory.c
         src/auxiliary.c
         src/linked_list.c
+        src/stack.c
+
 
         include/kind.h
         include/memory.h
         include/auxiliary.h
         include/linked_list.h
+        include/main.h
+        include/stack.h
 
         src/modules/code/code.c
         src/modules/code/include/code.h
@@ -66,8 +70,12 @@ set(SOURCE_FILES_compiler
 
         src/modules/typechecker/typechecker.c
         src/modules/typechecker/setup.c
+        src/modules/typechecker/pickup.c
+        src/modules/typechecker/check.c
         src/modules/typechecker/include/typechecker.h
         src/modules/typechecker/include/setup.h
+        src/modules/typechecker/include/pickup.h
+        src/modules/typechecker/include/check.h
 
 
         src/modules/weeder/weeder.c
