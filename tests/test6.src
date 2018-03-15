@@ -1,10 +1,11 @@
 # Typecheck and code generation, returning records from functions
 type recordType = record of {
                     x: int,
-                    y: bool
+                    y: int,
+                    z : recordType
                   };
 
-func a(x : int, y : bool) : recordType
+func a(x : int, y : int) : recordType
   var p2 : recordType;
   allocate p2;
   p2.x = x;
@@ -13,7 +14,7 @@ func a(x : int, y : bool) : recordType
 end a
 
 var p1 : recordType;
-var b : int;
-var c : bool;
 
-if (p1.y || c) then write p1.x + b;
+p1 = a(10,2);
+
+write p1.x / p1.y;
