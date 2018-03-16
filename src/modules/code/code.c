@@ -61,67 +61,68 @@ void code_general_expression(linked_list *list, expression *e, ASM_kind kind) {
                             new_asm_node(e->lineno, kind, "lable", "eax", "", "Jump to flag if expression is true"));
     return;
 }
-//
-//void code_GEQ_statement(linked_list *list, expression *e) {
-//    eval_expression(e->val.ops.left);
-//    linked_list_insert_tail(("push  %eax            ;save value of e1 on the stack"));
-//    eval_expression(e->val.ops.right);
-//    linked_list_insert_tail(("pop   %ecx            ;pop e1 from the stack into ECX"));
-//    linked_list_insert_tail(("cmp ecx, eax          ;values are now at EAX and ECX"));
-//    linked_list_insert_tail(("jge FLAG               ;Jump to flag if expression is false"));
-//    return;
-//}
-//
-//void code_LEQ_statement(linked_list *list, expression *e) {
-//    eval_expression(e->val.ops.left);
-//    linked_list_insert_tail("push  %eax            ;save value of e1 on the stack");
-//    eval_expression(e->val.ops.right);
-//    linked_list_insert_tail("pop   %ecx            ;pop e1 from the stack into ECX");
-//    linked_list_insert_tail("cmp ecx, eax          ;values are now at EAX and ECX");
-//    linked_list_insert_tail(("jle FLAG               ;Jump to flag if expression is false"));
-//    return;
-//}
-//
-//void code_LT_statement(linked_list *list, expression *e) {
-//    eval_expression(e->val.ops.left);
-//    linked_list_insert_tail("push  %eax            ;save value of e1 on the stack");
-//    eval_expression(e->val.ops.right);
-//    linked_list_insert_tail("pop   %ecx            ;pop e1 from the stack into ECX");
-//    linked_list_insert_tail("cmp ecx, eax          ;values are now at EAX and ECX");
-//    linked_list_insert_tail(("jl FLAG               ;Jump to flag if expression is false"));
-//    return;
-//}
-//
-//void code_GT_statement(linked_list *list, expression *e) {
-//    eval_expression(e->val.ops.left);
-//    linked_list_insert_tail(("push  %eax            ;save value of e1 on the stack"));
-//    eval_expression(e->val.ops.right);
-//    linked_list_insert_tail(("pop   %ecx            ;pop e1 from the stack into ECX"));
-//    linked_list_insert_tail(("cmp ecx, eax          ;values are now at EAX and ECX"));
-//    linked_list_insert_tail(("jg FLAG               ;Jump to flag if expression is false"));
-//    return;
-//}
-//
-//void code_NEQ_statement(linked_list *list, expression *e) {
-//    eval_expression(e->val.ops.left);
-//    linked_list_insert_tail(("push  %eax            ;save value of e1 on the stack"));
-//    eval_expression(e->val.ops.right);
-//    linked_list_insert_tail(("pop   %ecx            ;pop e1 from the stack into ECX"));
-//    linked_list_insert_tail(("cmp ecx, eax          ;values are now at EAX and ECX"));
-//    linked_list_insert_tail(("jne FLAG               ;Jump to flag if expression is false"));
-//    return;
-//}
-//
-//void code_EQ_statement(linked_list *list, expression *e) {
-//    eval_expression(e->val.ops.left);
-//    linked_list_insert_tail(("push  %eax            ;save value of e1 on the stack"));
-//    eval_expression(e->val.ops.right);
-//    linked_list_insert_tail("pop   %ecx            ;pop e1 from the stack into ECX");
-//    linked_list_insert_tail("cmp ecx, eax          ;values are now at EAX and ECX");
-//    linked_list_insert_tail("je FLAG               ;Jump to flag if expression is false");
-//    return;
-//}
+/*
 
+void code_GEQ_statement(linked_list *list, expression *e) {
+    eval_expression(e->val.ops.left);
+    linked_list_insert_tail(("push  %eax            ;save value of e1 on the stack"));
+    eval_expression(e->val.ops.right);
+    linked_list_insert_tail(("pop   %ecx            ;pop e1 from the stack into ECX"));
+    linked_list_insert_tail(("cmp ecx, eax          ;values are now at EAX and ECX"));
+    linked_list_insert_tail(("jge FLAG               ;Jump to flag if expression is false"));
+    return;
+}
+
+void code_LEQ_statement(linked_list *list, expression *e) {
+    eval_expression(e->val.ops.left);
+    linked_list_insert_tail("push  %eax            ;save value of e1 on the stack");
+    eval_expression(e->val.ops.right);
+    linked_list_insert_tail("pop   %ecx            ;pop e1 from the stack into ECX");
+    linked_list_insert_tail("cmp ecx, eax          ;values are now at EAX and ECX");
+    linked_list_insert_tail(("jle FLAG               ;Jump to flag if expression is false"));
+    return;
+}
+
+void code_LT_statement(linked_list *list, expression *e) {
+    eval_expression(e->val.ops.left);
+    linked_list_insert_tail("push  %eax            ;save value of e1 on the stack");
+    eval_expression(e->val.ops.right);
+    linked_list_insert_tail("pop   %ecx            ;pop e1 from the stack into ECX");
+    linked_list_insert_tail("cmp ecx, eax          ;values are now at EAX and ECX");
+    linked_list_insert_tail(("jl FLAG               ;Jump to flag if expression is false"));
+    return;
+}
+
+void code_GT_statement(linked_list *list, expression *e) {
+    eval_expression(e->val.ops.left);
+    linked_list_insert_tail(("push  %eax            ;save value of e1 on the stack"));
+    eval_expression(e->val.ops.right);
+    linked_list_insert_tail(("pop   %ecx            ;pop e1 from the stack into ECX"));
+    linked_list_insert_tail(("cmp ecx, eax          ;values are now at EAX and ECX"));
+    linked_list_insert_tail(("jg FLAG               ;Jump to flag if expression is false"));
+    return;
+}
+
+void code_NEQ_statement(linked_list *list, expression *e) {
+    eval_expression(e->val.ops.left);
+    linked_list_insert_tail(("push  %eax            ;save value of e1 on the stack"));
+    eval_expression(e->val.ops.right);
+    linked_list_insert_tail(("pop   %ecx            ;pop e1 from the stack into ECX"));
+    linked_list_insert_tail(("cmp ecx, eax          ;values are now at EAX and ECX"));
+    linked_list_insert_tail(("jne FLAG               ;Jump to flag if expression is false"));
+    return;
+}
+
+void code_EQ_statement(linked_list *list, expression *e) {
+    eval_expression(e->val.ops.left);
+    linked_list_insert_tail(("push  %eax            ;save value of e1 on the stack"));
+    eval_expression(e->val.ops.right);
+    linked_list_insert_tail("pop   %ecx            ;pop e1 from the stack into ECX");
+    linked_list_insert_tail("cmp ecx, eax          ;values are now at EAX and ECX");
+    linked_list_insert_tail("je FLAG               ;Jump to flag if expression is false");
+    return;
+}
+*/
 //TODO Lots
 
 void code_plus_expression(linked_list *list, expression *e) {
@@ -168,6 +169,7 @@ void code_mul_expression(linked_list *list, expression *e) {
     linked_list_insert_tail(list, new_asm_node(e->lineno, mul, "ecx", "eax", "", "add ECX and EAX are store result at EAX"));
 
 }
+
 
 void code_term_expression(linked_list *list, expression *e) {
     e->val;
@@ -216,7 +218,6 @@ void eval_expression(linked_list *list, expression *e) {
         break;
     case exp_TERM:
         eval_term(list, e->val.term);
-
         break;
     }
     return;

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6)   # CMake version check
-project(Compiler)                     # Create project "simple_example"
+project(compiler)                     # Create project "simple_example"
 set(CMAKE_CXX_STANDARD 11)            # Enable c++11 standard
 
 find_package(BISON)
@@ -82,7 +82,7 @@ set(SOURCE_FILES_compiler
         src/modules/weeder/include/weeder.h
         )
 
-add_executable(Compiler
+add_executable(compiler
         ${BISON_Parser_OUTPUTS}
         ${FLEX_Scanner_OUTPUTS}
         ${SOURCE_FILES_compiler}
