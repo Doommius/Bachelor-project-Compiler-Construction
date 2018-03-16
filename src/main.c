@@ -84,11 +84,11 @@ int main(int argc, char **argv) {
     // types = 0;
     // prettyProgram(theprogram);
 
-#ifdef debugflag
+#if debugflag > 0
     printf("\nStarting typechecking\n\n");
 #endif
     typecheck(theprogram);
-#ifdef debugflag
+#if debugflag > 0
     printf("\nAfter typechecking\n\n");
 #endif
     types = 1;

@@ -20,15 +20,15 @@ int typecheck(body *program) {
 
     symbol_table *table;
     table = init_symbol_table();
-#ifdef debugflag
+#if debugflag > 0
     printf("Starting Setup\n");
 #endif
     setup_body(program, table);
-#ifdef debugflag
+#if debugflag > 0
     printf("Starting pickup\n");
 #endif
     pickup_body(program);
-#ifdef debugflag
+#if debugflag > 0
     printf("Starting check\n");
 #endif
     check_body(program);

@@ -6,7 +6,7 @@
 
 #ifndef COMPILER_DEBUG_H
 
-//#define debugflag
+#define debugflag 0
 
 #define COMPILER_DEBUG_H
 
