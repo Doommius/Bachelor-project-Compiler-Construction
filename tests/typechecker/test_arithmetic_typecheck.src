@@ -1,6 +1,7 @@
+#test14.src
 var a : int;
-var b : bool;
+var b : int;
 a = 1;
-b = true;
+b = 3;
 
 write a + b;

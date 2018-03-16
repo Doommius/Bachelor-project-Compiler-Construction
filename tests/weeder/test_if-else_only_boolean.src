@@ -1,3 +1,4 @@
+#test2.src
 if (true || false) then
 write 1;
 else

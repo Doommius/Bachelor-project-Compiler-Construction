@@ -1,3 +1,4 @@
+#test13.src
 # Typecheck and code generation, returning records from functions
 type recordType = record of {
                     x: int,

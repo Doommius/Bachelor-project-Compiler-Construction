@@ -1,4 +1,4 @@
-#Scoping sometimes unreachable return
+#test10.src
 func test(n: int): int
 	var n : int;
 	var a : int;

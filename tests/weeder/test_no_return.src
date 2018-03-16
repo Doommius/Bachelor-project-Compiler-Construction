@@ -1,0 +1,7 @@
+#test5.src
+func test(n: int): int
+	var i: int;
+end test
+
+write test(1);
+

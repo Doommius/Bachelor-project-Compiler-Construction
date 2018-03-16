@@ -1,4 +1,4 @@
-# Parsing and code generation of expressions, associativity
+#test4.src
 func test(n: int): int
    return 2;
 end test

@@ -1,7 +1,0 @@
-# Parsing and code generation of expressions, associativity
-func test(n: int): int
-   return 2;
-end test
-
-write test(1);
-
