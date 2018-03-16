@@ -87,10 +87,13 @@ int main(int argc, char **argv) {
 
     //printf("\nStarting typechecking\n\n");
 
+#if debugflag > 0
+    printf("\nStarting typechecking\n\n");
+#endif
     typecheck(theprogram);
-
-    //printf("\nAfter typechecking\n\n");
-
+#if debugflag > 0
+    printf("\nAfter typechecking\n\n");
+#endif
     types = 1;
     prettyProgram(theprogram);
 

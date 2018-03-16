@@ -8,7 +8,7 @@
 
 
 void pickup_body(body *body){
-#ifdef debugflag
+#if debugflag > 2
     printf("Picking up body\n");
 #endif
     pickup_dlist(body->d_list);
@@ -16,7 +16,7 @@ void pickup_body(body *body){
 }
 
 void pickup_function(function *function){
-#ifdef debugflag
+#if debugflag > 2
     printf("Picking up function\n");
 #endif
     pickup_head(function->head);
@@ -25,22 +25,22 @@ void pickup_function(function *function){
 }
 
 void pickup_head(head *head){
-#ifdef debugflag
+#if debugflag > 2
     printf("Picking up head\n");
 #endif
     pickup_pdl(head->list);
     pickup_type(head->type);
-#ifdef debugflag
+#if debugflag > 3
     printf("Picked up Type in Head, Head type: %d, Symbol type: %d\n", head->type->kind, head->stype->type);
 #endif
     head->stype->val.func_type.ret_type = head->type;
-#ifdef debugflag
+#if debugflag > 2
     printf("Assigned ret type\n");
 #endif
 }
 
 void pickup_pdl(par_decl_list *pdl){
-#ifdef debugflag
+#if debugflag > 2
     printf("Picking up pdl\n");
 #endif
     if (pdl->kind == pdl_LIST){
@@ -50,7 +50,7 @@ void pickup_pdl(par_decl_list *pdl){
 }
 
 void pickup_vdl(var_decl_list *vdl){
-#ifdef debugflag
+#if debugflag > 2
     printf("Picking up vdl\n");
 #endif
     pickup_vtype(vdl->vartype);
@@ -61,11 +61,11 @@ void pickup_vdl(var_decl_list *vdl){
 }
 
 void pickup_vtype(var_type *vtype){
-#ifdef debugflag
+#if debugflag > 3
     printf("Picking up vtype, id: %s\n", vtype->id);
 #endif
     pickup_type(vtype->type);
-#ifdef debugflag
+#if debugflag > 2
     printf("Picked up Type in VType\n");
 #endif
     vtype->symbol->stype = vtype->type->stype;
@@ -73,7 +73,7 @@ void pickup_vtype(var_type *vtype){
 }
 
 void pickup_dlist(decl_list *dlist){
-#ifdef debugflag
+#if debugflag > 2
     printf("Picking up dlist\n");
 #endif
     if (dlist->kind == dl_LIST){
@@ -83,7 +83,7 @@ void pickup_dlist(decl_list *dlist){
 }
 
 void pickup_declaration(declaration *decl){
-#ifdef debugflag
+#if debugflag > 2
     printf("Picking up declaration\n");
 #endif
 
@@ -105,7 +105,7 @@ void pickup_declaration(declaration *decl){
 }
 
 void pickup_type(type *type){
-#ifdef debugflag
+#if debugflag > 2
     printf("Picking up type, kind: %d\n", type->kind);
 #endif
 
@@ -129,7 +129,7 @@ void pickup_type(type *type){
             break;
 
         case (type_ID):
-#ifdef debugflag
+#if debugflag > 3
             printf("ID we are looking for: %s, in table: %p\n", type->val.id, type->table);
 #endif
             s = get_symbol(type->table, type->val.id);
@@ -144,22 +144,22 @@ void pickup_type(type *type){
             }
             struct type *temp;
             temp = resolve_recursive_type(s->stype->val.id_type);
-#ifdef debugflag
+#if debugflag > 3
             printf("After recursive check\n");
 #endif
             type->stype = temp->stype;
-#ifdef debugflag
+#if debugflag > 3
             printf("After assignment\n");
 #endif
     }
-#ifdef debugflag
+#if debugflag > 3
     printf("After switch\n");
 #endif
 
 }
 
 type *resolve_recursive_type(type *type){
-#ifdef debugflag
+#if debugflag > 2
     printf("Resolving recursive conflict\n");
 #endif
     struct type *temp;
@@ -168,7 +168,7 @@ type *resolve_recursive_type(type *type){
         print_error("Recursive type definition", 0, type->lineno);
     }
     type->recursive_type = 1;
-#ifdef debugflag
+#if debugflag > 3
     printf("Type kind: %d\n", type->kind);
 #endif
     if (type->kind == type_ID){
@@ -180,7 +180,7 @@ type *resolve_recursive_type(type *type){
         }
         temp = resolve_recursive_type(s->stype->val.id_type);
     }
-#ifdef debugflag
+#if debugflag > 3
     printf("Checked recursively\n");
 #endif
     type->recursive_type = 0;

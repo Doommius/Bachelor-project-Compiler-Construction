@@ -48,7 +48,7 @@ void check_slist(statement_list *slist){
 }
 
 void check_stmt(statement *stmt){
-#ifdef debugflag
+#if debugflag > 2
     printf("Checking statement, kind: %d\n", stmt->kind);
 #endif
 
@@ -71,7 +71,7 @@ void check_stmt(statement *stmt){
 
         case (statement_ALLOCATE):
             check_var(stmt->val.allocate.variable);
-#ifdef debugflag
+#if debugflag > 3
             printf("Allocating type: %d\n", stmt->val.allocate.variable->stype->type);
 #endif
             if ( (stmt->val.allocate.variable->stype->type != symbol_ARRAY) && (stmt->val.allocate.variable->stype->type != symbol_RECORD)){
@@ -135,7 +135,7 @@ void check_stmt(statement *stmt){
 }
 
 void check_var(variable *var){
-#ifdef debugflag
+#if debugflag > 2
     printf("Checking variable, kind: %d\n", var->kind);
 #endif
 
@@ -178,7 +178,7 @@ void check_var(variable *var){
 }
 
 void check_exp(expression *exp){
-#ifdef debugflag
+#if debugflag > 2
     printf("Checking expression, kind %d\n", exp->kind);
 #endif
     symbol_type *st;
@@ -189,11 +189,11 @@ void check_exp(expression *exp){
         case (exp_MIN):
         case (exp_MULT):        // Subject to change, could be made to work with strings, f.x. "Hi"*2 could be: "HiHi"
         case (exp_DIV):
-#ifdef debugflag
+#if debugflag > 3
             printf("Checking left expression, Arithmetic\n");
 #endif
             check_exp(exp->val.ops.left);
-#ifdef debugflag
+#if debugflag > 3
             printf("Checking right expression, Arithmetic\n");
 #endif
             check_exp(exp->val.ops.right);
@@ -210,18 +210,18 @@ void check_exp(expression *exp){
         
         case (exp_EQ):
         case (exp_NEQ):
-#ifdef debugflag
+#if debugflag > 2
             printf("Checking left expression, EQ/NEQ\n");
 #endif
             check_exp(exp->val.ops.left);
-#ifdef debugflag
+#if debugflag > 2
             printf("Checking right expression, EQ/NEQ\n");
 #endif
             check_exp(exp->val.ops.right);
 
             // Should check stype->type->val.func_type.ret_type if comparing a function
             if ((exp->val.ops.left->stype->type == symbol_RECORD) && (exp->val.ops.right->stype->type == symbol_NULL)){
-#ifdef debugflag
+#if debugflag > 3
                 printf("Left type is record, and right type is NULL\n");
 #endif
                 st = NEW(symbol_type);
@@ -231,7 +231,7 @@ void check_exp(expression *exp){
             }
 
             if ((exp->val.ops.left->stype->type == symbol_NULL) && (exp->val.ops.right->stype->type == symbol_RECORD)){
-#ifdef debugflag
+#if debugflag > 3
                 printf("Left type is NULL, and right type is record\n");
 #endif
                 st = NEW(symbol_type);
@@ -239,11 +239,11 @@ void check_exp(expression *exp){
                 exp->stype = st;
                 break;
             }
-#ifdef debugflag
+#if debugflag > 3
             printf("Left sides type: %d, Right sides type: %d\n", exp->val.ops.left->stype->type, exp->val.ops.right->stype->type);
 #endif
             if (exp->val.ops.left->stype->type == exp->val.ops.right->stype->type){
-#ifdef debugflag
+#if debugflag > 3
                 printf("Checked if type is the same\n");
 #endif
                 st = NEW(symbol_type);
@@ -259,11 +259,11 @@ void check_exp(expression *exp){
         case (exp_LEQ):
         case (exp_LT):
         case (exp_GT):
-#ifdef debugflag
+#if debugflag > 2
             printf("Checking left expression, GEQ/LEQ/LT/GT\n");
 #endif
             check_exp(exp->val.ops.left);
-#ifdef debugflag
+#if debugflag > 2
             printf("Checking right expression, GEQ/LEQ/LT/GT\n");
 #endif
             check_exp(exp->val.ops.right);
@@ -280,11 +280,11 @@ void check_exp(expression *exp){
 
         case (exp_AND):
         case (exp_OR):
-#ifdef debugflag
+#if debugflag > 2
             printf("Checking left expression, AND/OR\n");
 #endif
             check_exp(exp->val.ops.left);
-#ifdef debugflag
+#if debugflag > 2
             printf("Checking right expression, AND/OR\n");
 #endif
             check_exp(exp->val.ops.right);
@@ -310,7 +310,7 @@ void check_exp(expression *exp){
 }
 
 void check_term(term *term){
-#ifdef debugflag
+#if debugflag > 2
     printf("Checking term, kind: %d\n", term->kind);
 #endif
 
@@ -322,7 +322,7 @@ void check_term(term *term){
         case (term_VAR):
             check_var(term->val.variable);
             term->stype = term->val.variable->stype;
-#ifdef debugflag
+#if debugflag > 3
             printf("Term type: %d\n", term->stype->type);
 #endif
             break;
@@ -353,7 +353,7 @@ void check_term(term *term){
 
         case (term_ABS):
             check_exp(term->val.expression);
-#ifdef debugflag
+#if debugflag > 3
             printf("Type of expression: %d\n", term->val.expression->stype->type);
 #endif
             if ((term->val.expression->stype->type != symbol_INT) && (term->val.expression->stype->type != symbol_ARRAY)){
@@ -414,7 +414,7 @@ int check_function_args(par_decl_list *pdl, act_list *alist){
     struct symbol_type *st2;
 
     if (pdl->kind == pdl_EMPTY){
-#ifdef debugflag
+#if debugflag > 3
         printf("PDL is empty\n");
 #endif
         if (alist->kind == al_EMPTY){
@@ -437,7 +437,7 @@ int check_function_args(par_decl_list *pdl, act_list *alist){
 
         st1 = temp->stype;
         st2 = elist->expression->stype;
-#ifdef debugflag
+#if debugflag > 3
         printf("ST1s type: %d, ST2s type: %d\n", st1->type, st2->type);
 #endif
 
@@ -459,14 +459,14 @@ int check_function_args(par_decl_list *pdl, act_list *alist){
 int compare_stype(symbol_type *stype1, symbol_type *stype2){
 
     if (stype1 == NULL || stype2 == NULL){
-#ifdef debugflag
+#if debugflag > 3
         printf("Both NULL, return 0\n");
 #endif
         return 0;
     }
 
     if (stype1->type == stype2->type){
-#ifdef debugflag
+#if debugflag > 3
         printf("Both equal, return 1\n");
 #endif
         return 1;
@@ -479,7 +479,7 @@ int compare_stype(symbol_type *stype1, symbol_type *stype2){
     if (stype1->type == symbol_RECORD && stype2->type == symbol_RECORD){
         return compare_record(stype1, stype2);
     }
-#ifdef debugflag
+#if debugflag > 3
     printf("Not equal, return 0\n");
 #endif
 
