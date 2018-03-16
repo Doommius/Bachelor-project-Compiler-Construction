@@ -1,0 +1,123 @@
+\section{notes}
+Book \\
+https://github.com/yihui-he/Modern-Compiler-Implementation-in-C/blob/master/Modern%20Compiler%20Implementation%20in%20C.pdf
+
+\subsection{02/02-18}
+Tools:\\
+flex, bison,\\
+Intel Pentium \\
+0\\
+
+\subsubsection{Phases of a modern compiler}
+\textbf{Scan(Leksikalsk analyse):}\\
+build a abstract syntax tree, and check if the programs contains any illegal symbols or identifiers.\\
+The allowed items are \{, \}, (, ),=,+ -, <=, =>, return, "numbers", ""Strings"", indentifiers. comments are removed, as they are only meant for the code writer. \\
+\vspace{6px}
+\textbf{Parse:}\\
+\vspace{6px}
+\textbf{Weed:}\\
+\vspace{6px}
+\textbf{Symbol:}\\
+Opsaml information om variabler\\
+\vspace{6px}
+\textbf{Type:}\\
+Er sproget typekorrekt? eg. 42 + "ko"? Angiv et sæt regler, så tingene kommer i orden efter design-valg.\\
+\vspace{6px}
+\textbf{Resource:}\\
+Har man resourcer tilgængelige?\\
+\vspace{6px}
+\textbf{Code:}\\
+Generer kode \\
+\vspace{6px}
+\textbf{Optimize:}\\
+Optimer genererede kode\\
+\vspace{6px}
+\textbf{Emit:}\\
+
+\subsubsection{Regulære udtryk - Regular Expressions}
+\begin{table}[H]
+\caption{Regular expression operations.}
+\begin{tabular}{l|l|l}
+Symbol        & a         & \{a\}                           \\
+\hline
+Altering      & $M|N$       & $L(M) \cup L(N)$                  \\
+\hline
+Concatenating &$ M \cdot N$ &$ \{xy | x \in L(M), y \in L(N) $  \\
+\hline
+Epsilon      &$ \epsilon $   &$ \{\epsilon\} or \{""\} $        \\
+\hline
+Repetition(Kleene star)      & M*    &$ \{\epsilon \} \cup L(M \cdot M) \cup L(M\cdot M\cdot M) \cup ....$         \\
+\end{tabular}
+\end{table}
+
+\subsubsection{Regulære udtryk - Regular Expressions - Forkortelser}
+\begin{table}[H]
+\caption{Forkortelser for Regular Expressions}
+\begin{tabular}{l|l}
+[abcd]        & (a|b|c|d)                                    \\
+\hline
+[d-g]     & ([defg]       \\
+\hline
+[d-gB-Dxq-s] & [defgBCDxqrs]  \\
+\hline
+M?      & $(M| \epsilon)$        \\
+\hline
+$M^+$     & $M\cdot M^*$         \\
+\hline
+. & [abc...012...+-/..] Uden Newline \\
+\hline
+
+\end{tabular}
+\end{table}
+
+\subsubsection{Flex - Fast Lexical Analysis}
+\textbf{Flex format}\\
+\%\{ \\
+\hspace{6px} c-definitioner\\
+\}\% \\
+\vspace{6px}
+\textbf{Flex-def:}\\
+Definitioner og udtryk\\
+Example: digits [0-9]\\
+\vspace{6px}
+yytext\\
+yyleng\\
+yyval\\
+\vspace{6px}
+\textbf{Flex regler}\\
+1. Længste match\\
+2. Regel prioritet\\
+\vspace{6px}
+\textbf{How to run Flex:}\\
+\textsf{> flex FILENAME.l -> lex.yy.c\\
+> gcc lex.yy.c -> a.out \\
+> ./a.out < INPUTFILE \\
+> echo INPUTFILE | a.out
+}
+\subsection{06/02-18}
+
+\subsubsection{Scanners and Parsers}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
