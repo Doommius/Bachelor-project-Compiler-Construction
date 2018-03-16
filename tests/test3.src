@@ -1,10 +1,7 @@
-# Parsing and code generation of expressions, associativity
-func test(n: int): int
-   if (n == 0) || (n == 1) || ||a+b|+c| then
-      return -1;
-   else
-      return n * factorial(n-1);
-end test
+var n : int;
+n = 1;
 
-write test();
-
+if ((n>0) || true) then
+write 1;
+else
+write 2;

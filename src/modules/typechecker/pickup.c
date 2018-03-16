@@ -138,7 +138,7 @@ void pickup_type(type *type){
                     printf("Symbol is NULL\n");
                 }
                 if (s->stype->type != symbol_ID){
-                    printf("Symbol is not ID, it is of type: %d", s->stype->type);
+                    printf("Symbol is not ID, it is of type: %d\n", s->stype->type);
                 }
                 print_error("Identifier error", 0, type->lineno);
             }

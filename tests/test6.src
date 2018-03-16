@@ -1,7 +1,8 @@
-# Typecheck and code generation, returning records from functions
+type r1 = r2;
+type r2 = r3;
+type r3 = record of { x : int};
 
-var n : int;
-
-n = 1;
-
-if ((n > 0) || true) then write 1; else write 2;
+var v1 : r1;
+var v2 : r2;
+var v3 : r3;
+write 42;

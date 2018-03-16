@@ -1,0 +1,6 @@
+var a : int;
+var b : bool;
+a = 1;
+b = true;
+
+write a + b;

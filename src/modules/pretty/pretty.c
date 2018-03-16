@@ -51,7 +51,7 @@ void prettyTail(tail *t) {
 void prettyType(type *t) {
     switch (t->kind) {
     case type_ID:
-        printf("%s", t->val.id);
+        printf("%s : ", t->val.id);
         if (types){
             prettyStype(t->stype, t->lineno);
         }

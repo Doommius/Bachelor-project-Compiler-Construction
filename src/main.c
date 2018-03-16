@@ -82,23 +82,19 @@ int main(int argc, char **argv) {
     
     weeder_init(theprogram);
     types = 0;
-    prettyProgram(theprogram);
+    //prettyProgram(theprogram);
 
-/*
-    printf("\nStarting typechecking\n\n");
+
+    //printf("\nStarting typechecking\n\n");
 
     typecheck(theprogram);
 
-    printf("\nAfter typechecking\n\n");
+    //printf("\nAfter typechecking\n\n");
 
     types = 1;
     prettyProgram(theprogram);
-<<<<<<< HEAD
-*/
 
-=======
-	
->>>>>>> 18569b0e220ff906823f0390ba4dfcae34b3a229
+
     printf("\n");
     return 1;
 }

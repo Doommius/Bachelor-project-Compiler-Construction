@@ -3,6 +3,7 @@ func test(n: int): int
    return 2;
 end test
 
-write test();
-(* This is a comment that is not closed
+return 2;
+
+write test(1);
 

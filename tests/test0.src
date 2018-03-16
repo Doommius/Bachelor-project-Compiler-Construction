@@ -1,10 +1,2 @@
-# Test of lazy OR operator
-# If the OR operator is lazy, the test will terminate
-
-func c () : bool
-  var d : int;
-  d = 0;
- 
-  b = false;
-  return true;
-end c
+var a : int;
+a = 2*2;
