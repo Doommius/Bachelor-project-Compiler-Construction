@@ -1,0 +1,17 @@
+#Scoping sometimes unreachable return
+func test(n: int): int
+	var n : int;
+	var a : int;
+	var b : int;
+   	if (n >= 0) then {		
+		if n == 2 then {
+			b = 2;
+		} else {
+			n = n + b;
+			return n;
+		}
+	}
+   
+end test
+
+write test(1);
