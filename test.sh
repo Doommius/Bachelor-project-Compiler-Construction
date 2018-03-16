@@ -2,7 +2,7 @@
 echo "+-------------+"
 echo "|    Make     |"
 echo "+-------------+"
-make
+echo make
 echo "+-------------+"
 echo "|    Tests    |"
 echo "+-------------+"
