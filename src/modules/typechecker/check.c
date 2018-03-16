@@ -437,7 +437,7 @@ int check_function_args(par_decl_list *pdl, act_list *alist){
 
         st1 = temp->stype;
         st2 = elist->expression->stype;
-#if debugflag > 3
+#if debugflag > 2
         printf("ST1s type: %d, ST2s type: %d\n", st1->type, st2->type);
 #endif
 
@@ -450,6 +450,12 @@ int check_function_args(par_decl_list *pdl, act_list *alist){
     
     if ((vdl == NULL) && (elist == NULL)){
         return 1;
+    } 
+    if (vdl == NULL){
+        print_error("Too many function arguments", 0, alist->lineno);
+    }
+    if (elist == NULL){
+        print_error("Too few function arguments", 0, alist->lineno);
     }
 
     return 0;

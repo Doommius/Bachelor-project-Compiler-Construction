@@ -12,7 +12,7 @@
 // 2 advanced debug levels, eg. is the program transversing the functions as expected.
 // 3 all the debug things. print all debug information within functions.
 
-#define debugflag 2
+#define debugflag 0
 
 #define COMPILER_DEBUG_H
 
