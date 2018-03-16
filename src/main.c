@@ -93,8 +93,12 @@ int main(int argc, char **argv) {
 
     types = 1;
     prettyProgram(theprogram);
+<<<<<<< HEAD
 */
 
+=======
+	
+>>>>>>> 18569b0e220ff906823f0390ba4dfcae34b3a229
     printf("\n");
     return 1;
 }

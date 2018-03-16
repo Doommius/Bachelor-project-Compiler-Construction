@@ -1,0 +1,20 @@
+# Return outside function, part 2
+
+func beta(n: int): int
+   var n : int;
+   if (n == 0) || (n == 1) then
+      n = 3;
+
+	return n;
+end beta
+
+write beta(1);
+
+func test(n: int): int
+   var n : int;
+   if (n == 0) || (n == 1) then
+      n = 3;
+end test
+
+return n;
+write test(1);
