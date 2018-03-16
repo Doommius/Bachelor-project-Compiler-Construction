@@ -187,7 +187,7 @@ void check_exp(expression *exp){
 
         case (exp_PLUS):        // Subject to change, could be made to work with strings, f.x. "Hi"+2 could be: "Hi2"
         case (exp_MIN):
-        case (exp_MULT):        // Subject ot change, could be made to work with strings, f.x. "Hi"*2 could be: "HiHi"
+        case (exp_MULT):        // Subject to change, could be made to work with strings, f.x. "Hi"*2 could be: "HiHi"
         case (exp_DIV):
 #ifdef debugflag
             printf("Checking left expression, Arithmetic\n");

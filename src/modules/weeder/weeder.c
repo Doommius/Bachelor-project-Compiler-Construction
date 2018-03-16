@@ -46,6 +46,7 @@ body *weed_body(body *body){
 }
 
 function *weed_function(function *func){
+
     stack_push(function_stack, func);
 
     func->body = weed_body(func->body);
