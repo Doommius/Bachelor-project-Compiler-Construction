@@ -80,6 +80,7 @@ int main(int argc, char **argv) {
     lineno = 1;
     yyparse();
     
+    //printf("\nStarting weeder\n\n");
     weeder_init(theprogram);
     types = 0;
     //prettyProgram(theprogram);
@@ -90,10 +91,13 @@ int main(int argc, char **argv) {
 #if debugflag > 0
     printf("\nStarting typechecking\n\n");
 #endif
+
     typecheck(theprogram);
+
 #if debugflag > 0
     printf("\nAfter typechecking\n\n");
 #endif
+
     types = 1;
     prettyProgram(theprogram);
 

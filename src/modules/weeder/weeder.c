@@ -163,12 +163,10 @@ statement_list *weed_slist(statement_list *slist){
     if (slist->kind == sl_LIST){
         slist->list = weed_slist(slist->list);
     }
-
+    
     if (slist->statement == NULL){
         return slist->list;
     }
-
-    
 
     return slist;
 
@@ -237,7 +235,6 @@ statement *weed_stmt(statement *stmt){
             break;
 
         case (statement_IF_ELSE):
-            //printf("Statement if else\n");
             stmt->val.ifthen.expression = weed_expression(stmt->val.ifthen.expression);
             stmt->val.ifthen.statement1 = weed_stmt(stmt->val.ifthen.statement1);
             //printf("Weeding statement 2\n");
@@ -252,8 +249,9 @@ statement *weed_stmt(statement *stmt){
             if (stmt->val.ifthen.expression->kind == exp_TERM){
                 if (stmt->val.ifthen.expression->val.term->kind == term_FALSE){
                     stmt = stmt->val.ifthen.statement2;
+                } else {
+                    stmt = stmt->val.ifthen.statement1;
                 }
-                stmt = stmt->val.ifthen.statement1;
             }
             
             break;
