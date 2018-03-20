@@ -122,13 +122,77 @@ linked_list *linked_list_get_head(linked_list *list) {
 }
 
 /**
- * @brief retrieves the tail of the list
+ * @brief retrieves the tail of the list.
  * 
  * @param list reference to list, where the tail has to be found.
  * @return linked_list* returns the tail of the list.
  */
 linked_list *linked_list_get_tail(linked_list *list) {
     return list->meta->tail;
+}
+
+/**
+ * @brief Removes the head of the list.
+ * 
+ * @param list reference to list, where the head has to be removed.
+ * @return linked_list* returns the new list.
+ */
+linked_list *linked_list_remove_head(linked_list *list) {
+	linked_list *old_head = list->meta->head;
+	list->meta->head = list->meta->head->next;
+	list->meta->head->prev = list->meta->tail;
+	list->meta->tail->next = list->meta->head;
+	list->meta->length--;
+	if(list->meta->current_pos == 0) {
+		list->meta->current_element = list->meta->head;
+	}
+	free(old_head);
+	return list;
+}
+
+/**
+ * @brief Removes tail of the list.
+ * 
+ * @param list reference to list, where the head has to be removed.
+ * @return linked_list* returns the new list.
+ */
+linked_list *linked_list_remove_tail(linked_list *list) {
+	linked_list *old_tail = list->meta->tail;
+	list->meta->tail = list->meta->tail->prev;
+	list->meta->tail->next = list->meta->head;
+	list->meta->head->prev = list->meta->tail;
+	if(list->meta->current_pos == list->meta->length-1) {
+		list->meta->current_element = list->meta->current_element->prev;
+		list->meta->current_pos = list->meta->length-2;
+	}
+	list->meta->length--;
+	free(old_tail);
+	return list;
+}
+
+/**
+ * @brief Removes the ith item from the list
+ * 
+ * @param list list to remove the element from.
+ * @param i element at index i to remove.
+ * @return linked_list* returns updated list.
+ */
+linked_list *linked_list_remove_at_index(linked_list *list, unsigned i) {
+	if(i >= list->meta->length-1) {
+		return 0;
+	}
+
+	linked_list *item = linked_list_get(list, i);
+
+	item->prev->next = item->next;
+	item->next->prev = item->prev;
+	if(item == list->meta->head) {
+		list->meta->head = item->next;
+	} else if (item == list->meta->tail) {
+		list->meta->tail = item->prev;
+	}
+	free(item);
+	return list;
 }
 
 /**
