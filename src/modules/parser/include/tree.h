@@ -100,6 +100,7 @@ typedef struct declaration {
 typedef struct statement_list {
     struct symbol_table*table;
     int lineno;
+    int contains_ret;
     SL_kind kind;
     struct statement *statement;
     struct statement_list *list;

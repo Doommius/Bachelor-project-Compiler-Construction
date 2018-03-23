@@ -50,6 +50,11 @@ function *weed_function(function *func){
     stack_push(function_stack, func);
 
     func->body = weed_body(func->body);
+    
+    if (func->body->s_list->contains_ret == 0){
+        print_error("Function does not contain a return", 0, func->lineno);
+    }
+
     func->head = weed_head(func->head);
 
     stack_pop(function_stack);
@@ -154,19 +159,53 @@ declaration *weed_decl(declaration *decl){
 
 statement_list *weed_slist(statement_list *slist){
     //printf("Weeding slist\n");
+    struct function *f;
+    slist->contains_ret = 0;
 
     if (slist == NULL){
         return NULL;
     }
 
     slist->statement = weed_stmt(slist->statement);
+    slist->contains_ret = slist->statement->contains_ret;
+
     if (slist->kind == sl_LIST){
         slist->list = weed_slist(slist->list);
+        slist->contains_ret = slist->list->contains_ret;
     }
+
     
     if (slist->statement == NULL){
         return slist->list;
     }
+
+    f = stack_read(function_stack);
+
+    if (f != NULL){
+        if (slist->statement->kind == statement_IF_ELSE){
+            if (slist->statement->contains_ret == 0){
+                // prettySTMT(slist->statement);
+                print_error("If-else does not contain enough returns", 0, slist->statement->lineno);
+            }
+        }
+        
+        //We need to check if there is a return after the if
+        if (slist->statement->kind == statement_IF){
+            if (slist->list->contains_ret == 0){
+                print_error("No return after IF", 0, slist->statement->lineno);
+                
+            }
+            
+        }
+        // printf("Slist's statement contains a ret? %d\n", slist->statement->contains_ret);
+
+        // prettySTMT(slist->statement);
+        // slist->contains_ret = slist->statement->contains_ret;
+        f->body->s_list->contains_ret = 1;
+    }
+
+    
+
 
     return slist;
 
@@ -225,6 +264,11 @@ statement *weed_stmt(statement *stmt){
             stmt->val.ifthen.expression = weed_expression(stmt->val.ifthen.expression);
             stmt->val.ifthen.statement1 = weed_stmt(stmt->val.ifthen.statement1);
 
+            //Check for return in if
+            if (stmt->val.ifthen.statement1->contains_ret == 1){
+                stmt->contains_ret = 1;
+            }
+
             // Check if expression is always true/false
             if (stmt->val.ifthen.expression->kind == exp_TERM){
                 if (stmt->val.ifthen.expression->val.term->kind == term_FALSE){
@@ -241,7 +285,13 @@ statement *weed_stmt(statement *stmt){
             stmt->val.ifthen.statement2 = weed_stmt(stmt->val.ifthen.statement2);
             //printf("Done weeding statement 2\n");
             
-            if (stmt->val.ifthen.statement1->contains_ret && stmt->val.ifthen.statement2->contains_ret){
+            if (stmt->val.ifthen.statement1->contains_ret == 1 && stmt->val.ifthen.statement2->contains_ret == 1){
+                stmt->contains_ret = 1;
+            }
+
+            //Check for return in both if and else
+            
+            if (stmt->val.ifthen.statement1->contains_ret == 1 && stmt->val.ifthen.statement2->contains_ret == 1){
                 stmt->contains_ret = 1;
             }
 
@@ -271,7 +321,7 @@ statement *weed_stmt(statement *stmt){
             if (stmt->val.list == NULL){
                 return NULL;
             }
-            stmt->contains_ret = stmt->val.list->statement->contains_ret;
+            stmt->contains_ret = stmt->val.list->contains_ret;
             break;
     }
 

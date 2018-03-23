@@ -212,6 +212,7 @@ statement *make_STMT_ret(expression *e) {
     s->lineno = lineno;
     s->kind = statement_RETURN;
     s->val.ret = e;
+    s->contains_ret = 0;
     return s;
 }
 
