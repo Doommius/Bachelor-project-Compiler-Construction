@@ -88,6 +88,12 @@ linked_list* linked_list_get_head(linked_list *list);
 
 linked_list* linked_list_get_tail(linked_list *list);
 
+linked_list* linked_list_remove_head(linked_list *list);
+
+linked_list* linked_list_remove_tail(linked_list *list);
+
+linked_list* linked_list_remove_at_index(linked_list *list, unsigned i);
+
 unsigned int linked_list_length(linked_list *list);
 
 linked_list *linked_list_get(linked_list *list, int index);
