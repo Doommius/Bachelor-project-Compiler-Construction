@@ -1,0 +1,10 @@
+type a = int;
+type b = a;
+
+func f(): int
+    type a = bool;
+    var i : b;
+    return i;
+end f
+
+write f();
