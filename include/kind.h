@@ -104,6 +104,7 @@ typedef enum { jmp, //unconditional jump
                MOVQ,
                ADDQ,
                SUBQ,
+               CALL,
 
                PUSH,
                POP,
@@ -121,11 +122,12 @@ typedef enum { jmp, //unconditional jump
                CMP
 } ASM_kind;
 
-typedef enum { op_CONST,
+typedef enum { op_INTCONST,
                op_REGISTER,
                op_STACK_LOC,
                op_HEAP_LOC,
                op_LABEL,
+               op_CONST,
 
                op_TEMP //Temporary until we find out what register/stack location it should be in, atleast i hope so.
 

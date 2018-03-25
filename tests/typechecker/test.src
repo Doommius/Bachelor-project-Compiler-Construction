@@ -1,17 +1,1 @@
-type a = int;
-type b = a;
-
-func f(): int
-    type a = bool;
-    var i : b;
-    i = 2;
-    if (i > 1) then
-    {
-        write 2;
-        return i;
-    }
-    else
-        return i+2;
-end f
-
-write f();
+write 2 + 2;

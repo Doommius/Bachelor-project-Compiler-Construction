@@ -18,77 +18,75 @@ int temps = 0;
 
 /**
  * Initialize general purpose register operators
+ * 
+ * Also initialize "wrt_INT" and "op_PRINTF", for printing ints
+ * 
  */
 void init_regs(){
-	struct asm_op *reg_RAX;
 	reg_RAX = NEW(asm_op);
 	reg_RAX->type = op_REGISTER;
 	reg_RAX->val.reg_id = "rax";
 
-	struct asm_op *reg_RBX;
 	reg_RBX = NEW(asm_op);
 	reg_RBX->type = op_REGISTER;
 	reg_RBX->val.reg_id = "rbx";
 
-	struct asm_op *reg_RCX;
 	reg_RCX = NEW(asm_op);
 	reg_RCX->type = op_REGISTER;
 	reg_RCX->val.reg_id = "rcx";
 
-	struct asm_op *reg_RDX;
 	reg_RDX = NEW(asm_op);
 	reg_RDX->type = op_REGISTER;
 	reg_RDX->val.reg_id = "rdx";
 
-	struct asm_op *reg_RSI;
 	reg_RSI = NEW(asm_op);
 	reg_RSI->type = op_REGISTER;
 	reg_RSI->val.reg_id = "rsi";
 
-	struct asm_op *reg_RDI;
 	reg_RDI = NEW(asm_op);
 	reg_RDI->type = op_REGISTER;
 	reg_RDI->val.reg_id = "rdi";
 
-	struct asm_op *reg_R8;
 	reg_R8 = NEW(asm_op);
 	reg_R8->type = op_REGISTER;
 	reg_R8->val.reg_id = "r8";
 
-	struct asm_op *reg_R9;
 	reg_R9 = NEW(asm_op);
 	reg_R9->type = op_REGISTER;
 	reg_R9->val.reg_id = "r9";
 
-	struct asm_op *reg_R10;
 	reg_R10 = NEW(asm_op);
 	reg_R10->type = op_REGISTER;
 	reg_R10->val.reg_id = "r10";
 
-	struct asm_op *reg_R11;
 	reg_R11 = NEW(asm_op);
 	reg_R11->type = op_REGISTER;
 	reg_R11->val.reg_id = "r11";
 
-	struct asm_op *reg_R12;
 	reg_R12 = NEW(asm_op);
 	reg_R12->type = op_REGISTER;
 	reg_R12->val.reg_id = "r12";
 
-	struct asm_op *reg_R13;
 	reg_R13 = NEW(asm_op);
 	reg_R13->type = op_REGISTER;
 	reg_R13->val.reg_id = "r13";
 
-	struct asm_op *reg_R14;
 	reg_R14 = NEW(asm_op);
 	reg_R14->type = op_REGISTER;
 	reg_R14->val.reg_id = "r14";
 
-	struct asm_op *reg_R15;
 	reg_R15= NEW(asm_op);
 	reg_R15->type = op_REGISTER;
 	reg_R15->val.reg_id = "r15";
+
+	wrt_INT = NEW(asm_op);
+	wrt_INT->type = op_CONST;
+	wrt_INT->val.label_id = ".wrt_INT";
+
+	op_PRINTF = NEW(asm_op);
+	op_PRINTF->type = op_LABEL;
+	op_PRINTF->val.func_id = "printf";
+
 }
 
 void code_or_expression(linked_list *list, expression *e) {
@@ -368,72 +366,156 @@ linked_list *buildcode(statement_list input) {
 
 
 a_asm *generate_program(body *body){
-	init_regs();
-
-
-   
-}
-
-a_asm *generate_body(body *body){
-
-	
-}
-
-a_asm *generate_function(function *func){
-
-	
-}
-
-a_asm *generate_head(head *head){
-
-	
-}
-
-a_asm *generate_tail(tail *tail){
-
-	
-}
-
-a_asm *generate_type(type *type){
-
-	
-}
-
-a_asm *generate_pdl(par_decl_list *pdl){
-
-	
-}
-
-a_asm *generate_vdl(var_decl_list *vdl){
-
-	
-}
-
-a_asm *generate_vtype(var_type *vtype){
-
-	
-}
-
-a_asm *generate_dlist(decl_list *dlist){
-
-	
-}
-
-a_asm *generate_decl(declaration *decl){
-
-
-}
-
-a_asm *generate_slist(statement_list *slist){
+	struct a_asm *b;
 	struct a_asm *head;
     struct a_asm *tail;
 	head = NULL;
 	tail = NULL;
+    
+	printf("Initializing registers\n");
+
+	init_regs();
+
+
+	printf("Generating body\n");
+	b = generate_body(body);
+
+	asm_insert(&head, &tail, &b);
+	printf("Done generating program\n");
+
+	return head;
+   
+}
+
+a_asm *generate_body(body *body){
+	struct a_asm *sl;
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+
+	printf("In body, generating s_list\n");
+	sl = generate_slist(body->s_list);
+	asm_insert(&head, &tail, &sl);
+	printf("In body, done generating s_list\n");
+
+	return head;
 	
-	asm_insert(head, tail, generate_stmt(slist->statement));
+}
+
+a_asm *generate_function(function *func){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+    
+
+	return head;
+	
+}
+
+a_asm *generate_head(head *h){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+    
+
+	return head;
+}
+
+a_asm *generate_tail(tail *t){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+    
+
+	return head;
+}
+
+a_asm *generate_type(type *type){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+    
+
+	return head;
+}
+
+a_asm *generate_pdl(par_decl_list *pdl){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+    
+
+	return head;
+}
+
+a_asm *generate_vdl(var_decl_list *vdl){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+    
+
+	return head;
+}
+
+a_asm *generate_vtype(var_type *vtype){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+    
+
+	return head;
+}
+
+a_asm *generate_dlist(decl_list *dlist){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+    
+
+	return head;
+}
+
+a_asm *generate_decl(declaration *decl){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+    
+
+	return head;
+}
+
+a_asm *generate_slist(statement_list *slist){
+	struct a_asm *stmt;
+	struct a_asm *sl;
+
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+
+
+	printf("In s_list, generating statement\n");
+	stmt = generate_stmt(slist->statement);
+	
+	asm_insert(&head, &tail, &stmt);
+
+	printf("In s_list, done generating statement\n");
 
 	if (slist->kind !=NULL){
-		asm_insert(head, tail, generate_slist(slist->list));
+		printf("In s_list, generating s_list\n");
+		sl = generate_slist(slist->list);
+		asm_insert(&head, &tail, &sl);
+		printf("In s_list, done generating s_list\n");
 	}
 
 	// Could possibly be a struct = {head, tail}, so we didn't have to loop through and find the tail later.
@@ -443,13 +525,34 @@ a_asm *generate_slist(statement_list *slist){
 
 a_asm *generate_stmt(statement *stmt){
 	struct a_asm *head;
-    struct a_asm *tail;
+    struct a_asm *tail;    printf("Creating 2 op\n");
+
 	head = NULL;
 	tail = NULL;
+	struct a_asm *expr;
+
+	struct asm_op *wrt;
+
 
 	switch (stmt->kind){
 
 		case (statement_WRITE):
+
+			printf("In statement, generating expression\n");
+			expr = generate_exp(stmt->val.wrt);
+			printf("In statment, done generating expressions\n");
+			asm_insert(&head, &tail, &expr);
+			wrt = tail->val.two_op.op2;
+			printf("Got expression to write\n");
+			//Should probably be some more pushing before creating a print
+			add_1_ins(&head, &tail, PUSH, reg_RAX, "Saving value of RAX before printf call");
+
+			add_2_ins(&head, &tail, MOVQ, wrt_INT, reg_RDI, "First argument for printf");
+			add_2_ins(&head, &tail, MOVQ, wrt, reg_RSI, "Second argument for printf");
+			add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RAX, "No vector arguments");
+			add_1_ins(&head, &tail, CALL, op_PRINTF, "Calling printf");
+
+			add_1_ins(&head, &tail, POP, reg_RAX, "Restoring RAX");
 
 			break;
 
@@ -459,9 +562,11 @@ a_asm *generate_stmt(statement *stmt){
 
 	}
     
+	return head;
 }
 
 a_asm *generate_exp(expression *exp){
+	printf("Generating code for exp kind: %d\n", exp->kind);
 
     struct a_asm *left_exp;
     struct a_asm *right_exp;
@@ -476,17 +581,23 @@ a_asm *generate_exp(expression *exp){
     
 
     if (exp->kind == exp_TERM){
+
+		printf("In expression, generating term\n");
         single = generate_term(exp->val.term);
-		asm_insert(head, tail, single);
+		printf("Got term a_asm\n");
+		asm_insert(&head, &tail, &single);
+		printf("Inserted term in list\n");
 		return head;
     }
 
+	printf("In expression, generating left expression\n");
     left_exp = generate_exp(exp->val.ops.left);
-    asm_insert(head, tail, left_exp);
+    asm_insert(&head, &tail, &left_exp);
 	left_target = tail->val.two_op.op2;
 
+	printf("In expression, generating right expression\n");
 	right_exp = generate_exp(exp->val.ops.right);
-	asm_insert(head, tail, right_exp);
+	asm_insert(&head, &tail, &right_exp);
 	right_target = tail->val.two_op.op2;
 
 	switch (exp->kind){
@@ -494,29 +605,29 @@ a_asm *generate_exp(expression *exp){
 		case (exp_MULT):
 			//IMUL uses the %rax register, so we must move one of the values to this register
 			//Put the resulting value in a temporary
-			add_2_ins(head, tail, MOVQ, left_target, reg_RAX, "Using RAX for multiplication");
-			add_2_ins(head, tail, MOVQ, right_target, reg_RBX, "Using RBX for multiplication");
-			add_1_ins(head, tail, IMUL, reg_RBX, "Multiplication using RAX and RBX");
-			add_2_ins(head, tail, MOVQ, reg_RAX, make_op_temp, "Storing result here (temp)");
+			add_2_ins(&head, &tail, MOVQ, left_target, reg_RAX, "Using RAX for multiplication");
+			add_2_ins(&head, &tail, MOVQ, right_target, reg_RBX, "Using RBX for multiplication");
+			add_1_ins(&head, &tail, IMUL, reg_RBX, "Multiplication using RAX and RBX");
+			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp, "Storing result here (temp)");
 			break;
 
 		case (exp_DIV):
 			//IDIV uses the %rax register, so we must move one of the values to this register
 			//Should be change to a multiplication when optimizing, since that is faster than division
-			add_2_ins(head, tail, MOVQ, left_target, reg_RAX, "Using RAX for division");
+			add_2_ins(&head, &tail, MOVQ, left_target, reg_RAX, "Using RAX for division");
 
 			//Need to add a check to see if this value is 0 or not
-			add_2_ins(head, tail, MOVQ, right_target, reg_RBX, "Using RBX for division");
-			add_1_ins(head, tail, IDIV, reg_RBX, "Division using RAX and RBX");
-			add_2_ins(head, tail, MOVQ, reg_RAX, make_op_temp, "Storing result here (temp)");
+			add_2_ins(&head, &tail, MOVQ, right_target, reg_RBX, "Using RBX for division");
+			add_1_ins(&head, &tail, IDIV, reg_RBX, "Division using RAX and RBX");
+			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp, "Storing result here (temp)");
 			break;
 
 		case (exp_PLUS):
-			add_2_ins(head, tail, ADDQ, left_target, right_target, "Addition");
+			add_2_ins(&head, &tail, ADDQ, left_target, right_target, "Addition");
 			break;
 
 		case (exp_MIN):
-			add_2_ins(head, tail, SUBQ, left_target, right_target, "Subtraction");
+			add_2_ins(&head, &tail, SUBQ, left_target, right_target, "Subtraction");
 			break;
 
 
@@ -537,7 +648,9 @@ a_asm *generate_term(term *term){
     switch (term->kind){
 
         case (term_NUM):
-			add_2_ins(head, tail, MOVQ, make_op_const(term->val.num), make_op_temp(), "Moving constant to register");
+
+			printf("In term, generating num\n");
+			add_2_ins(&head, &tail, MOVQ, make_op_const(term->val.num), make_op_temp(), "Moving constant to register");
 			break;
 
 		default:
@@ -547,42 +660,55 @@ a_asm *generate_term(term *term){
 
 
     }
+	printf("In term, returning head, head ins: %d\n", head->ins);
 
 	return head;
     
 }
 
 a_asm *generate_alist(act_list *alist){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+    
 
-
+	return head;
 }
 
 a_asm *generate_elist(exp_list *elist){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+    
 
-
+	return head;
 }
 
 // Insert a "linked list" into an existing list
-void asm_insert(a_asm *head, a_asm *tail, a_asm *new){
+void asm_insert(a_asm **head, a_asm **tail, a_asm **new){
+	printf("Inserting in list\n");
     struct a_asm *temp;
 	temp = NULL;
     
-    if (new != NULL){
-		if (tail != NULL){
-			temp = tail->next;
-			tail->next = new;
+    if ((*new) != NULL){
+		printf("Incoming list is not NULL\n");
+		if (*tail != NULL){
+			temp = (*tail)->next;
+			(*tail)->next = (*new);
     	}
 
-        new->prev = tail;
-        if (tail == NULL){
-            head = new;
+        (*new)->prev = *tail;
+        if ((*tail) == NULL){
+            *head = (*new);
         }
 
-		tail = find_tail(new);
+		(*tail) = find_tail((*new));
 
-		tail->next = temp;
+		(*tail)->next = temp;
         if (temp != NULL){
-			temp->prev = tail;
+			temp->prev = (*tail);
 		}
 
     }
@@ -590,40 +716,54 @@ void asm_insert(a_asm *head, a_asm *tail, a_asm *new){
 }
 
 //Add instruction with 2 operators
-void add_2_ins(a_asm *head, a_asm *tail, ASM_kind *ins, asm_op *op1, asm_op *op2, char* comment){
+void add_2_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, asm_op *op2, char* comment){
+	if (*tail == NULL){
+		printf("Tail is NULL, when adding ins\n");
+	}
+	printf("Getting next...\n");
 	get_next(head, tail);
+	printf("Got next!\n");
+	if (tail == NULL){
+		printf("tail is still NULL\n");
+	}
 	
-	tail->ins = ins;
-	tail->val.two_op.op1 = op1;
-	tail->val.two_op.op2 = op2;
-	tail->comment = comment;
-	tail->ops = 2;
-	tail->next = NULL;
+	(*tail)->ins = ins;
+	(*tail)->val.two_op.op1 = op1;
+	(*tail)->val.two_op.op2 = op2;
+	(*tail)->comment = comment;
+	(*tail)->ops = 2;
+	(*tail)->next = NULL;
+	printf("Tail ins: %d\n", (*tail)->ins);
+	printf("Head ins: %d\n", (*head)->ins);
 
 }
 
 //Add instruction with 1 operator
-void add_1_ins(a_asm *head, a_asm *tail, ASM_kind *ins, asm_op *op1, char* comment){
+void add_1_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, char* comment){
 	get_next(head, tail);
 	
-	tail->ins = ins;
-	tail->val.one_op.op = op1;
-	tail->comment = comment;
-	tail->ops = 1;
-	tail->next = NULL;
+	(*tail)->ins = ins;
+	(*tail)->val.one_op.op = op1;
+	(*tail)->comment = comment;
+	(*tail)->ops = 1;
+	(*tail)->next = NULL;
 
 }
 
 
 
-void get_next(a_asm *head, a_asm *tail){
-	if (tail == NULL){
-		tail = NEW(a_asm);
-		head = tail;
+void get_next(a_asm **head1, a_asm **tail1){
+	if (*tail1 == NULL){
+		printf("Tail is null, creating new tail\n");
+		*tail1 = NEW(a_asm);
+		if (tail1 == NULL){
+			printf("Tail is NULL after allocation\n");
+		}
+		*head1 = *tail1;
 	} else {
-		tail->next = NEW(a_asm);
-		tail->next->prev = tail;
-		tail = tail->next;
+		(*tail1)->next = NEW(a_asm);
+		(*tail1)->next->prev = *tail1;
+		*tail1 = (*tail1)->next;
 	}
 
 }
@@ -634,7 +774,7 @@ a_asm *find_tail(a_asm *node){
 	struct a_asm *temp;
 	temp = node;
 
-	while (temp != NULL){
+	while (temp->next != NULL){
 		temp = temp->next;
 	}
 
@@ -647,7 +787,7 @@ asm_op *make_op_const(int i){
 	struct asm_op *op;
 	op = NEW(asm_op);
 	
-	op->type = op_CONST;
+	op->type = op_INTCONST;
 	op->val.intconst = i;
 	return op;
 

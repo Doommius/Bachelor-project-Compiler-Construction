@@ -18,7 +18,7 @@ typedef struct asm_node {
 //Abstract assembly node, with a build in linked list.
 //To be expanded
 typedef struct a_asm {
-	ASM_kind *ins;
+	ASM_kind ins;
 	struct a_asm *prev;
 	struct a_asm *next;
 	char *comment;
@@ -47,10 +47,12 @@ typedef struct a_asm {
 } a_asm;
 
 typedef struct asm_op {
-	OP_kind *type;
+	OP_kind type;
 	int stack_offset;
 	union {
 		char *reg_id;
+		char *label_id;
+		char *func_id;
 		struct {
 			int id;
 		} temp;

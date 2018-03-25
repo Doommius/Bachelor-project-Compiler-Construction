@@ -20,6 +20,8 @@
 #include "y.tab.h"
 #include "weeder.h"
 #include "typechecker.h"
+#include "code.h"
+#include "print_asm.h"
 
 
 int lineno;
@@ -32,6 +34,7 @@ int main(int argc, char **argv) {
     char *cvalue = NULL;
     int index;
     int c;
+    a_asm *program;
 
     opterr = 0;
 
@@ -81,7 +84,7 @@ int main(int argc, char **argv) {
     yyparse();
     
     //printf("\nStarting weeder\n\n");
-    weeder_init(theprogram);
+    //weeder_init(theprogram);
     types = 0;
     //prettyProgram(theprogram);
 
@@ -99,7 +102,11 @@ int main(int argc, char **argv) {
 #endif
 
     types = 1;
-    prettyProgram(theprogram);
+    //prettyProgram(theprogram);
+
+
+    program = generate_program(theprogram);
+    print_asm(program, "a.s");
 
 
     printf("\n");

@@ -4,6 +4,7 @@
 #include "tree.h"
 #include "linked_list.h"
 
+
 void eval_statement(linked_list *list,statement *s);
 
 void eval_expression(linked_list *list,expression *e);
@@ -30,9 +31,9 @@ a_asm *generate_body(body *body);
 
 a_asm *generate_function(function *func);
 
-a_asm *generate_head(head *head);
+a_asm *generate_head(head *h);
 
-a_asm *generate_tail(tail *tail);
+a_asm *generate_tail(tail *t);
 
 a_asm *generate_type(type *type);
 
@@ -60,13 +61,13 @@ a_asm *generate_alist(act_list *alist);
 
 a_asm *generate_elist(exp_list *elist);
 
-void asm_insert(a_asm *head, a_asm *tail, a_asm *new);
+void asm_insert(a_asm **head, a_asm **tail, a_asm **new);
 
 a_asm *find_tail(a_asm *node);
 
-void add_2_ins(a_asm *head, a_asm *tail, ASM_kind *ins, asm_op *op1, asm_op *op2, char* comment);
+void add_2_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, asm_op *op2, char* comment);
 
-void add_1_ins(a_asm *head, a_asm *tail, ASM_kind *ins, asm_op *op1, char* comment);
+void add_1_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, char* comment);
 
 asm_op *make_op_const(int i);
 
@@ -74,7 +75,7 @@ asm_op *make_op_temp();
 
 void init_regs();
 
-void get_next(a_asm *head, a_asm *tail);
+void get_next(a_asm **head, a_asm **tail);
 
 //General purpose registers we can use. 
 struct asm_op *reg_RAX;
@@ -104,5 +105,9 @@ struct asm_op *reg_R13;
 struct asm_op *reg_R14;
 
 struct asm_op *reg_R15;
+
+struct asm_op *wrt_INT;
+
+struct asm_op *op_PRINTF;
 
 #endif
