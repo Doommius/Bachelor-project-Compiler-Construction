@@ -105,6 +105,7 @@ typedef enum { jmp, //unconditional jump
                ADDQ,
                SUBQ,
                CALL,
+               RET,
 
                PUSH,
                POP,

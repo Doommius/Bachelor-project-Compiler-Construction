@@ -12,8 +12,11 @@
 #include "tree.h"
 #include "code.h"
 #include "memory.h"
+#include "symbol.h"
 
 int temps = 0;
+int cmps = 0;
+int ifs = 0;
 
 
 /**
@@ -378,26 +381,45 @@ a_asm *generate_program(body *body){
 
 
 	printf("Generating body\n");
-	b = generate_body(body);
+	b = generate_body(body, "main", "main_end");
 
 	asm_insert(&head, &tail, &b);
 	printf("Done generating program\n");
+	add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RAX, "Return \"no error\" exit code");
+	add_ins(&head, &tail, RET, "Program return");
+
 
 	return head;
    
 }
 
-a_asm *generate_body(body *body){
+a_asm *generate_body(body *body, char *start_label, char *end_label){
 	struct a_asm *sl;
+	struct a_asm *dl;
 	struct a_asm *head;
     struct a_asm *tail;
+	struct a_asm *head2;
+	struct a_asm *tail2;
 	head = NULL;
 	tail = NULL;
+	
+	local_init(body->d_list);
+
+
+	printf("In body, generating d_list\n");
+	dl = generate_dlist(body->d_list);
+	asm_insert(&head, &tail, &dl);
+	printf("In body, done generating d_list\n");
+
+	//We want "main" to be the last label in the file.
+	add_label(&head, &tail, start_label, "Start of body");
 
 	printf("In body, generating s_list\n");
 	sl = generate_slist(body->s_list);
 	asm_insert(&head, &tail, &sl);
 	printf("In body, done generating s_list\n");
+
+	add_label(&head, &tail, end_label, "End of body");
 
 	return head;
 	
@@ -406,9 +428,19 @@ a_asm *generate_body(body *body){
 a_asm *generate_function(function *func){
 	struct a_asm *head;
     struct a_asm *tail;
+	struct a_asm *b;
+	struct a_asm *h;
 	head = NULL;
 	tail = NULL;
-    
+
+	h = generate_head(func->head);
+	asm_insert(&head, &tail, &h);
+
+	b = generate_body(func->body, func->start_label, func->end_label);
+	asm_insert(&head, &tail, &b);
+
+	add_ins(&head, &tail, RET, "Return from function");
+
 
 	return head;
 	
@@ -417,29 +449,13 @@ a_asm *generate_function(function *func){
 a_asm *generate_head(head *h){
 	struct a_asm *head;
     struct a_asm *tail;
+	struct a_asm *pdl;
+
 	head = NULL;
 	tail = NULL;
-    
 
-	return head;
-}
-
-a_asm *generate_tail(tail *t){
-	struct a_asm *head;
-    struct a_asm *tail;
-	head = NULL;
-	tail = NULL;
-    
-
-	return head;
-}
-
-a_asm *generate_type(type *type){
-	struct a_asm *head;
-    struct a_asm *tail;
-	head = NULL;
-	tail = NULL;
-    
+	pdl = generate_pdl(h->list);
+	asm_insert(&head, &tail, &pdl);
 
 	return head;
 }
@@ -447,20 +463,39 @@ a_asm *generate_type(type *type){
 a_asm *generate_pdl(par_decl_list *pdl){
 	struct a_asm *head;
     struct a_asm *tail;
+	struct a_asm *vdl;
+	int offset;
 	head = NULL;
 	tail = NULL;
     
+	if (pdl->kind != pdl_EMPTY){
+		offset = 1;
+		vdl = generate_vdl(pdl->list, offset);
+		asm_insert(&head, &tail, &vdl);
+	}
 
 	return head;
 }
 
-a_asm *generate_vdl(var_decl_list *vdl){
+a_asm *generate_vdl(var_decl_list *vdl, int offset){
 	struct a_asm *head;
     struct a_asm *tail;
+	struct a_asm *l;
+	SYMBOL *s;
 	head = NULL;
 	tail = NULL;
-    
 
+	s = get_symbol(vdl->vartype->table, vdl->vartype->id);
+
+	//Possibly -8 instead of 8
+	s->offset = 8 * offset;
+	offset++;
+	printf("Offset of var: %s = %d\n", s->name, s->offset);
+	if ( vdl->kind == vdl_LIST && vdl->list != NULL){
+		l = generate_vdl(vdl->list, offset);
+		asm_insert(&head, &tail, &l);
+	}
+    
 	return head;
 }
 
@@ -477,9 +512,21 @@ a_asm *generate_vtype(var_type *vtype){
 a_asm *generate_dlist(decl_list *dlist){
 	struct a_asm *head;
     struct a_asm *tail;
+
+	struct a_asm *decl;
+	struct a_asm *dl;
+
 	head = NULL;
 	tail = NULL;
-    
+
+	if (dlist->kind != dl_EMPTY){
+		decl = generate_decl(dlist->decl);
+		asm_insert(&head, &tail, &decl);
+
+		dl = generate_dlist(dlist->list);
+		asm_insert(&head, &tail, &dl);
+		
+	}
 
 	return head;
 }
@@ -487,8 +534,14 @@ a_asm *generate_dlist(decl_list *dlist){
 a_asm *generate_decl(declaration *decl){
 	struct a_asm *head;
     struct a_asm *tail;
+	struct a_asm *func;
 	head = NULL;
 	tail = NULL;
+
+	if (decl->kind == decl_FUNC){
+		func = generate_function(decl->val.function);
+		asm_insert(&head, &tail, &func);
+	}
     
 
 	return head;
@@ -504,18 +557,15 @@ a_asm *generate_slist(statement_list *slist){
 	tail = NULL;
 
 
-	printf("In s_list, generating statement\n");
 	stmt = generate_stmt(slist->statement);
 	
 	asm_insert(&head, &tail, &stmt);
 
-	printf("In s_list, done generating statement\n");
 
 	if (slist->kind !=NULL){
-		printf("In s_list, generating s_list\n");
+		
 		sl = generate_slist(slist->list);
 		asm_insert(&head, &tail, &sl);
-		printf("In s_list, done generating s_list\n");
 	}
 
 	// Could possibly be a struct = {head, tail}, so we didn't have to loop through and find the tail later.
@@ -525,25 +575,36 @@ a_asm *generate_slist(statement_list *slist){
 
 a_asm *generate_stmt(statement *stmt){
 	struct a_asm *head;
-    struct a_asm *tail;    printf("Creating 2 op\n");
+    struct a_asm *tail;
+	char label_else[20];
+	char label_ifend[20];
 
 	head = NULL;
 	tail = NULL;
 	struct a_asm *expr;
+	struct a_asm *s1;
+	struct a_asm *s2;
 
 	struct asm_op *wrt;
+	struct asm_op *ret;
+	struct asm_op *ifexp;
 
 
 	switch (stmt->kind){
 
+		case (statement_RETURN):
+			expr = generate_exp(stmt->val.ret);
+			asm_insert(&head, &tail, &expr);
+			ret = tail->val.two_op.op2;
+			add_2_ins(&head, &tail, MOVQ, ret, reg_RAX, "Return value placed in RAX");
+			add_1_ins(&head, &tail, JMP, make_op_label(stmt->function->end_label), "Jump to functions end label");
+			break;
+
 		case (statement_WRITE):
 
-			printf("In statement, generating expression\n");
 			expr = generate_exp(stmt->val.wrt);
-			printf("In statment, done generating expressions\n");
 			asm_insert(&head, &tail, &expr);
 			wrt = tail->val.two_op.op2;
-			printf("Got expression to write\n");
 			//Should probably be some more pushing before creating a print
 			add_1_ins(&head, &tail, PUSH, reg_RAX, "Saving value of RAX before printf call");
 
@@ -556,6 +617,40 @@ a_asm *generate_stmt(statement *stmt){
 
 			break;
 
+		case (statement_IF):
+			expr = generate_exp(stmt->val.ifthen.expression);
+			asm_insert(&head, &tail, &expr);
+			ifexp = tail->val.two_op.op2;
+			make_if_label(label_ifend);
+			add_2_ins(&head, &tail, CMP, make_op_const(1), ifexp, "Check if IF expression is true");
+			add_1_ins(&head, &tail, JNE, make_op_label(label_ifend), "Expression is false, skip IF part");
+
+			s1 = generate_stmt(stmt->val.ifthen.statement1);
+			asm_insert(&head, &tail, &s1);
+			add_label(&head, &tail, label_ifend, "End of IF");
+			break;
+
+		case (statement_IF_ELSE):
+			expr = generate_exp(stmt->val.ifthen.expression);
+			asm_insert(&head, &tail, &expr);
+			ifexp = tail->val.two_op.op2;
+			make_else_label(label_else);
+			make_if_label(label_ifend);
+			add_2_ins(&head, &tail, CMP, make_op_const(1), ifexp, "Check if IF expression is true");
+			add_1_ins(&head, &tail, JNE, make_op_label(label_else), "Expression is false, jump to ELSE part");
+
+			s1 = generate_stmt(stmt->val.ifthen.statement1);
+			asm_insert(&head, &tail, &s1);
+			add_1_ins(&head, &tail, JMP, make_op_label(label_ifend), "Skip ELSE part");
+
+			add_label(&head, &tail, label_else, "Start of ELSE");
+			s2 = generate_stmt(stmt->val.ifthen.statement2);
+			asm_insert(&head, &tail, &s2);
+
+			add_label(&head, &tail, label_ifend, "End of IF");
+			break;
+
+
 
 		default:
 			break;
@@ -565,14 +660,48 @@ a_asm *generate_stmt(statement *stmt){
 	return head;
 }
 
+
+a_asm *generate_var(variable *var){
+	struct a_asm *head;
+    struct a_asm *tail;
+	head = NULL;
+	tail = NULL;
+
+	struct asm_op *v;
+	struct asm_op *temp;
+
+	SYMBOL *s;
+
+	switch (var->kind){
+
+		case (var_ID):
+			s = get_symbol(var->table, var->id);
+			v = make_op_stack_loc(s->offset);
+			temp = make_op_temp();
+			add_2_ins(&head, &tail, MOVQ, v, temp, "Move val from stack to temp");
+			break;
+
+
+
+		default:
+			break;
+
+	}
+	return head;
+
+}
+
 a_asm *generate_exp(expression *exp){
-	printf("Generating code for exp kind: %d\n", exp->kind);
 
     struct a_asm *left_exp;
     struct a_asm *right_exp;
     struct a_asm *single;
 	struct asm_op *left_target;
 	struct asm_op *right_target;
+	struct asm_op *temp;
+	char label_true[20];
+	char label_end[20];
+	char label_bool[20];
 
     struct a_asm *head;
     struct a_asm *tail;
@@ -582,20 +711,26 @@ a_asm *generate_exp(expression *exp){
 
     if (exp->kind == exp_TERM){
 
-		printf("In expression, generating term\n");
         single = generate_term(exp->val.term);
-		printf("Got term a_asm\n");
 		asm_insert(&head, &tail, &single);
-		printf("Inserted term in list\n");
 		return head;
     }
 
-	printf("In expression, generating left expression\n");
     left_exp = generate_exp(exp->val.ops.left);
     asm_insert(&head, &tail, &left_exp);
 	left_target = tail->val.two_op.op2;
+	
+	if (exp->kind == exp_OR){
+		make_bool_label(label_bool);
+		add_2_ins(&head, &tail, CMP, make_op_const(1), left_target, "Compare left side of OR with true");
+		add_1_ins(&head, &tail, JE, make_op_label(label_bool), "If true, skip right expression");
+		add_label(&head, &tail, label_bool, "OR expression label");
+		right_exp = generate_exp(exp->val.ops.right);
+		asm_insert(&head, &tail, &right_exp);
+		return head;
 
-	printf("In expression, generating right expression\n");
+	}
+
 	right_exp = generate_exp(exp->val.ops.right);
 	asm_insert(&head, &tail, &right_exp);
 	right_target = tail->val.two_op.op2;
@@ -608,7 +743,7 @@ a_asm *generate_exp(expression *exp){
 			add_2_ins(&head, &tail, MOVQ, left_target, reg_RAX, "Using RAX for multiplication");
 			add_2_ins(&head, &tail, MOVQ, right_target, reg_RBX, "Using RBX for multiplication");
 			add_1_ins(&head, &tail, IMUL, reg_RBX, "Multiplication using RAX and RBX");
-			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp, "Storing result here (temp)");
+			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp(), "Storing result here (temp)");
 			break;
 
 		case (exp_DIV):
@@ -619,7 +754,7 @@ a_asm *generate_exp(expression *exp){
 			//Need to add a check to see if this value is 0 or not
 			add_2_ins(&head, &tail, MOVQ, right_target, reg_RBX, "Using RBX for division");
 			add_1_ins(&head, &tail, IDIV, reg_RBX, "Division using RAX and RBX");
-			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp, "Storing result here (temp)");
+			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp(), "Storing result here (temp)");
 			break;
 
 		case (exp_PLUS):
@@ -628,6 +763,105 @@ a_asm *generate_exp(expression *exp){
 
 		case (exp_MIN):
 			add_2_ins(&head, &tail, SUBQ, left_target, right_target, "Subtraction");
+			break;
+
+		case (exp_EQ):
+			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, EQ");
+			//Will hold either 1 or 0, depending on if the expression was true of false
+			temp = make_op_temp();
+			make_cmp_label(label_true);
+			make_end_cmp_label(label_end);
+			add_1_ins(&head, &tail, JE, make_op_label(label_true), "If true, jump to label");
+			
+			add_2_ins(&head, &tail, MOVQ, make_op_const(0), temp, "Setting result to 0 (false)");
+			add_1_ins(&head, &tail, JMP, make_op_label(label_end), "Jump to after compare label");
+			add_label(&head, &tail, label_true, "Compare true label");
+			add_2_ins(&head, &tail, MOVQ, make_op_const(1), temp, "Setting result to 1 (true)");
+			add_label(&head, &tail, label_end, "After compare label");
+			add_2_ins(&head, &tail, MOVQ, temp, temp, "Used to get \"target\" when creating next instruction");
+			break;
+
+		case (exp_NEQ):
+			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, NEQ");
+			//Will hold either 1 or 0, depending on if the expression was true of false
+			temp = make_op_temp();
+			make_cmp_label(label_true);
+			make_end_cmp_label(label_end);
+			add_1_ins(&head, &tail, JNE, make_op_label(label_true), "If true, jump to label");
+			
+			add_2_ins(&head, &tail, MOVQ, make_op_const(0), temp, "Setting result to 0 (false)");
+			add_1_ins(&head, &tail, JMP, make_op_label(label_end), "Jump to after compare label");
+			add_label(&head, &tail, label_true, "Compare true label");
+			add_2_ins(&head, &tail, MOVQ, make_op_const(1), temp, "Setting result to 1 (true)");
+			add_label(&head, &tail, label_end, "After compare label");
+			add_2_ins(&head, &tail, MOVQ, temp, temp, "Used to get \"target\" when creating next instruction");
+			break;
+
+		case (exp_GT):
+			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, EQ");
+			//Will hold either 1 or 0, depending on if the expression was true of false
+			temp = make_op_temp();
+			make_cmp_label(label_true);
+			make_end_cmp_label(label_end);
+			add_1_ins(&head, &tail, JG, make_op_label(label_true), "If true, jump to label");
+			
+			add_2_ins(&head, &tail, MOVQ, make_op_const(0), temp, "Setting result to 0 (false)");
+			add_1_ins(&head, &tail, JMP, make_op_label(label_end), "Jump to after compare label");
+			add_label(&head, &tail, label_true, "Compare true label");
+			add_2_ins(&head, &tail, MOVQ, make_op_const(1), temp, "Setting result to 1 (true)");
+			add_label(&head, &tail, label_end, "After compare label");
+			add_2_ins(&head, &tail, MOVQ, temp, temp, "Used to get \"target\" when creating next instruction");
+			break;
+
+		case (exp_LT):
+			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, EQ");
+			//Will hold either 1 or 0, depending on if the expression was true of false
+			temp = make_op_temp();
+			make_cmp_label(label_true);
+			make_end_cmp_label(label_end);
+			add_1_ins(&head, &tail, JL, make_op_label(label_true), "If true, jump to label");
+			
+			add_2_ins(&head, &tail, MOVQ, make_op_const(0), temp, "Setting result to 0 (false)");
+			add_1_ins(&head, &tail, JMP, make_op_label(label_end), "Jump to after compare label");
+			add_label(&head, &tail, label_true, "Compare true label");
+			add_2_ins(&head, &tail, MOVQ, make_op_const(1), temp, "Setting result to 1 (true)");
+			add_label(&head, &tail, label_end, "After compare label");
+			add_2_ins(&head, &tail, MOVQ, temp, temp, "Used to get \"target\" when creating next instruction");
+			break;
+
+		case (exp_GEQ):
+			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, EQ");
+			//Will hold either 1 or 0, depending on if the expression was true of false
+			temp = make_op_temp();
+			make_cmp_label(label_true);
+			make_end_cmp_label(label_end);
+			add_1_ins(&head, &tail, JGE, make_op_label(label_true), "If true, jump to label");
+			
+			add_2_ins(&head, &tail, MOVQ, make_op_const(0), temp, "Setting result to 0 (false)");
+			add_1_ins(&head, &tail, JMP, make_op_label(label_end), "Jump to after compare label");
+			add_label(&head, &tail, label_true, "Compare true label");
+			add_2_ins(&head, &tail, MOVQ, make_op_const(1), temp, "Setting result to 1 (true)");
+			add_label(&head, &tail, label_end, "After compare label");
+			add_2_ins(&head, &tail, MOVQ, temp, temp, "Used to get \"target\" when creating next instruction");
+			break;
+		
+		case (exp_LEQ):
+			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, EQ");
+			//Will hold either 1 or 0, depending on if the expression was true of false
+			temp = make_op_temp();
+			make_cmp_label(label_true);
+			make_end_cmp_label(label_end);
+			add_1_ins(&head, &tail, JLE, make_op_label(label_true), "If true, jump to label");
+			
+			add_2_ins(&head, &tail, MOVQ, make_op_const(0), temp, "Setting result to 0 (false)");
+			add_1_ins(&head, &tail, JMP, make_op_label(label_end), "Jump to after compare label");
+			add_label(&head, &tail, label_true, "Compare true label");
+			add_2_ins(&head, &tail, MOVQ, make_op_const(1), temp, "Setting result to 1 (true)");
+			add_label(&head, &tail, label_end, "After compare label");
+			add_2_ins(&head, &tail, MOVQ, temp, temp, "Used to get \"target\" when creating next instruction");
+			break;
+
+		default:
 			break;
 
 
@@ -642,14 +876,28 @@ a_asm *generate_exp(expression *exp){
 a_asm *generate_term(term *term){
 	struct a_asm *head;
     struct a_asm *tail;
+	struct a_asm *v;
 	head = NULL;
 	tail = NULL;
 
+	struct asm_op *target;
+
     switch (term->kind){
+
+		case (term_VAR):
+			v = generate_var(term->val.variable);
+			asm_insert(&head, &tail, &v);
+			target = v->val.two_op.op2;
+			add_2_ins(&head, &tail, MOVQ, target, make_op_temp(), "Copy val to new temp, to not harm it");
+			break;
+
+		case (term_LIST):
+			
+
+
 
         case (term_NUM):
 
-			printf("In term, generating num\n");
 			add_2_ins(&head, &tail, MOVQ, make_op_const(term->val.num), make_op_temp(), "Moving constant to register");
 			break;
 
@@ -660,7 +908,6 @@ a_asm *generate_term(term *term){
 
 
     }
-	printf("In term, returning head, head ins: %d\n", head->ins);
 
 	return head;
     
@@ -688,12 +935,10 @@ a_asm *generate_elist(exp_list *elist){
 
 // Insert a "linked list" into an existing list
 void asm_insert(a_asm **head, a_asm **tail, a_asm **new){
-	printf("Inserting in list\n");
     struct a_asm *temp;
 	temp = NULL;
     
     if ((*new) != NULL){
-		printf("Incoming list is not NULL\n");
 		if (*tail != NULL){
 			temp = (*tail)->next;
 			(*tail)->next = (*new);
@@ -717,15 +962,7 @@ void asm_insert(a_asm **head, a_asm **tail, a_asm **new){
 
 //Add instruction with 2 operators
 void add_2_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, asm_op *op2, char* comment){
-	if (*tail == NULL){
-		printf("Tail is NULL, when adding ins\n");
-	}
-	printf("Getting next...\n");
 	get_next(head, tail);
-	printf("Got next!\n");
-	if (tail == NULL){
-		printf("tail is still NULL\n");
-	}
 	
 	(*tail)->ins = ins;
 	(*tail)->val.two_op.op1 = op1;
@@ -733,8 +970,6 @@ void add_2_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, asm_op *op
 	(*tail)->comment = comment;
 	(*tail)->ops = 2;
 	(*tail)->next = NULL;
-	printf("Tail ins: %d\n", (*tail)->ins);
-	printf("Head ins: %d\n", (*head)->ins);
 
 }
 
@@ -750,14 +985,31 @@ void add_1_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, char* comm
 
 }
 
+void add_ins(a_asm **head, a_asm **tail, ASM_kind ins, char *comment){
+	get_next(head, tail);
+
+	(*tail)->ins = ins;
+	(*tail)->comment = comment;
+	(*tail)->ops = 0;
+	(*tail)->next = NULL;
+}
+
+void add_label(a_asm **head, a_asm **tail, char *label, char *comment){
+	get_next(head, tail);
+
+	(*tail)->ins = LABEL;
+	(*tail)->val.label_id = malloc(sizeof(char) *20);
+	sprintf((*tail)->val.label_id, "%s", label);
+	(*tail)->comment = comment;
+	(*tail)->next = NULL;
+
+}
 
 
 void get_next(a_asm **head1, a_asm **tail1){
 	if (*tail1 == NULL){
-		printf("Tail is null, creating new tail\n");
 		*tail1 = NEW(a_asm);
 		if (tail1 == NULL){
-			printf("Tail is NULL after allocation\n");
 		}
 		*head1 = *tail1;
 	} else {
@@ -768,7 +1020,33 @@ void get_next(a_asm **head1, a_asm **tail1){
 
 }
 
-//Should no be necessary if we keep meta information on blocks
+//Assign temp to every local variable
+void local_init(decl_list *dlist){
+	struct decl_list *d_temp;
+	struct var_decl_list *v_temp;
+	SYMBOL *s;
+	int vars;
+	vars = 0;
+
+	d_temp = dlist;
+
+	while(d_temp->kind != dl_EMPTY){
+		if (d_temp->decl->kind == decl_VAR){
+			v_temp = d_temp->decl->val.list;
+			while (v_temp != NULL){
+				s = get_symbol(dlist->table, v_temp->vartype->id);
+				s->op = make_op_temp();
+				v_temp = v_temp->list;
+				vars++;
+			}
+		}
+		d_temp = d_temp->list;
+	}
+	printf("Vars: %d\n", vars);
+}
+
+
+//Should not be necessary if we keep meta information on blocks
 a_asm *find_tail(a_asm *node){
 
 	struct a_asm *temp;
@@ -800,6 +1078,69 @@ asm_op *make_op_temp(){
 	op->type = op_TEMP;
 	op->val.temp.id = temps;
 	temps++;
+	return op;
+
+}
+
+
+asm_op *make_op_label(char *label){
+	struct asm_op *op;
+	op = NEW(asm_op);
+
+	op->type = op_LABEL;
+	op->val.label_id = malloc(sizeof(char) * 20);
+	sprintf(op->val.label_id, "%s", label);
+	return op;
+
+}
+
+
+void make_cmp_label(char *buffer){
+
+	sprintf(buffer, "cmpTrue_%d", cmps);
+	cmps++;
+
+}
+
+
+void make_end_cmp_label(char *buffer){
+
+	sprintf(buffer, "endCMP_%d", cmps-1);
+	
+}
+
+void make_bool_label(char *buffer){
+
+	sprintf(buffer, "endBoolCMP_%d", cmps);
+	cmps++;
+}
+
+
+void make_else_label(char *buffer){
+
+	sprintf(buffer, "else_%d", ifs);
+	ifs++;
+
+}
+
+
+void make_if_label(char *buffer){
+
+	sprintf(buffer, "if_end_%d", ifs-1);
+
+}
+
+
+asm_op *make_op_stack_loc(int offset){
+
+	struct asm_op *op;
+	op = NEW(asm_op);
+
+	//Not exactly a label, but it fits with the printing
+	op->type = op_LABEL;
+	op->val.label_id = malloc(sizeof(char) *20);
+	sprintf(op->val.label_id, "%d(%%rbp)", offset);
+	op->stack_offset = offset;
 	return op;
 
 }

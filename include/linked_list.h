@@ -34,6 +34,7 @@ typedef struct a_asm {
 
 		//Missing something for label
 
+		char *label_id;
 		struct {
 			struct asm_op *op1;
 			struct asm_op *op2;

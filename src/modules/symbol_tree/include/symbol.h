@@ -2,6 +2,7 @@
 #define __symbol_h
 
 #include "tree.h"
+#include "linked_list.h"
 
 #define HashSize 317
 /* SYMBOL will be extended later.
@@ -22,6 +23,8 @@ typedef struct SYMBOL {
     int value;
     struct SYMBOL *next;
     struct symbol_type *stype;
+    struct asm_op *op;
+    int offset;
 } SYMBOL;
 
 typedef struct symbol_table {

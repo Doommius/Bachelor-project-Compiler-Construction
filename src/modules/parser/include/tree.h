@@ -11,6 +11,8 @@ typedef struct function {
     struct head *head;
     struct body *body;
     struct tail *tail;
+    char *start_label;
+    char *end_label;
 
 } function;
 

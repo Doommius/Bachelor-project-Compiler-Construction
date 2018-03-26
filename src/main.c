@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
     yyparse();
     
     //printf("\nStarting weeder\n\n");
-    //weeder_init(theprogram);
+    weeder_init(theprogram);
     types = 0;
     //prettyProgram(theprogram);
 
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
 #endif
 
     types = 1;
-    //prettyProgram(theprogram);
+    prettyProgram(theprogram);
 
 
     program = generate_program(theprogram);

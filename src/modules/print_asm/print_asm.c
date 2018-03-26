@@ -28,7 +28,7 @@ void create_asm(a_asm *head){
     //Should probably make a check to see if we even use this label
     create_label(".wrt_INT", "Integer write label");
     create_ins(".string", "\"%d\\n\"", "String used for printing integers");
-    fprintf(out, ".globl main\nmain:\n");
+    fprintf(out, ".globl main\n");
     while (head != NULL){
         switch (head->ins){
 
@@ -51,6 +51,48 @@ void create_asm(a_asm *head){
             case (POP):
                 create_1_op("pop", head->val.one_op.op, head->comment);
                 break;
+
+            case (RET):
+                create_ins("ret", "", head->comment);
+                break;
+
+            case (LABEL):
+                create_label(head->val.label_id, head->comment);
+                break;
+
+            case (CMP):
+                create_2_op("cmp", head->val.two_op.op1, head->val.two_op.op2, head->comment);
+                break;
+
+            case (JMP):
+                create_1_op("jmp", head->val.one_op.op, head->comment);
+                break;
+
+            case (JNE):
+                create_1_op("jne", head->val.one_op.op, head->comment);
+                break;
+            
+            case (JE):
+                create_1_op("je", head->val.one_op.op, head->comment);
+                break;
+            
+            case (JG):
+                create_1_op("jg", head->val.one_op.op, head->comment);
+                break;
+
+            case (JL):
+                create_1_op("jl", head->val.one_op.op, head->comment);
+                break;
+
+            case (JGE):
+                create_1_op("jge", head->val.one_op.op, head->comment);
+                break;
+
+            case (JLE):
+                create_1_op("jle", head->val.one_op.op, head->comment);
+                break;
+
+
         }
 
 

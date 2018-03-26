@@ -27,19 +27,15 @@ linked_list *buildcode(statement_list input);
 
 a_asm *generate_program(body *body);
 
-a_asm *generate_body(body *body);
+a_asm *generate_body(body *body, char *start_label, char *end_label);
 
 a_asm *generate_function(function *func);
 
 a_asm *generate_head(head *h);
 
-a_asm *generate_tail(tail *t);
-
-a_asm *generate_type(type *type);
-
 a_asm *generate_pdl(par_decl_list *pdl);
 
-a_asm *generate_vdl(var_decl_list *vdl);
+a_asm *generate_vdl(var_decl_list *vdl, int offset);
 
 a_asm *generate_vtype(var_type *vtype);
 
@@ -65,13 +61,33 @@ void asm_insert(a_asm **head, a_asm **tail, a_asm **new);
 
 a_asm *find_tail(a_asm *node);
 
-void add_2_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, asm_op *op2, char* comment);
+void add_2_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, asm_op *op2, char *comment);
 
-void add_1_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, char* comment);
+void add_1_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, char *comment);
+
+void add_ins(a_asm **head, a_asm **tail, ASM_kind ins, char *comment);
+
+void add_label(a_asm **head, a_asm **tail, char *label, char *comment);
+
+void local_init(decl_list *dlist);
 
 asm_op *make_op_const(int i);
 
 asm_op *make_op_temp();
+
+asm_op *make_op_label(char *label);
+
+asm_op *make_op_stack_loc(int offset);
+
+void make_cmp_label(char *buffer);
+
+void make_end_cmp_label(char *buffer);
+
+void make_bool_label(char *buffer); 
+
+void make_else_label(char *buffer);
+
+void make_if_label(char *buffer);
 
 void init_regs();
 

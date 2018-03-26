@@ -157,6 +157,7 @@ void setup_vtype(var_type *vtype, symbol_table*table){
 void setup_dlist(decl_list *dlist, symbol_table *table){
 
     //printf("Setting up dlist\n");
+    dlist->table = table;
     if (dlist->kind != dl_EMPTY){
         setup_decl(dlist->decl, table);
         setup_dlist(dlist->list, table);
