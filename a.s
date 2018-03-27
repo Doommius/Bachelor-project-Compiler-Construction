@@ -29,22 +29,35 @@ endCMP_2:                     # After compare label
     movq t7, t7               # Used to get "target" when creating next instruction
     cmp $1, t7                # Check if IF expression is true
     jne else_0                # Expression is false, jump to ELSE part
-    movq $2, t8               # Moving constant to register
+    movq $1, t8               # Moving constant to register
     movq t8, %rax             # Return value placed in RAX
     jmp end_factorial         # Jump to functions end label
     jmp if_end_0              # Skip ELSE part
 else_0:                       # Start of ELSE
-    movq $1, t9               # Moving constant to register
-    movq t9, %rax             # Return value placed in RAX
+    movq 8(%rbp), t9          # Move val from stack to temp
+    movq t9, t10              # Copy val to new temp, to not harm it
+    movq 8(%rbp), t11         # Move val from stack to temp
+    movq t11, t12             # Copy val to new temp, to not harm it
+    movq $1, t13              # Moving constant to register
+    push t13                  # Push argument for function
+    call factorial            # Calling function
+    movq %rax, t14            # Saving return value from function in temp
+    movq t10, %rax            # Using RAX for multiplication
+    movq t14, %rbx            # Using RBX for multiplication
+    movq %rax, t15            # Storing result here (temp)
+    movq t15, %rax            # Return value placed in RAX
     jmp end_factorial         # Jump to functions end label
 if_end_0:                     # End of IF
 end_factorial:                # End of body
     ret                       # Return from function
 main:                         # Start of body
-    movq $4, t10              # Moving constant to register
+    movq $5, t16              # Moving constant to register
+    push t16                  # Push argument for function
+    call factorial            # Calling function
+    movq %rax, t17            # Saving return value from function in temp
     push %rax                 # Saving value of RAX before printf call
     movq $.wrt_INT, %rdi      # First argument for printf
-    movq t10, %rsi            # Second argument for printf
+    movq t17, %rsi            # Second argument for printf
     movq $0, %rax             # No vector arguments
     call printf               # Calling printf
     pop %rax                  # Restoring RAX

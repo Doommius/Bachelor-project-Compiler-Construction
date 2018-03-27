@@ -18,6 +18,15 @@ int temps = 0;
 int cmps = 0;
 int ifs = 0;
 
+/**
+ * 
+ * Have not yet implemented pushes of RBP and RSP and such, before calling functions
+ * A possibility for doing this would be to add an instruction with a special type "FUNC_START" and "FUNC_END" or such
+ * Where we replace the "FUNC_START" with instructions to push the correct registers and such
+ * And in "FUNC_END" we restore those registers.
+ * 
+ */
+
 
 /**
  * Initialize general purpose register operators
@@ -880,7 +889,10 @@ a_asm *generate_term(term *term){
 	head = NULL;
 	tail = NULL;
 
+	SYMBOL *s;
+
 	struct asm_op *target;
+	struct a_asm *el;
 
     switch (term->kind){
 
@@ -892,7 +904,20 @@ a_asm *generate_term(term *term){
 			break;
 
 		case (term_LIST):
+			s = get_symbol(term->table, term->val.list.id);
+			//printf("Calling function: %s, args: %d\n", s->name, s->stype->val.func_type.func->head->args);
+			if (term->val.list.list->kind != al_EMPTY){
+				el = generate_elist(term->val.list.list->list);
+				asm_insert(&head, &tail, &el);
+
+			}
+			add_1_ins(&head, &tail, CALL, make_op_label(s->name), "Calling function");
+			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp(), "Saving return value from function in temp");
+
+			break;
+
 			
+
 
 
 
@@ -928,6 +953,22 @@ a_asm *generate_elist(exp_list *elist){
     struct a_asm *tail;
 	head = NULL;
 	tail = NULL;
+
+	struct a_asm *el;
+	struct a_asm *expr;
+	struct asm_op *target;
+
+
+	if (elist->kind == el_LIST){
+		el = generate_elist(elist->list);
+		asm_insert(&head, &tail, &el);
+	}
+
+	expr = generate_exp(elist->expression);
+	asm_insert(&head, &tail, &expr);
+	target = tail->val.two_op.op2;
+	add_1_ins(&head, &tail, PUSH, target, "Push argument for function");
+
     
 
 	return head;
