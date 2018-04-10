@@ -48,9 +48,6 @@ void check_slist(statement_list *slist){
 }
 
 void check_stmt(statement *stmt){
-#if debugflag > 2
-    printf("Checking statement, kind: %d\n", stmt->kind);
-#endif
 
     
     switch(stmt->kind){

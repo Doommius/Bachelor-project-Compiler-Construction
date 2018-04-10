@@ -18,6 +18,11 @@ function *make_Func(head *h, body *b, tail *t) {
     f->head = h;
     f->body = b;
     f->tail = t;
+    f->start_label = h->id;
+    f->end_label = malloc(sizeof(char) * (strlen(h->id) + 5));
+    sprintf(f->end_label, "end_%s", h->id);
+
+
     return f;
 }
 
@@ -212,6 +217,7 @@ statement *make_STMT_ret(expression *e) {
     s->lineno = lineno;
     s->kind = statement_RETURN;
     s->val.ret = e;
+    s->contains_ret = 0;
     return s;
 }
 

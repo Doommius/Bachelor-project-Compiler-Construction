@@ -22,3 +22,8 @@ y.output
 # gccwrap
 # check.py
 # checkdir.py
+
+*.log
+*.fls
+*.fdb_latexmk
+*.aux

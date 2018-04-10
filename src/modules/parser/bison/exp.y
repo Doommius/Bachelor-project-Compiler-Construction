@@ -9,8 +9,9 @@
 extern char *yytext;
 //extern EXP *theexpression;
 extern body *theprogram;
+extern int lineno;
 void yyerror() {
-   printf("syntax error before %s\n",yytext);
+   printf("syntax error before %s at line %d\n",yytext, lineno);
 }
 %}
 

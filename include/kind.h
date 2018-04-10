@@ -88,7 +88,50 @@ typedef enum { jmp, //unconditional jump
                setne,
                cmpl,
                andb,
-               cmp
+               cmp,
+
+               // Renamed enumerators with capital letters, have not remove non-capital versions, as other code depends on those.
+               LABEL,
+               JMP, //unconditional jump
+               JE,  //jump equal
+               JNE, //Jump not equal
+               JG,  //jump greater
+               JGE, //jump greater or equal
+               JL,  //Jump less
+               JLE, //Jump less or equal
+               IMUL,
+               IDIV,
+               MOVQ,
+               ADDQ,
+               SUBQ,
+               CALL,
+               RET,
+
+               PUSH,
+               POP,
+
+               ORL, //or less ?
+
+               ADD,
+               SUB,
+               MUL,
+               MOV,
+               MOVL,
+               SETNE,
+               CMPL,
+               ANDB,
+               CMP
 } ASM_kind;
+
+typedef enum { op_INTCONST,
+               op_REGISTER,
+               op_STACK_LOC,
+               op_HEAP_LOC,
+               op_LABEL,
+               op_CONST,
+
+               op_TEMP //Temporary until we find out what register/stack location it should be in, atleast i hope so.
+
+} OP_kind;
 
 #endif //COMPILER_KIND_H

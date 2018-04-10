@@ -3,6 +3,7 @@
 
 #include "kind.h"
 
+
 typedef struct asm_node {
     int id;
     ASM_kind kind;
@@ -13,6 +14,53 @@ typedef struct asm_node {
     char *comment;
 
 } asm_node;
+
+//Abstract assembly node, with a build in linked list.
+//To be expanded
+typedef struct a_asm {
+	ASM_kind ins;
+	struct a_asm *prev;
+	struct a_asm *next;
+	char *comment;
+	int ops;
+
+	/**
+	 * 
+	 * Should probably contain information about the head and tail of the current block
+	 * 
+	 */
+
+	union {
+
+		//Missing something for label
+
+		char *label_id;
+		struct {
+			struct asm_op *op1;
+			struct asm_op *op2;
+		} two_op;
+
+		struct {
+			struct asm_op *op;
+		} one_op;
+	} val;
+
+} a_asm;
+
+typedef struct asm_op {
+	OP_kind type;
+	int stack_offset;
+	union {
+		char *reg_id;
+		char *label_id;
+		char *func_id;
+		struct {
+			int id;
+		} temp;
+		int intconst;
+	} val;
+	
+} asm_op;
 
 typedef struct linked_list_meta {
 	struct linked_list *head;
@@ -42,6 +90,12 @@ linked_list* linked_list_insert_tail(linked_list *list, void* node);
 linked_list* linked_list_get_head(linked_list *list);
 
 linked_list* linked_list_get_tail(linked_list *list);
+
+linked_list* linked_list_remove_head(linked_list *list);
+
+linked_list* linked_list_remove_tail(linked_list *list);
+
+linked_list* linked_list_remove_at_index(linked_list *list, unsigned i);
 
 unsigned int linked_list_length(linked_list *list);
 
