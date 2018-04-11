@@ -5,23 +5,55 @@
 #include "linked_list.h"
 
 
-void eval_statement(linked_list *list,statement *s);
-
-void eval_expression(linked_list *list,expression *e);
-
-void code_GEQ_statement(linked_list *list,expression *e);
-
-void code_or_expression(linked_list *list,expression *e);
-
-void code_and_expression(linked_list *list,expression *e);
-
-void code_general_expression(linked_list *list, expression *e, ASM_kind kind);
-
-void code_plus_expression(linked_list *list, expression *e);
-
-linked_list *buildcode(statement_list input);
 
 
+
+//Abstract assembly node, with a build in linked list.
+//To be expanded
+typedef struct a_asm {
+	ASM_kind ins;
+	struct a_asm *prev;
+	struct a_asm *next;
+	char *comment;
+	int ops;
+
+	/**
+	 * 
+	 * Should probably contain information about the head and tail of the current block
+	 * 
+	 */
+
+	union {
+
+		//Missing something for label
+
+		char *label_id;
+		struct {
+			struct asm_op *op1;
+			struct asm_op *op2;
+		} two_op;
+
+		struct {
+			struct asm_op *op;
+		} one_op;
+	} val;
+
+} a_asm;
+
+typedef struct asm_op {
+	OP_kind type;
+	int stack_offset;
+	union {
+		char *reg_id;
+		char *label_id;
+		char *func_id;
+		struct {
+			int id;
+		} temp;
+		int intconst;
+	} val;
+	
+} asm_op;
 
 
 

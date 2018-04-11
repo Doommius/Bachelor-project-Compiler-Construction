@@ -3,7 +3,6 @@
 #include <errno.h>
 #include "print_asm.h"
 #include "code.h"
-#include "linked_list.h"
 
 FILE *out;
 
