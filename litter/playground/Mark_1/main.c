@@ -8,17 +8,17 @@
 void brackettest(){
 
     int a = 1;
-    printf("%i",a);
+    printf("%i \n",a);
     {
         int a = 2;
-        printf("%i",a);
+        printf("%i\n",a);
         {
             int a = 3;
-            printf("%i",a);
+            printf("%i\n",a);
         }
-        printf("%i",a);
+        printf("%i\n",a);
     }
-    printf("%i",a);
+    printf("%i\n",a);
 }
 
 int main() {

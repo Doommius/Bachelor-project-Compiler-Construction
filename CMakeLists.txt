@@ -31,6 +31,8 @@ include_directories(src/modules/typechecker)
 include_directories(src/modules/typechecker/include)
 include_directories(src/modules/weeder)
 include_directories(src/modules/weeder/include)
+include_directories(src/modules/print_asm)
+include_directories(src/modules/print_asm/include)
 
 set(SOURCE_FILES_compiler
         src/main.c
@@ -67,6 +69,9 @@ set(SOURCE_FILES_compiler
 
         src/modules/symbol_tree/symbol.c
         src/modules/symbol_tree/include/symbol.h
+
+        src/modules/print_asm/print_asm.c
+        src/modules/print_asm/include/print_asm.h
 
         src/modules/typechecker/typechecker.c
         src/modules/typechecker/setup.c

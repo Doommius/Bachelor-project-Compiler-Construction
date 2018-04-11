@@ -9,4 +9,4 @@ func fac(n: int): int
 end fac
 
 
-write fac(1);
+write fac(10);
