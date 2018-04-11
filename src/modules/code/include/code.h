@@ -4,18 +4,24 @@
 #include "tree.h"
 #include "linked_list.h"
 
+typedef struct a_asm a_asm;
+typedef struct asm_op asm_op;
 
+typedef struct a_asm_meta {
+	a_asm *head;
+	a_asm *tail;
+	unsigned length;
+} a_asm_meta;
 
-
-
-//Abstract assembly node, with a build in linked list.
+//Abstract assembly node, with a built-in linked list.
 //To be expanded
 typedef struct a_asm {
 	ASM_kind ins;
-	struct a_asm *prev;
-	struct a_asm *next;
+	a_asm *prev;
+	a_asm *next;
 	char *comment;
 	int ops;
+	a_asm_meta *meta;
 
 	/**
 	 * 
@@ -29,12 +35,12 @@ typedef struct a_asm {
 
 		char *label_id;
 		struct {
-			struct asm_op *op1;
-			struct asm_op *op2;
+			asm_op *op1;
+			asm_op *op2;
 		} two_op;
 
 		struct {
-			struct asm_op *op;
+			asm_op *op;
 		} one_op;
 	} val;
 
