@@ -22,6 +22,8 @@
 #include "typechecker.h"
 #include "code.h"
 #include "print_asm.h"
+#include "reg_alloc.h"
+#include "peephole.h"
 
 
 int lineno;
@@ -106,7 +108,23 @@ int main(int argc, char **argv) {
 
 
     program = generate_program(theprogram);
-    print_asm(program, "a.s");
+
+    printf("Printing asm without peep\n");
+    print_asm(program, "nopeep.s");
+
+
+    printf("Peepholing\n");
+    peephole(program);
+
+
+    printf("Printing asm with peep\n");
+    print_asm(program, "peep.s");
+
+
+    
+    //reg_alloc(program, 0);
+
+    print_asm(program, "a2.s");
 
 
     printf("\n");

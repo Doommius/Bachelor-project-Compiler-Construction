@@ -69,7 +69,7 @@ void add_ins(a_asm **head, a_asm **tail, ASM_kind ins, char *comment);
 
 void add_label(a_asm **head, a_asm **tail, char *label, char *comment);
 
-void local_init(decl_list *dlist);
+int local_init(decl_list *dlist);
 
 asm_op *make_op_const(int i);
 
@@ -92,6 +92,15 @@ void make_if_label(char *buffer);
 void init_regs();
 
 void get_next(a_asm **head, a_asm **tail);
+
+void add_simple_start(a_asm **head, a_asm **tail);
+
+void add_simple_end(a_asm **head, a_asm **tail);
+
+//Base and stack pointer registers
+struct asm_op *reg_RBP;
+
+struct asm_op *reg_RSP;
 
 //General purpose registers we can use. 
 struct asm_op *reg_RAX;
