@@ -173,4 +173,6 @@ struct asm_op *wrt_INT;
 
 struct asm_op *op_PRINTF;
 
+int get_num_temps();
+
 #endif

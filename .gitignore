@@ -27,3 +27,5 @@ y.output
 *.fls
 *.fdb_latexmk
 *.aux
+
+*.s

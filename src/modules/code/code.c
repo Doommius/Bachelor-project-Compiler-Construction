@@ -145,8 +145,8 @@ a_asm *generate_body(body *body, char *start_label, char *end_label){
 	int vars;
 	int tmps = 0;
 
-	struct a_asm *sl;
-	struct a_asm *dl;
+	struct a_asm *sl;		// Statement list
+	struct a_asm *dl;		// Declaration list
 	struct a_asm *head;
     struct a_asm *tail;
 	struct a_asm *head2;
@@ -997,4 +997,8 @@ void add_simple_end(a_asm **head, a_asm **tail){
 	add_2_ins(head, tail, MOVQ, reg_RBP, reg_RSP, "Restoring stack pointer");
 	add_1_ins(head, tail, PUSH, reg_RBP, "Restoring base pointer");
 
+}
+
+int get_num_temps() {
+	return temps;
 }
