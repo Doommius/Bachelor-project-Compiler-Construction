@@ -1,0 +1,413 @@
+%Template by Mark Jervelund - 2015 - mjerv15@student.sdu.dk
+
+\documentclass[a4paper,10pt,titlepage]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[document]{ragged2e}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{color}
+\usepackage{datenumber}
+\usepackage{venndiagram}
+\usepackage{chngcntr}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%lstlisting ting:
+\definecolor{dkgreen}{rgb}{0,0.45,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.30,0,0.30}
+\lstset{frame=tb,
+  language=C,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\footnotesize,
+  keywordstyle=\color{dkgreen}\bfseries,
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  frame=single,
+  breaklines=true,
+  breakatwhitespace=false
+  tabsize=1
+}
+\renewcommand{\lstlistingname}{Code} 
+
+\setdatetoday
+\addtocounter{datenumber}{0} %date for dilierry standard is today
+\setdatebynumber{\thedatenumber}
+\date{}
+\setcounter{secnumdepth}{0}
+\pagestyle{fancy}
+\fancyhf{}
+\title{CC - Assignment 2}
+
+\newcommand{\Z}{\mathbb{Z}}
+\lhead{Compiler (DM546)}
+\rhead{Mjerv15, Trpet15  \& Mojae15}
+\rfoot{Page  \thepage \, of \pageref{LastPage}}
+\counterwithin*{equation}{section}
+
+\begin{document}
+\newpage
+{%
+\centering
+    \huge
+    \bfseries
+    \vspace{5mm}
+CC, Spring 2018\\
+Exam project, part 2\\
+\vspace{5mm}
+\begin{tabular}{|l|l|}
+\hline
+Group & 1 \\ \hline
+\end{tabular}
+\\
+\vspace{10mm}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\multicolumn{1}{|l|}{Name}      & \multicolumn{1}{l|}{Mark Wolff Jervelund } \\ \midrule
+\multicolumn{1}{|l|}{Birthday}  & \multicolumn{1}{l|}{280795} \\ \midrule
+\multicolumn{1}{|l|}{Login}     & \multicolumn{1}{l|}{mjerv15@student.sdu.dk} \\ \midrule
+\multicolumn{1}{|l|}{Signature} & \multicolumn{1}{l|}{\includegraphics[scale=0.3]{mark_sign}} \\ \midrule
+                                &                       \\ \midrule
+\multicolumn{1}{|l|}{Name}      &  \multicolumn{1}{l|}{Troels Blicher Petersen} \\ \midrule
+\multicolumn{1}{|l|}{Birthday}      &   \multicolumn{1}{l|}{230896} \\ \midrule
+\multicolumn{1}{|l|}{Login}      &  \multicolumn{1}{l|}{trpet15@student.sdu.dk} \\ \midrule
+\multicolumn{1}{|l|}{Signature}      & \multicolumn{1}{l|}{\includegraphics[scale=0.08]{troels_sign} } \\ \midrule
+                                &                       \\ \midrule
+\multicolumn{1}{|l|}{Name}     &  \multicolumn{1}{l|}{Morten Kristian Jæger} \\ \midrule
+\multicolumn{1}{|l|}{Birthday}      &  \multicolumn{1}{l|}{030895} \\ \midrule
+\multicolumn{1}{|l|}{Login}     &   \multicolumn{1}{l|}{mojae15@student.sdu.dk} \\ \midrule
+\multicolumn{1}{|l|}{Signature}    &  \multicolumn{1}{l|}{\includegraphics[scale=0.3]{morten_sign}} \\ \midrule
+\end{tabular}
+\\
+\vspace{10mm}
+This report contains a total of \underline{ 43 } pages.
+}
+
+\begin{titlepage}
+\centering
+    \vspace*{9\baselineskip}
+    \huge
+    \bfseries
+    2. Assignment \\
+    \normalfont 
+    Mark Jervelund, Troels Blicher Petersen \& Morten Jæger  \\
+    (Mjerv15, Trpet15, Mojae15) \\
+	\huge    
+    Compiler (DM546)  \\[4\baselineskip]
+    \normalfont
+	\includegraphics[scale=1]{SDU_logo}
+    \vfill\ 
+    \vspace{5mm}
+    IMADA \\
+
+    \textbf{\datedate} \\[2\baselineskip]
+\end{titlepage}
+
+\renewcommand{\thepage}{\roman{page}}% Roman numerals for page counter
+\tableofcontents
+\newpage
+\setcounter{page}{1}
+\renewcommand{\thepage}{\arabic{page}}
+\newpage
+
+\section{Introduction}
+In the second task of the Compiler project, we are tasked with implementing a Scanner and a Parser, using Flex and Bison, and a Pretty printer. This is all to be done in C. As part of the project, all the files needed to complete the project were given beforehand, and only needed to be edited. An essential part of this project, is to implement an Abstract Syntax Tree, to give the compiler a way of understanding the code.
+
+\subsection{How to compile and run}
+Besides the main objective of this assignment, the group has also started implementing a more modular project structure, which will be explained in the design section. However, a brief introduction on how to build and run the program will be given here.\\
+\vspace{6px}
+Since the program is already starting to take modular shape, there are several ways to compile it. The easiest way is to simply run in the directory of the \textsf{Makefile}
+\begin{lstlisting}
+make all
+\end{lstlisting}
+\textsf{make all} will, however, build all binaries. Including the ones from Assignment 1. Therefore, for this project it is also possible to simply run
+\begin{lstlisting}
+make exp
+\end{lstlisting}
+This will only compile and output the program \textsf{exp} for this assignment. Before running the program \textsf{exp}, it is important to have the input file in the same directory.\\
+\vspace{6px}
+There are two ways to run the program \textsf{exp}. The first is to simply run
+\begin{lstlisting}
+./exp
+\end{lstlisting}
+This will run the program and read an input file \textsf{input.txt}. The other way to run the program is by passing the file to test on the command line, as an argument.
+\begin{lstlisting}
+./exp <inputfile>
+\end{lstlisting}
+This makes it a little easier to test several different testcases, without having to change the same file all the time.\\
+\vspace{6px}
+To remove all object files, run
+\begin{lstlisting}
+make clean
+\end{lstlisting}
+To remove all object files and executable binaries, run
+\begin{lstlisting}
+make clean-all
+\end{lstlisting}
+
+\section{Design} %%TODO SKAL NOK OGSÅ VÆRE NOGET OM ABSTRACT SYNTAX TREE
+\subsection{Scanner and Parser}
+The scanning and parsing is the main subject in this report. It is here the written program (to be compiled) is pulled apart to understand its structure and meaning.
+\subsubsection{Scanner}
+The scanner needs to be able to recognize the different symbols that are specified in the assignment. This means that it needs to be able to spot and return the different operators we are working with (+, -, /, *, etc.), and the specific words as specified in the syntax. These are words like, "while", "if", "array of", and such. After spotting these symbols, the scanner needs to pass them on to the parser, which will parse the input, and start creating our Abstract Syntax Tree. \\
+\vspace{6px}
+Another feature of the scanner, is the possibility to be able to weed out some "bad" programs already at this point. To do this, the scanner checks for input not defined in the language, which means that neither the scanner, nor the parser can do anything with it. If this happens, we want to be able to tell the user, that the program is not valid. The scanner should also check whether multi-line comments have been closed by the end on the program, as this is also not legal, according to the grammar of the language.
+
+\subsubsection{Parser}
+The parser needs to be a able to recognize the input it gets from the scanner, and match that up with the grammar of the language. This means that it needs to be able to match the input from the scanner, with the rules in the grammar. When the parser matches some input with one of the rules, it should create a node in our Abstract Syntax Tree, which we can use later on, f.x. for printing the AST.\\
+\vspace{6px}
+Another feature of the parser, it the possibility to weed out some "bad" programs, like we also did in the scanner phase. To do this, the parser checks if a function has the same name in both the name and the tail. If this is not the case, the user should be notified of the error, just like we did in the scanner phase.
+
+\subsection{Abstract Syntax Tree (AST)}
+The abstract syntax tree is a datastructure used to keep track of the way, the program we read, is built. The AST is built from the parser, which, given some input from the scanner, matches the input with the rules of the language, and creates nodes in the AST. An example of how a node could be created, is when the parser reads some input with a "+" between two expressions. The parser would then create a node in the AST, which would be a "+"-node. This node would then have two child nodes, which would the the expressions on each side of the "+" symbol. This is the way we build up our AST when we parse the input.
+
+\subsection{Pretty Printer}
+The pretty printer needs to be able to print the Abstract Syntax Tree we get from parsing the input program. This must be done in such a way, that the corresponding output from the pretty printer looks like the original program as much as possible, assuming that the original program is not weeded out at this point. Small changes to the output does happen however, such as indentation, and parentheses.
+
+\subsection{New Project Structure}
+As mentioned in the introduction, the group has implemented a new project structure to accommodate for a more modular design. The main goal is to have all modules separate, so that removing one module in theory would not break the rest. It was also found that the makefile should be easy to use, so that adding new files to a module in most cases would not require any changes to this file. To some degree this might not seem important, but as the project grows larger it might turn out to be a very convenient choice.\\
+\vspace{6px}
+It has been chosen, that each module will have its own include directory instead of one big shared include directory. This makes it easier to separate the modules, and removing a module is as simple as removing its directory.\\
+\vspace{6px}
+The project will be built in the build folder, and all module objects will reside in their respective folder, to prevent possible collisions of filenames.
+
+
+\newpage
+
+\section{Implementation}
+\subsection{Scanner and Parser}
+\subsubsection{Scanner}
+
+\begin{lstlisting}
+/* abbreviation of symbols we match on, TO BE EXPANDED */
+SYMBOLS [+\-*\/\(\)\[\]{}!\|,\.=;:]
+
+%%
+[ \t]+        /* ignore */;
+\n              lineno++;
+
+{SYMBOLS}       return yytext[0];
+\end{lstlisting}
+Above is a small part of the "exp.l" file, which is the file Flex uses to scan the given program. This code handles the different symbols that we want to match on, when scanning the file. We use an list of all the symbols we can match on, as this was easier than writing each and every symbol out individually.
+
+\begin{lstlisting}
+"<="            return LEQ;
+">"             return GT;
+">="            return GEQ;
+"if"            return IF;
+"else"          return ELSE;
+\end{lstlisting}
+Above is another small part, that shows how we return tokens when reading certain words, or symbols.
+
+\begin{lstlisting}
+<COMMENT_MULTI>{
+
+\n              lineno++;
+"(*"            nested_comment++;
+"*)"            {   nested_comment--;
+                    if (nested_comment == 0){
+                        BEGIN(0);
+                    }
+                }
+.               /* ignore */
+<<EOF>>         fprintf(stderr, "Comment not closed at the end of the file. Found at line: %i\n", lineno); exit(1);
+}
+\end{lstlisting}
+Above is the part of the scanner that takes care of multi-line comments. The state for multi-line comments check for nested comments, and, as described in the design section, returns an error if the comment is not closed by the end of the file.
+
+\subsubsection{Parser}
+\begin{lstlisting}
+expression  :   expression '+' expression
+        {$$ = make_EXP(exp_PLUS, $1, $3);}
+            | expression '-' expression
+        {$$ = make_EXP(exp_MIN, $1, $3);}
+            | expression '*' expression
+        {$$ = make_EXP(exp_MULT, $1, $3);}
+            | expression '/' expression
+        {$$ = make_EXP(exp_DIV, $1, $3);}
+            | '(' expression ')'
+        {$$ = $2;}
+\end{lstlisting}
+Above is a small part of the "exp.y" file, which is the file Bison uses for parsing the input from the scanner. This part of the code is a part of the code that handles expressions, by making nodes in the AST.
+\begin{lstlisting}
+function    :   head body tail
+        {$$ = make_Func($1, $2, $3);
+        if (check_Func($1, $3) != 0){
+            fprintf(stderr, "Function name: %s, at line %i, does not match function name: %s, at line %i\n", $1->id, $1->lineno, $3->id, $3->lineno);
+            YYABORT;
+            }}
+;
+\end{lstlisting}
+As described in the design section, we want to check if a function has the same name in the head and the tail. This part of the code checks this, by calling the function "check\_func()". This function checks the "id" of the given head and tail. If they are not equal, we give the user an error message, stop the parsing, since the input program is not valid.
+\subsection{Abstract Syntax Tree}
+\begin{lstlisting}
+expression *make_EXP(EXP_kind kind, expression *left, expression *right){
+    expression *e;
+    e = NEW(expression);
+    e->lineno = lineno;
+    e->kind = kind;
+    e->val.ops.left = left;
+    e->val.ops.right = right;
+    return e;
+}
+\end{lstlisting}
+Above is a small part of the functions used to create the AST. This particular function is used to create expressions, with an expression on each side of an operator. This operator could be "+", "-", "*", and so on. As described in the design section, when we create this node, we set the left and right side of the operator as the children of the node.
+
+\subsection{Pretty Printer}
+\begin{lstlisting}
+void prettyEXP(expression *e) {
+    switch (e->kind) {
+
+        case exp_MULT:
+            prettyEXP(e->val.ops.left);
+            printf("*");
+            prettyEXP(e->val.ops.right);
+            break;
+
+        case exp_DIV:
+            prettyEXP(e->val.ops.left);
+            printf("/");
+            prettyEXP(e->val.ops.right);
+            break;
+\end{lstlisting}
+The code above is a part of the function used to print expressions. The way this is done, is by checking the expressions "kind", which describes what kind of expression we are working with. When we know what kind of expression we have, we can print the expression with the correct operators
+
+\subsection{New Project Structure}
+Implementation of this new structure is fairly simple. However, it was chosen to divide the scanner, parser and pretty printer into separate modules. This approach is a little backwards in terms of the new modular design, since they appear to heavily depend on each other. But, it also means that it is possible to remove one module and replace it with another if need be.
+
+\section{Testing}
+The programs used to test the scanner, parser, and pretty printer can be found in the appendix. Some are simple, to just test the basics of the program, and some are more complicated (contain unary minus, expressions with absolute values which looks like "||"). The programs are not meant to be run as actual programs, so they may not make sense.
+\section{Results}
+\subsection{Test1}
+This is just a basic test, to make sure indentation works and such.
+\begin{lstlisting}
+func test(n : int) : int
+    return 2;
+end test
+write test();
+\end{lstlisting}
+
+\subsection{Test2}
+We now test if we can handle unary minuses.
+\begin{lstlisting}
+func test(n : int) : int
+    if (n == 0 || n == 1) then
+        return -1;
+ else
+        return n*factorial(n-1);
+end test
+write test();
+\end{lstlisting}
+
+\subsection{Test3}
+We now test if we can handle an absolute value expression that looks like an "or" 
+\begin{lstlisting}
+func test(n : int) : int
+    if (n == 0 || n == 1 || ||a+b|+c|) then
+        return -1;
+ else
+        return n*factorial(n-1);
+end test
+write test();
+\end{lstlisting}
+
+\subsection{Test4}
+We now test if we get an error if the function name is not the same in the head and the tail of the function.
+\begin{lstlisting}
+Function name: test, at line 2, does not match function name: nottest, at line 4
+Segmentation fault (core dumped)
+\end{lstlisting}
+
+\subsection{Test5}
+We now test if we get an error if we do not close a multi-line comment.
+\begin{lstlisting}
+Comment not closed at the end of the file. Found at line: 9
+\end{lstlisting}
+
+\subsection{Test6}
+We now test if we get an error if we read a symbol that is not in our grammar.
+\begin{lstlisting}
+Unrecognized symbol. Found at line: 7
+\end{lstlisting}
+\section{Conclusion}
+From the tests we have run, we can conclude that our scanner, parser, AST, and pretty printer works as intended on a given program. 
+
+\newpage
+\section{Appendix}
+\subsection{exp.l}
+\lstinputlisting{f_exp.txt}
+
+\newpage
+\subsection{exp.y}
+\lstinputlisting{b_exp.txt}
+
+\newpage
+\subsection{kind.h}
+\lstinputlisting{kind.h}
+
+\newpage
+\subsection{memory.h}
+\lstinputlisting{memory.h}
+
+\newpage
+\subsection{tree.h}
+\lstinputlisting{tree.h}
+
+\newpage
+\subsection{tree.c}
+\lstinputlisting{tree.c}
+
+\newpage
+\subsection{pretty.h}
+\lstinputlisting{pretty.h}
+
+\newpage
+\subsection{pretty.c}
+\lstinputlisting{pretty.c}
+
+\newpage
+\subsection{scan\_parse.c}
+\lstinputlisting{scan_parse.c}
+
+\newpage
+\subsection{Test1.txt}
+\lstinputlisting{Test1.txt}
+
+\newpage
+\subsection{Test2.txt}
+\lstinputlisting{Test2.txt}
+
+\newpage
+\subsection{Test3.txt}
+\lstinputlisting{Test3.txt}
+
+\newpage
+\subsection{Test4.txt}
+\lstinputlisting{Test4.txt}
+
+\newpage
+\subsection{Test5.txt}
+\lstinputlisting{Test5.txt}
+
+\newpage
+\subsection{Test6.txt}
+\lstinputlisting{Test6.txt}
+\end{document}

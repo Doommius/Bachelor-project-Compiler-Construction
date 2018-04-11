@@ -1,0 +1,549 @@
+%Template by Mark Jervelund - 2015 - mjerv15@student.sdu.dk
+
+\documentclass[a4paper,10pt,titlepage]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[document]{ragged2e}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{color}
+\usepackage{datenumber}
+\usepackage{venndiagram}
+\usepackage{chngcntr}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%lstlisting ting:
+\definecolor{dkgreen}{rgb}{0,0.45,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.30,0,0.30}
+\lstset{frame=tb,
+  language=C,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\footnotesize,
+  keywordstyle=\color{dkgreen}\bfseries,
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  frame=single,
+  breaklines=true,
+  breakatwhitespace=false
+  tabsize=1
+}
+\renewcommand{\lstlistingname}{Code} 
+
+\setdatetoday
+\addtocounter{datenumber}{0} %date for dilierry standard is today
+\setdatebynumber{\thedatenumber}
+\date{}
+\setcounter{secnumdepth}{0}
+\pagestyle{fancy}
+\fancyhf{}
+\title{dm546 - Compiler - symboltable - handin1}
+
+\newcommand{\Z}{\mathbb{Z}}
+\lhead{Compiler (DM546)}
+\rhead{Mjerv15, Trpet15  \& Mojae15}
+\rfoot{Page  \thepage \, of \pageref{LastPage}}
+\counterwithin*{equation}{section}
+
+\begin{document}
+\begin{titlepage}
+\centering
+    \vspace*{9\baselineskip}
+    \huge
+    \bfseries
+    1. Assignment \\
+    \normalfont 
+    Mark Jervelund, Troels Blicher Petersen \& Morten Jæger  \\
+    (Mjerv15, Trpet15, Mojae15) \\
+	\huge    
+    Compiler (DM546)  \\[4\baselineskip]
+    \normalfont
+	\includegraphics[scale=1]{SDU_logo}
+    \vfill\ 
+    \vspace{5mm}
+    IMADA \\
+
+    \textbf{\datedate}  \bf{at 10} \\[2\baselineskip]
+\end{titlepage}
+
+\renewcommand{\thepage}{\roman{page}}% Roman numerals for page counter
+\tableofcontents
+\newpage
+\setcounter{page}{1}
+\renewcommand{\thepage}{\arabic{page}}
+
+
+\newpage
+
+
+\newpage
+\section{Appendix}
+\subsection{main.c}
+\begin{lstlisting}
+//
+// Created by jervelund on 2/9/18.
+//
+#include "symbol.h"
+#include <string.h>
+#include <stdio.h>
+#include <struct.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int main(int argc, char **argv) {
+
+//    char str[100]; // make sure that this size is enough to hold the single line
+    int no_line = 1;
+
+    SymbolTable *table = initSymbolTable();
+    char buf[100];
+    do {
+        fgets(buf, sizeof buf, stdin);
+        if (buf[strlen(buf) - 1] == '\n') {
+            char *str;
+            str = malloc((strlen(buf)-1));
+            strcpy(str,buf);
+            str[strlen(buf)-1] = 0;
+            SYMBOL *symbol = putSymbol(table, str, Hash(str));
+//            printSymbol(symbol);
+        } else {
+        break;
+        }
+//        dumpSymbolTable(table);
+    } while (buf != "\0");
+
+    dumpSymbolTable(table);
+
+    return 1;
+
+
+}
+\end{lstlisting}
+\subsection{symbol.c}
+\begin{lstlisting}
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+#include "symbol.h"
+#include "memory.h"
+
+
+/*
+ * Computes the hash function as seen below.
+ *
+ */
+int Hash(char *str) {
+    unsigned int length;
+    length = (unsigned) strlen(str);
+//    printf("the lenght of the string is %i \n",length);
+
+    int k = (int) str[0];
+    int i;
+    int pointer = 1;
+
+    while (pointer < length) {
+//        printf("shifting k from %i ", k);
+        k = k << 1;
+//        printf("to %i \n",k);
+        i = (int) str[pointer];
+//        printf("loaded value i %i \n",i);
+//        printf("adding i (%i) and k (%i) \n", i,k);
+        k = i + k;
+//        printf("sum is %i \n", k);
+
+        pointer++;
+    }
+    return (k % HashSize);
+}
+
+/*
+initSymbolTable returns a pointer to a new initialized hash table (of type
+        SymbolTable)
+*/
+SymbolTable *initSymbolTable() {
+
+    int i = 0;
+    SymbolTable *table = Malloc(sizeof(SYMBOL) * HashSize);
+    table->next = NULL;
+    while (i < HashSize) {
+        table->table[i] = NULL;
+        i++;
+    }
+    return table;
+}
+
+/*
+ *
+ * scopeSymbolTable takes a pointer to a hash table t as argument and returns
+ * a new hash table with a pointer to t in its next field.
+ */
+SymbolTable *scopeSymbolTable(SymbolTable *t) {
+    SymbolTable *newTable = initSymbolTable();
+    newTable->next = t;
+    return newTable;
+}
+
+
+/*
+ * putSymbol takes a hash table and a string, name, as arguments and inserts name into the hash table together with the associated value value. A pointer
+ * to the SYMBOL value which stores name is returned.
+*/
+SYMBOL *putSymbol(SymbolTable *t, char *name, int value) {
+    if (t == NULL) {
+        return NULL;
+    }
+    SYMBOL *localCheck = checkLocal(t, name);
+    //Symbol already exists
+    if (localCheck != NULL) {
+        return localCheck;
+    } else {
+
+        SYMBOL *symbol = Malloc(sizeof(SYMBOL));
+        symbol->name = name;
+        symbol->value = value;
+        symbol->next = Malloc(sizeof(SYMBOL));
+
+        //Placed in front of the list
+        symbol->next = t->table[value];
+        t->table[value] = symbol;
+        return symbol;
+
+    }
+}
+
+
+/*
+    getSymbol takes a hash table and a string name as arguments and searches for
+    name in the following manner: First search for name in the hash table which
+    is one of the arguments of the function call. If name is not there, continue the
+    search in the next hash table. This process is repeatedly recursively. If name has
+    not been found after the root of the tree (see Fig. 1) has been checked, the result
+    NULL is returned. If name is found, return a pointer to the SYMBOL value in
+    which name is stored
+    */
+SYMBOL *getSymbol(SymbolTable *t, char *name) {
+//    First check if t is null
+    if (t == NULL) {
+        return NULL;
+    }
+
+    SYMBOL *localCheck = checkLocal(t, name);
+
+    //Symbol in local table?
+    if (localCheck != NULL) {
+        return localCheck;
+    }
+
+    if (t->next != NULL) {
+        getSymbol(t->next, name);
+    }
+
+    //Symbol does not exists, should be an error message or such, later in the project
+    return NULL;
+}
+
+
+/*
+ * dumpSymbolTable takes a pointer to a hash table t as argument and prints all
+ * the (name, value) pairs that are found in the hash tables from t up to the root.
+ * Hash tables are printed one at a time. The printing should be formatted in a nice
+ * way and is intended to be used for debugging (of other parts of the compiler).
+*/
+void dumpSymbolTable(SymbolTable *t) {
+    if (t == NULL) {
+        return;
+    }
+
+    printf("Printing symbol table:\n\n");
+
+    for (int i = 0; i < HashSize; i++) {
+        if (t->table[i] != NULL) {
+            printSymbol(t->table[i]);
+            printf("\n");
+        }
+//        SYMBOL *symbol = t->table[i];
+//
+//        if (symbol != NULL){
+//            printf("Hash: \t%i ", i);
+//            while (symbol != NULL){
+//                printSymbol(symbol);
+//                printf(" ");
+//                symbol = symbol->next;
+//            }
+//            printf("\n");
+//        }
+    }
+    printf("\n");
+
+    dumpSymbolTable(t->next);
+
+}
+
+/*
+ * Check the current table we are in for a value
+ */
+SYMBOL *checkLocal(SymbolTable *t, char *name) {
+    int hashValue = Hash(name);
+
+
+    SYMBOL *symbol = t->table[hashValue];
+    if (symbol == NULL) {
+        return NULL;
+    } else {
+        while (symbol != NULL) {
+            if (strcmp(name, symbol->name) == 0) {
+                return symbol;
+            }
+            symbol = symbol->next;
+        }
+    }
+
+    //Hash value for the symbol exists, but the symbol is not in the table
+    return NULL;
+}
+
+void printSymbol(SYMBOL *symbol) {
+    printf("(%s, %i)", symbol->name, symbol->value);
+}
+\end{lstlisting}
+\subsection{tests.c}
+\begin{lstlisting}
+// First file!
+#include <stdio.h>
+#include "symbol.h"
+#include <string.h>
+
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+#define testString         "kitty"
+#define testString2        "tesu"
+#define testString3        "tets"
+
+int main(int argc, char **argv) {
+    int returnvalue = 1;
+    int testpassed = 0;
+    int totaltests = 0;
+
+
+
+    printf("Testing hash function\n");
+    totaltests++;
+    int i = (Hash(testString));
+    if (i == 199) {
+        printf(ANSI_COLOR_GREEN     "Test %i - Hash function test PASSED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        testpassed++;
+    } else {
+        printf(ANSI_COLOR_RED     "Test %i - Hash functon test FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        returnvalue = -1;
+    }
+    printf("\n");
+
+
+    printf("Testing init table function\n");
+    totaltests++;
+    SymbolTable *table = initSymbolTable();
+    if (table != NULL) {
+        printf(ANSI_COLOR_GREEN     "Test %i - Table constructed PASSED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        testpassed++;
+    } else {
+        printf(ANSI_COLOR_RED     "Test %i - Table construction FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        returnvalue = -1;
+    }
+
+    printf("\n");
+    printf("Testing putsymbol function\n");
+    totaltests++;
+    SYMBOL *symbol = putSymbol(table, testString, Hash(testString));
+    if (symbol != NULL) {
+        if (symbol->value == Hash(testString) && (strcmp(symbol->name, testString) == 0)) {
+            printf(ANSI_COLOR_GREEN     "Test %i - Symbol correctly made.\n"     ANSI_COLOR_RESET "\n", totaltests);
+            testpassed++;
+        } else {
+            printf(ANSI_COLOR_RED     "Test %i - Symbol creation FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+            printf("Symbol was made but data was wrong");
+            returnvalue = -1;
+        }
+    } else {
+        printf(ANSI_COLOR_RED     "Test %i - Symbol creation FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        returnvalue = -1;
+    }
+
+    printf("\n");
+    printf("Testing getSymbol function\n");
+    totaltests++;
+    SYMBOL *symbol2 = getSymbol(table, testString);
+    if (symbol2 != NULL) {
+        if (symbol2->value == Hash(testString) && (strcmp(symbol2->name, testString) == 0)) {
+            printf(ANSI_COLOR_GREEN     "Test %i - Symbol correctly returned.\n"     ANSI_COLOR_RESET "\n", totaltests);
+            testpassed++;
+        }
+    } else {
+        printf(ANSI_COLOR_RED     "Test %i - Symbol return FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        returnvalue = -1;
+    }
+
+    printf("\n");
+    printf("Testing putsymbol function again\n");
+    totaltests++;
+    symbol = putSymbol(table, testString, Hash(testString));
+    if (symbol != NULL) {
+        if (symbol->value == Hash(testString) && (strcmp(symbol->name, testString) == 0)) {
+            printf(ANSI_COLOR_GREEN     "Test %i - Symbol correctly made.\n"     ANSI_COLOR_RESET "\n", totaltests);
+            testpassed++;
+        } else {
+            printf(ANSI_COLOR_RED     "Test %i - Symbol creation FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+            printf("Symbol was made but data was wrong");
+            returnvalue = -1;
+        }
+    } else {
+        printf(ANSI_COLOR_RED     "Test %i - Symbol creation FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        returnvalue = -1;
+    }
+
+    printf("\n");
+    printf("Testing searching for a symbol, that is not in the table, but the hash for the symbol exists.\n");
+    totaltests++;
+    SYMBOL *symbol3 = putSymbol(table, testString2, Hash(testString2));
+
+    symbol = getSymbol(table, testString3);
+
+    if (symbol3 != NULL) {
+        if (symbol == NULL) {
+            printf(ANSI_COLOR_GREEN     "Test %i - NULL successfully received.\n"     ANSI_COLOR_RESET "\n", totaltests);
+            testpassed++;
+        }
+    } else {
+        printf(ANSI_COLOR_RED     "Test %i - Symbol search failed\n"     ANSI_COLOR_RESET "\n", totaltests);
+        returnvalue = -1;
+    }
+
+
+    printf("Testing putSymbol function with a symbol which hash already is in the table\n");
+    totaltests++;
+    SYMBOL *symbol4 = putSymbol(table, testString3, Hash(testString3));
+
+    if (symbol3 != NULL && symbol4 != NULL) {
+        if (symbol3->value == Hash(testString2) && (strcmp(symbol3->name, testString2) == 0)) {
+            if (symbol4->value == Hash(testString3) && (strcmp(symbol4->name, testString3) == 0)) {
+                printf(ANSI_COLOR_GREEN     "Test %i - Symbol correctly made.\n"     ANSI_COLOR_RESET "\n", totaltests);
+                testpassed++;
+            }
+        } else {
+            printf(ANSI_COLOR_RED     "Test %i - Symbol creation FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+            printf("Symbol was made but data was wrong");
+            returnvalue = -1;
+        }
+    } else {
+        printf(ANSI_COLOR_RED     "Test %i - Symbol creation FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        returnvalue = -1;
+    }
+
+
+    printf("Testing scopeSymbolTable function\n");
+    totaltests++;
+    SymbolTable *newTable = scopeSymbolTable(table);
+    if (newTable != NULL) {
+        printf(ANSI_COLOR_GREEN     "Test %i - Table constructed PASSED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        testpassed++;
+    } else {
+        printf(ANSI_COLOR_RED     "Test %i - Table construction FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        returnvalue = -1;
+    }
+
+    printf("\n");
+    printf("Testing putsymbol function in new table\n");
+    totaltests++;
+    SYMBOL *symbol5 = putSymbol(newTable, testString, Hash(testString));
+    if (symbol5 != NULL) {
+        if (symbol5->value == Hash(testString) && (strcmp(symbol5->name, testString) == 0)) {
+            printf(ANSI_COLOR_GREEN     "Test %i - Symbol correctly made.\n"     ANSI_COLOR_RESET "\n", totaltests);
+            testpassed++;
+        } else {
+            printf(ANSI_COLOR_RED     "Test %i - Symbol creation FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+            printf("Symbol was made but data was wrong");
+            returnvalue = -1;
+        }
+    } else {
+        printf(ANSI_COLOR_RED     "Test %i - Symbol creation FAILED\n"     ANSI_COLOR_RESET "\n", totaltests);
+        returnvalue = -1;
+    }
+
+
+    printf("\n \n");
+
+    printf("Tests PASSED %i\n", testpassed);
+    printf("\n \n");
+
+
+    if (totaltests - testpassed != 0) {
+        printf(ANSI_COLOR_RED     "test FAILED %i\n"     ANSI_COLOR_RESET "\n", totaltests - testpassed);
+    }
+
+    dumpSymbolTable(newTable);
+
+    return returnvalue;
+
+}
+\end{lstlisting}
+\newpage
+{%
+\centering
+    \huge
+    \bfseries
+    \vspace{5mm}
+CC, Spring 2018\\
+Exam project, part 1\\
+\vspace{5mm}
+\begin{tabular}{|l|l|}
+\hline
+Group & 1 \\ \hline
+\end{tabular}
+\\
+\vspace{10mm}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\multicolumn{1}{|l|}{Name}      & \multicolumn{1}{l|}{Mark Wolff Jervelund } \\ \midrule
+\multicolumn{1}{|l|}{Birthday}  & \multicolumn{1}{l|}{280795} \\ \midrule
+\multicolumn{1}{|l|}{Login}     & \multicolumn{1}{l|}{mjerv15@student.sdu.dk} \\ \midrule
+\multicolumn{1}{|l|}{Signature} & \multicolumn{1}{l|}{\includegraphics[scale=0.3]{mark_sign}} \\ \midrule
+                                &                       \\ \midrule
+\multicolumn{1}{|l|}{Name}      &  \multicolumn{1}{l|}{Troels Blicher Petersen} \\ \midrule
+\multicolumn{1}{|l|}{Birthday}      &   \multicolumn{1}{l|}{230896} \\ \midrule
+\multicolumn{1}{|l|}{Login}      &  \multicolumn{1}{l|}{trpet15@student.sdu.dk} \\ \midrule
+\multicolumn{1}{|l|}{Signature}      & \multicolumn{1}{l|}{\includegraphics[scale=0.08]{troels_sign} } \\ \midrule
+                                &                       \\ \midrule
+\multicolumn{1}{|l|}{Name}     &  \multicolumn{1}{l|}{Morten Kristian Jæger} \\ \midrule
+\multicolumn{1}{|l|}{Birthday}      &  \multicolumn{1}{l|}{030895} \\ \midrule
+\multicolumn{1}{|l|}{Login}     &   \multicolumn{1}{l|}{mojae15@student.sdu.dk} \\ \midrule
+\multicolumn{1}{|l|}{Signature}    &  \multicolumn{1}{l|}{\includegraphics[scale=0.3]{morten_sign}} \\ \midrule
+\end{tabular}
+\\
+\vspace{10mm}
+This report contains a total of \underline{ 15 } pages.
+
+
+}
+\end{document}
