@@ -92,6 +92,19 @@ void create_asm(a_asm *head){
                 create_1_op("jle", head->val.one_op.op, head->comment);
                 break;
 
+            case (IMUL):
+                create_1_op("imul", head->val.one_op.op, head->comment);
+                break;
+
+            case (IDIV):
+                create_1_op("idiv", head->val.one_op.op, head->comment);
+                break;
+
+            case (SUBQ):
+                create_2_op("subq", head->val.two_op.op1, head->val.two_op.op2, head->comment);
+                break;
+            
+
 
         }
 

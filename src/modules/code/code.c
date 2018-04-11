@@ -7,6 +7,8 @@
  */
 
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "tree.h"
 #include "linked_list.h"
 #include "tree.h"
@@ -14,9 +16,11 @@
 #include "memory.h"
 #include "symbol.h"
 
-int temps = 0;
-int cmps = 0;
-int ifs = 0;
+int temps = 1;
+int cmps = 1;
+int ifs = 1;
+int nullInserts = 0;
+int nonNullInserts = 0; 
 
 /**
  * 
@@ -29,12 +33,20 @@ int ifs = 0;
 
 
 /**
- * Initialize general purpose register operators
+ * Initialize register operators
  * 
  * Also initialize "wrt_INT" and "op_PRINTF", for printing ints
  * 
  */
 void init_regs(){
+	reg_RBP = NEW(asm_op);
+	reg_RBP->type = op_REGISTER;
+	reg_RBP->val.reg_id = "rbp";
+	
+	reg_RSP = NEW(asm_op);
+	reg_RSP->type = op_REGISTER;
+	reg_RSP->val.reg_id = "rsp";
+
 	reg_RAX = NEW(asm_op);
 	reg_RAX->type = op_REGISTER;
 	reg_RAX->val.reg_id = "rax";
@@ -397,38 +409,70 @@ a_asm *generate_program(body *body){
 	add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RAX, "Return \"no error\" exit code");
 	add_ins(&head, &tail, RET, "Program return");
 
+	printf("Null tail inserts: %d\n", nullInserts);
+	printf("Non-Null tail inserts: %d\n", nonNullInserts);
+
 
 	return head;
    
 }
 
 a_asm *generate_body(body *body, char *start_label, char *end_label){
+	int vars;
+	int tmps = 0;
+
 	struct a_asm *sl;
 	struct a_asm *dl;
 	struct a_asm *head;
     struct a_asm *tail;
 	struct a_asm *head2;
 	struct a_asm *tail2;
+	struct a_asm *temp;
 	head = NULL;
 	tail = NULL;
+	head2 = NULL;
+	tail2 = NULL;
 	
-	local_init(body->d_list);
+	vars = local_init(body->d_list);
+	printf("Vars: %d, in function: %s\n", vars, start_label);
 
 
 	printf("In body, generating d_list\n");
 	dl = generate_dlist(body->d_list);
 	asm_insert(&head, &tail, &dl);
-	printf("In body, done generating d_list\n");
+	tmps = temps;
+	printf("In body, done generating d_list, created %d temps for now in body: %s\n", tmps, start_label);
 
 	//We want "main" to be the last label in the file.
 	add_label(&head, &tail, start_label, "Start of body");
 
 	printf("In body, generating s_list\n");
 	sl = generate_slist(body->s_list);
-	asm_insert(&head, &tail, &sl);
+	asm_insert(&head2, &tail2, &sl);
+
+	
+	tmps = temps - tmps;
 	printf("In body, done generating s_list\n");
 
+
+	//This is not nice
+	temp = NEW(a_asm);
+	temp->comment = "Reserving space for temps in body";
+	temp->ins = SUBQ;
+	printf("Reserving space for %d temps in body of: %s\n", tmps, start_label);
+	temp->val.two_op.op1 = make_op_const(8 * tmps);
+	temp->val.two_op.op2 = reg_RSP;
+	
+	add_simple_start(&head, &tail);
+
+	asm_insert(&head, &tail, &temp);
+
+	asm_insert(&head, &tail, &head2);
+
+
+
 	add_label(&head, &tail, end_label, "End of body");
+	add_simple_end(&head, &tail);
 
 	return head;
 	
@@ -593,10 +637,13 @@ a_asm *generate_stmt(statement *stmt){
 	struct a_asm *expr;
 	struct a_asm *s1;
 	struct a_asm *s2;
+	struct a_asm *v;
 
 	struct asm_op *wrt;
 	struct asm_op *ret;
 	struct asm_op *ifexp;
+	struct asm_op *var;
+	struct asm_op *assignexp;
 
 
 	switch (stmt->kind){
@@ -659,6 +706,21 @@ a_asm *generate_stmt(statement *stmt){
 			add_label(&head, &tail, label_ifend, "End of IF");
 			break;
 
+		case (statement_ASSIGNMENT):
+			expr = generate_exp(stmt->val.assignment.expression);
+			asm_insert(&head, &tail, &expr);
+			assignexp = tail->val.two_op.op2;
+
+			v = generate_var(stmt->val.assignment.variable);
+			asm_insert(&head, &tail, &v);
+			var = tail->val.two_op.op2;
+
+
+			add_2_ins(&head, &tail, MOVQ, assignexp, var, "Assigning value to var");
+			break;
+
+
+
 
 
 		default:
@@ -685,9 +747,14 @@ a_asm *generate_var(variable *var){
 
 		case (var_ID):
 			s = get_symbol(var->table, var->id);
-			v = make_op_stack_loc(s->offset);
-			temp = make_op_temp();
-			add_2_ins(&head, &tail, MOVQ, v, temp, "Move val from stack to temp");
+			if (s->offset == 0){
+				v = s->op;
+				add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
+			} else {
+				v = make_op_stack_loc(s->offset);
+				add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
+
+			}
 			break;
 
 
@@ -977,7 +1044,15 @@ a_asm *generate_elist(exp_list *elist){
 // Insert a "linked list" into an existing list
 void asm_insert(a_asm **head, a_asm **tail, a_asm **new){
     struct a_asm *temp;
+	struct a_asm *temp2;
 	temp = NULL;
+
+	if ((*tail) == NULL){
+		nullInserts++;
+	} else {
+		nonNullInserts++;
+	}
+
     
     if ((*new) != NULL){
 		if (*tail != NULL){
@@ -1062,7 +1137,7 @@ void get_next(a_asm **head1, a_asm **tail1){
 }
 
 //Assign temp to every local variable
-void local_init(decl_list *dlist){
+int local_init(decl_list *dlist){
 	struct decl_list *d_temp;
 	struct var_decl_list *v_temp;
 	SYMBOL *s;
@@ -1083,7 +1158,7 @@ void local_init(decl_list *dlist){
 		}
 		d_temp = d_temp->list;
 	}
-	printf("Vars: %d\n", vars);
+	return vars;
 }
 
 
@@ -1183,5 +1258,19 @@ asm_op *make_op_stack_loc(int offset){
 	sprintf(op->val.label_id, "%d(%%rbp)", offset);
 	op->stack_offset = offset;
 	return op;
+
+}
+
+
+void add_simple_start(a_asm **head, a_asm **tail){
+	add_1_ins(head, tail, PUSH, reg_RBP, "Pushing base pointer");
+	add_2_ins(head, tail, MOVQ, reg_RSP, reg_RBP, "Making stack pointer new base pointer");
+
+}
+
+void add_simple_end(a_asm **head, a_asm **tail){
+
+	add_2_ins(head, tail, MOVQ, reg_RBP, reg_RSP, "Restoring stack pointer");
+	add_1_ins(head, tail, PUSH, reg_RBP, "Restoring base pointer");
 
 }
