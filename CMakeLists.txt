@@ -33,6 +33,10 @@ include_directories(src/modules/weeder)
 include_directories(src/modules/weeder/include)
 include_directories(src/modules/print_asm)
 include_directories(src/modules/print_asm/include)
+include_directories(src/modules/reg_allocate)
+include_directories(src/modules/reg_allocate/include)
+include_directories(src/modules/peephole)
+include_directories(src/modules/peephole/include)
 
 set(SOURCE_FILES_compiler
         src/main.c
@@ -52,11 +56,16 @@ set(SOURCE_FILES_compiler
         src/modules/code/code.c
         src/modules/code/include/code.h
 
+        src/modules/reg_allocate/reg_alloc.c
+        src/modules/reg_allocate/include/reg_alloc.h
+
         src/modules/error/error.c
         src/modules/error/include/error.h
 
         src/modules/optimizer/optimizer.c
         src/modules/optimizer/include/optimzer.h
+        src/modules/peephole/peephole.c
+        src/modules/peephole/include/peephole.h
 
         src/modules/parser/tree.c
         src/modules/parser/include/tree.h
