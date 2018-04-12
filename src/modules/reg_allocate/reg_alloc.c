@@ -9,24 +9,26 @@ void *liveness_analysis(a_asm *tail) {
 
     a_asm *original_tail = tail;
 
-    temporary *temp_array;
-
-    a_asm *tail = find_tail(tail);
+    temporary **temp_matrix;
 
     // Need to know order of declarations and statements
 
-    temp_array = (temporary *)malloc(sizeof(temporary) * get_num_temps());
+    temp_matrix = (temporary *)malloc(sizeof(temporary*) * asm_list_length(tail));
 
     asm_op *op1;
     asm_op *op2;
 
+    unsigned y = 0;
+    unsigned x = 0;
     unsigned runs = 0;
+
     while (tail != NULL && runs < 2) {
+        temp_matrix[y] = (temporary*)malloc(sizeof(temporary) * get_num_temps());
         if (&tail->val.two_op) {
             op1 = tail->val.two_op.op1;
             op2 = tail->val.two_op.op2;
-            int op1_position = exists_in_temporary_array(op1, temp_array, get_num_temps());
-            int op2_position = exists_in_temporary_array(op2, temp_array, get_num_temps());
+            int op1_position = exists_in_temporary_array(op1, temp_matrix[y], get_num_temps());
+            int op2_position = exists_in_temporary_array(op2, temp_matrix[y], get_num_temps());
 
             if(op1_position == -1) {
                 

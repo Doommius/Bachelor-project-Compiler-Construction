@@ -1005,9 +1005,9 @@ int get_num_temps() {
 }
 
 /**
- * @brief Gets the number of remaining elements in a linked list.
+ * @brief Gets the number of preceding elements in a linked list.
  * Can therefore also be used to find the length of a linked list
- * if the node is the head of the list.
+ * if the node is the head of the list. It counts backwards.
  * 
  * @param node 
  * @return int 
@@ -1017,7 +1017,7 @@ int asm_list_length(a_asm *node) {
 
 	while(node != NULL) {
 		++length;
-		node = node->next;
+		node = node->prev;
 	}
 	return length;
 }
