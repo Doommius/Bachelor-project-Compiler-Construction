@@ -37,7 +37,7 @@ void *liveness_analysis(a_asm *tail) {
 
             set_temp(op1, op1_position, temp_array, temp_matrix[y]);
             set_temp(op2, op2_position, temp_array, temp_matrix[y]);
-        } else if(&tail->val.one_op) {
+        } else if (&tail->val.one_op) {
             op1 = tail->val.one_op.op;
 
             int op1_position = exists_in_temporary_array(op1, temp_matrix[y], get_num_temps());
@@ -45,6 +45,10 @@ void *liveness_analysis(a_asm *tail) {
             set_temp(op1, op1_position, temp_array, temp_matrix[y]);
         }
     }
+}
+
+void graph_analysis() {
+    
 }
 
 void set_temp(asm_op *operator, int pos, temporary_meta *temp_meta, temporary *temp) {
@@ -58,8 +62,19 @@ void set_temp(asm_op *operator, int pos, temporary_meta *temp_meta, temporary *t
         }
     } else {
         temp[pos].temp_id = operator->val.temp.id;
-                temp[pos].meta = &temp_meta[operator->val.temp.id];
-                ++temp[pos].meta->importance;
+        temp[pos].meta = &temp_meta[operator->val.temp.id];
+        ++temp[pos].meta->importance;
+    }
+    set_connected(operator, temp_meta);
+}
+
+/**
+ * @brief Add itself to every other temp in current array.
+ * 
+ */
+void set_connected(asm_op *self, temporary_meta **meta) {
+    for(unsigned i = 0; i < get_num_temps(); ++i) {
+        meta[i]->connected[self->val.temp.id] = 1;
     }
 }
 

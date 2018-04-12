@@ -7,7 +7,8 @@
 typedef struct temporary_meta {
     unsigned importance;
     unsigned temp_id;
-    int address;            // Where to put it, if too many registers in use at the same time.
+    int address;			// Where to put it, if too many registers in use at the same time.
+    unsigned *connected;	// length = get_num_temps()-1. Position is name of temporary
 } temporary_meta;
 
 typedef struct temporary {
@@ -21,6 +22,8 @@ typedef struct temporary {
 void *liveness_analysis(a_asm *program);
 
 void set_temp(asm_op *operator, int pos, temporary_meta *temp_meta, temporary *temp);
+
+void set_connected(asm_op *self, temporary_meta **meta);
 
 void init_register_array(temporary_meta *temp_array);
 
