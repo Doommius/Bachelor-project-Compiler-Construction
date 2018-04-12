@@ -18,7 +18,7 @@ void *liveness_analysis(a_asm *tail) {
     temp_array = (temporary_meta *)malloc(sizeof(temporary_meta) * get_num_temps());
     temp_matrix = (temporary *)malloc(sizeof(temporary *) * asm_list_length(tail));
 
-    init_register_array(temp_array);
+    init_temp_register_array(temp_array);
 
     asm_op *op1;
     asm_op *op2;
@@ -27,8 +27,15 @@ void *liveness_analysis(a_asm *tail) {
     unsigned x = 0;
     unsigned runs = 0;
 
+
+    /**
+     * @brief Find out when variables are needed and also save which 
+     * temps are used simultaneously.
+     * 
+     */
     while (tail != NULL && runs < 2) {
         temp_matrix[y] = (temporary *)malloc(sizeof(temporary) * get_num_temps());
+        // TODO: What about scopes?
         if (&tail->val.two_op) {
             op1 = tail->val.two_op.op1;
             op2 = tail->val.two_op.op2;
@@ -45,10 +52,16 @@ void *liveness_analysis(a_asm *tail) {
             set_temp(op1, op1_position, temp_array, temp_matrix[y]);
         }
     }
+
+    /**
+     * @brief Assign register values.
+     * 
+     */
+    graph_analysis(temp_array);
 }
 
-void graph_analysis() {
-    
+void graph_analysis(temporary_meta **meta) {
+    // TODO:
 }
 
 void set_temp(asm_op *operator, int pos, temporary_meta *temp_meta, temporary *temp) {
@@ -70,15 +83,16 @@ void set_temp(asm_op *operator, int pos, temporary_meta *temp_meta, temporary *t
 
 /**
  * @brief Add itself to every other temp in current array.
+ * This is for the graph to use.
  * 
  */
 void set_connected(asm_op *self, temporary_meta **meta) {
-    for(unsigned i = 0; i < get_num_temps(); ++i) {
+    for (unsigned i = 0; i < get_num_temps(); ++i) {
         meta[i]->connected[self->val.temp.id] = 1;
     }
 }
 
-void init_register_array(temporary_meta *temp_array) {
+void init_temp_register_array(temporary_meta *temp_array) {
     for (int i = 0; i < get_num_temps(); ++i) {
         temp_array[i].address = 0;
         temp_array[i].temp_id = i;
