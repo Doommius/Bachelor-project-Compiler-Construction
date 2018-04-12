@@ -789,6 +789,7 @@ void asm_insert(a_asm **head, a_asm **tail, a_asm **new){
             *head = (*new);
         }
 
+		// TODO: (*tail) = *tail->next ??
 		(*tail) = find_tail((*new));
 
 		(*tail)->next = temp;
@@ -1001,4 +1002,22 @@ void add_simple_end(a_asm **head, a_asm **tail){
 
 int get_num_temps() {
 	return temps;
+}
+
+/**
+ * @brief Gets the number of remaining elements in a linked list.
+ * Can therefore also be used to find the length of a linked list
+ * if the node is the head of the list.
+ * 
+ * @param node 
+ * @return int 
+ */
+int asm_list_length(a_asm *node) {
+	unsigned length = 0;
+
+	while(node != NULL) {
+		++length;
+		node = node->next;
+	}
+	return length;
 }

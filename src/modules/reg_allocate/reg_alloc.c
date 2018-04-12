@@ -5,13 +5,52 @@
 #include "linked_list.h"
 #include "reg_alloc.h"
 
-void *liveness_analysis(a_asm *program) {
+void *liveness_analysis(a_asm *tail) {
 
-    temporary **temp_matrix;
+    a_asm *original_tail = tail;
+
+    temporary *temp_array;
+
+    a_asm *tail = find_tail(tail);
 
     // Need to know order of declarations and statements
 
-    temp_matrix = (temporary *)malloc(sizeof(temporary) * get_num_temps());
+    temp_array = (temporary *)malloc(sizeof(temporary) * get_num_temps());
+
+    asm_op *op1;
+    asm_op *op2;
+
+    unsigned runs = 0;
+    while (tail != NULL && runs < 2) {
+        if (&tail->val.two_op) {
+            op1 = tail->val.two_op.op1;
+            op2 = tail->val.two_op.op2;
+            int op1_position = exists_in_temporary_array(op1, temp_array, get_num_temps());
+            int op2_position = exists_in_temporary_array(op2, temp_array, get_num_temps());
+
+            if(op1_position == -1) {
+                
+            }
+        }
+    }
+}
+
+/**
+ * @brief Searches for element in array. If it finds it, 
+ * it will return the position.
+ * 
+ * @param operator
+ * @param temp_array 
+ * @param length 
+ * @return int 
+ */
+int exists_in_temporary_array(asm_op *operator, temporary *temp_array, unsigned length) {
+    for (unsigned i = 0; i < length; ++i) {
+        if (temp_array[i].id == operator->val.temp.id) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 //Simple register allocation, using the stack

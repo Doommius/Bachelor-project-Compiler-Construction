@@ -175,4 +175,6 @@ struct asm_op *op_PRINTF;
 
 int get_num_temps();
 
+int asm_list_length(a_asm *node);
+
 #endif
