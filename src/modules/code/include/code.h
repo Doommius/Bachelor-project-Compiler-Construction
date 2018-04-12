@@ -173,8 +173,8 @@ struct asm_op *wrt_INT;
 
 struct asm_op *op_PRINTF;
 
-int get_num_temps();
+unsigned get_num_temps();
 
-int asm_list_length(a_asm *node);
+unsigned asm_list_length(a_asm *node);
 
 #endif

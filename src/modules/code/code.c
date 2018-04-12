@@ -1000,7 +1000,7 @@ void add_simple_end(a_asm **head, a_asm **tail){
 
 }
 
-int get_num_temps() {
+unsigned get_num_temps() {
 	return temps;
 }
 
@@ -1012,7 +1012,7 @@ int get_num_temps() {
  * @param node 
  * @return int 
  */
-int asm_list_length(a_asm *node) {
+unsigned asm_list_length(a_asm *node) {
 	unsigned length = 0;
 
 	while(node != NULL) {
