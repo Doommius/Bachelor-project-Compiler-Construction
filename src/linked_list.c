@@ -37,7 +37,7 @@ asm_node *new_asm_node(int linenumber, ASM_kind kind, char *arg1, char *arg2, ch
  * @param data for the first element of the linked list.
  * @return linked_list* Returns a reference to the created linked list.
  */
-linked_list *init_linked_list(void *data) {
+linked_list *linked_list_init(void *data) {
     linked_list_meta *meta = malloc(sizeof(linked_list_meta));
     linked_list *list = malloc(sizeof(linked_list));
 
@@ -64,7 +64,7 @@ linked_list *init_linked_list(void *data) {
 linked_list *linked_list_insert_head(linked_list **list_ref, void *data) {
 
     if (list_ref == NULL) {
-        return init_linked_list(data);
+        return linked_list_init(data);
     }
 
     linked_list *new_element = malloc(sizeof(linked_list));
@@ -93,7 +93,7 @@ linked_list *linked_list_insert_head(linked_list **list_ref, void *data) {
 linked_list *linked_list_insert_tail(linked_list *list, void *data) {
 
     if (list == NULL) {
-        return init_linked_list(data);
+        return linked_list_init(data);
     }
 
     linked_list *new_element = malloc(sizeof(linked_list));

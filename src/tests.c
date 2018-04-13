@@ -24,7 +24,7 @@
 
 int main(int argc, char **argv) {
     //symboltable_test();
-	linked_list *list = init_linked_list("Hej");
+	linked_list *list = linked_list_init("Hej");
 
 	linked_list *head;
 

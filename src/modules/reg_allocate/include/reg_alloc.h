@@ -13,13 +13,18 @@ typedef struct temporary_meta {
 
 typedef struct temporary {
     unsigned temp_id;
+	unsigned set; // 1 or 0.
     temporary_meta *meta;
 } temporary;
 
 
 #define AVAIL_REGS 10
 
-void *liveness_analysis(a_asm *program);
+void liveness_analysis(a_asm *head);
+
+void forward_analysis(a_asm *head);
+
+void backward_analysis(a_asm *tail);
 
 void graph_analysis(temporary_meta **meta);
 

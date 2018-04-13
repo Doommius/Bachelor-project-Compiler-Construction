@@ -24,6 +24,19 @@ typedef struct a_asm {
 	a_asm_meta *meta;
 
 	/**
+	 * @brief For use in liveness analysis
+	 * 
+	 */
+
+	// In and out sets
+	linked_list *pred;	// In
+	linked_list *succ;	// Out
+	
+	// Uses and defs
+	linked_list *uses;
+	linked_list *defs;
+
+	/**
 	 * 
 	 * Should probably contain information about the head and tail of the current block
 	 * 

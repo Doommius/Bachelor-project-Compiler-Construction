@@ -67,28 +67,7 @@ typedef enum { al_LIST,
 typedef enum { el_EXP,
                el_LIST } EL_kind;
 
-typedef enum { jmp, //unconditional jump
-               je,  //jump equal
-               jne, //Jump not equal
-               jg,  //jump greater
-               jge, //jump greater or equal
-               jl,  //Jump less
-               jle, //Jump less or equal
-
-               push,
-               pop,
-
-               orl, //or less ?
-
-               add,
-               sub,
-               mul,
-               mov,
-               movl,
-               setne,
-               cmpl,
-               andb,
-               cmp,
+typedef enum {
 
                // Renamed enumerators with capital letters, have not remove non-capital versions, as other code depends on those.
                LABEL,

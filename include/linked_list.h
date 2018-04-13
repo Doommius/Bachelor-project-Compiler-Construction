@@ -33,7 +33,7 @@ typedef enum {NEXT, PREV} direction;
 
 asm_node *new_asm_node(int linenumber, ASM_kind kind, char *arg1, char *arg2, char *arg3, char *comment);
 
-linked_list* init_linked_list();
+linked_list* linked_list_init();
 
 linked_list* linked_list_insert_head(linked_list **list, void* node);
 
