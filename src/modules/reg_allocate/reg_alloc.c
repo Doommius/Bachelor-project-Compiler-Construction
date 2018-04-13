@@ -30,10 +30,11 @@ void graph_analysis(temporary_meta **meta) {
 void forward_analysis(a_asm *node) {
     a_asm *head = node;
     while (node != NULL) {
+        a_asm *item;
         switch (node->ins) {
         case JMP:
             // Add successor to node
-            a_asm *item = find_in_flow(head, &node->val.one_op.op->type, node->val.one_op.op);
+            item = find_in_flow(head, &node->val.one_op.op->type, node->val.one_op.op);
             node->successors = linked_list_init(item);
 
             // Add predecessor to successor node
