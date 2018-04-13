@@ -30,14 +30,6 @@ void make_in_out(a_asm *head, a_asm *node);
 
 void graph_analysis(temporary_meta **meta);
 
-void set_temp(asm_op *operator, int pos, temporary_meta *temp_meta, temporary *temp);
-
-void set_connected(asm_op *self, temporary_meta **meta);
-
-void init_temp_register_array(temporary_meta *temp_array);
-
-int exists_in_temporary_array(asm_op *operation, temporary *temp_array, unsigned length);
-
 a_asm *reg_alloc(a_asm *h, int local_vars);
 
 void allocate(asm_op **op);

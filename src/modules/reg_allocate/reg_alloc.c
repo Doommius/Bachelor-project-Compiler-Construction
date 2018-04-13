@@ -33,7 +33,7 @@ void forward_analysis(a_asm *node) {
         switch (node->ins) {
         case JMP:
             // Add successor to node
-            a_asm *item = find_in_flow(head, node->val.one_op.op->type, node);
+            a_asm *item = find_in_flow(head, &node->val.one_op.op->type, node->val.one_op.op);
             node->successors = linked_list_init(item);
 
             // Add predecessor to successor node
@@ -67,9 +67,15 @@ void forward_analysis(a_asm *node) {
     }
 }
 
+/**
+ * @brief Creates in and out sets 
+ * 
+ * @param head 
+ * @param node 
+ */
 void make_in_out(a_asm *head, a_asm *node) {
     // Add successors node
-    a_asm *item_jmp = find_in_flow(head, node->val.one_op.op->type, node);
+    a_asm *item_jmp = find_in_flow(head, &node->val.one_op.op->type, node->val.one_op.op);
     node->successors = linked_list_init(item_jmp);
 
     a_asm *item_nojmp = node->next;
@@ -92,48 +98,14 @@ void make_in_out(a_asm *head, a_asm *node) {
 }
 
 /**
- * @brief Create a uses and defs object
+ * @brief
  * 
  * @param tail 
  */
-void backward_analysis(a_asm *tail) {
-}
+void backward_analysis(a_asm *node) {
+	a_asm *head = node;
 
-/**
- * @brief Add itself to every other temp in current array.
- * This is for the graph to use.
- * 
- */
-void set_connected(asm_op *self, temporary_meta **meta) {
-    for (unsigned i = 0; i < get_num_temps(); ++i) {
-        meta[i]->connected[self->val.temp.id] = 1;
-    }
-}
 
-void init_temp_register_array(temporary_meta *temp_array) {
-    for (int i = 0; i < get_num_temps(); ++i) {
-        temp_array[i].address = 0;
-        temp_array[i].temp_id = i;
-        temp_array[i].importance = 0;
-    }
-}
-
-/**
- * @brief Searches for element in array. If it finds it, 
- * it will return the position.
- * 
- * @param operator
- * @param temp_array 
- * @param length 
- * @return int 
- */
-int exists_in_temporary_array(asm_op *operator, temporary *temp_array, unsigned length) {
-    for (unsigned i = 0; i < length; ++i) {
-        if (temp_array[i].temp_id == operator->val.temp.id) {
-            return i;
-        }
-    }
-    return -1;
 }
 
 //Simple register allocation, using the stack
