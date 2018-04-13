@@ -36,6 +36,7 @@ void *liveness_analysis(a_asm *tail) {
     while (tail != NULL && runs < 2) {
         temp_matrix[y] = (temporary *)malloc(sizeof(temporary) * get_num_temps());
         // TODO: What about scopes?
+		// TODO: Is declaration or operation?
         if (&tail->val.two_op) {
             op1 = tail->val.two_op.op1;
             op2 = tail->val.two_op.op2;
