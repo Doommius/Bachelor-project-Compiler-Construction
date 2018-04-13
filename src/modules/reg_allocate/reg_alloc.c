@@ -30,45 +30,40 @@ void graph_analysis(temporary_meta **meta) {
 void forward_analysis(a_asm *node) {
     a_asm *head = node;
     while (node != NULL) {
-        if (node->prev == NULL) {
-            switch (node->ins) {
-            case JMP:
-                // Add successor to node
-                a_asm *item = find_in_flow(head, node->val.one_op.op->type, node);
-                node->successors = linked_list_init(item);
+        switch (node->ins) {
+        case JMP:
+            // Add successor to node
+            a_asm *item = find_in_flow(head, node->val.one_op.op->type, node);
+            node->successors = linked_list_init(item);
 
-                // Add predecessor to successor node
-                if (!item->predecessors) {
-                    item->predecessors = linked_list_init(node);
-                } else {
-                    linked_list_insert_tail(item->predecessors, node);
-                }
-                break;
-            case JNE:
-                make_in_out(head, node);
-                break;
-            case JG:
-                make_in_out(head, node);
-                break;
-            case JL:
-                make_in_out(head, node);
-                break;
-            case JGE:
-                make_in_out(head, node);
-                break;
-            case JLE:
-                make_in_out(head, node);
-                break;
-            case JE:
-                make_in_out(head, node);
-                break;
+            // Add predecessor to successor node
+            if (!item->predecessors) {
+                item->predecessors = linked_list_init(node);
+            } else {
+                linked_list_insert_tail(item->predecessors, node);
             }
-        } else if (head->next == NULL) {
-
-        } else {
+            break;
+        case JNE:
+            make_in_out(head, node);
+            break;
+        case JG:
+            make_in_out(head, node);
+            break;
+        case JL:
+            make_in_out(head, node);
+            break;
+        case JGE:
+            make_in_out(head, node);
+            break;
+        case JLE:
+            make_in_out(head, node);
+            break;
+        case JE:
+            make_in_out(head, node);
+            break;
         }
 
-        head = head->next;
+        node = node->next;
     }
 }
 

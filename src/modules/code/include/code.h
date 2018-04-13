@@ -8,73 +8,71 @@ typedef struct a_asm a_asm;
 typedef struct asm_op asm_op;
 
 typedef struct a_asm_meta {
-	a_asm *head;
-	a_asm *tail;
-	unsigned length;
+    a_asm *head;
+    a_asm *tail;
+    unsigned length;
 } a_asm_meta;
 
 //Abstract assembly node, with a built-in linked list.
 //To be expanded
 typedef struct a_asm {
-	ASM_kind ins;
-	a_asm *prev;
-	a_asm *next;
-	char *comment;
-	int ops;
-	a_asm_meta *meta;
+    ASM_kind ins;
+    a_asm *prev;
+    a_asm *next;
+    char *comment;
+    int ops;
+    a_asm_meta *meta;
 
-	/**
+    /**
 	 * @brief For use in liveness analysis
 	 * 
 	 */
 
-	// In and out sets
-	linked_list *predecessors;	// In
-	linked_list *successors;	// Out
-	
-	// Uses and defs
-	linked_list *uses;
-	linked_list *defs;
+    // In and out sets
+    linked_list *predecessors; // In
+    linked_list *successors;   // Out
 
-	/**
+    // Uses and defs
+    linked_list *uses;
+    linked_list *defs;
+
+    /**
 	 * 
 	 * Should probably contain information about the head and tail of the current block
 	 * 
 	 */
 
-	union {
+    union {
 
-		//Missing something for label
+        //Missing something for label
 
-		char *label_id;
-		struct {
-			asm_op *op1;
-			asm_op *op2;
-		} two_op;
+        char *label_id;
+        struct {
+            asm_op *op1;
+            asm_op *op2;
+        } two_op;
 
-		struct {
-			asm_op *op;
-		} one_op;
-	} val;
+        struct {
+            asm_op *op;
+        } one_op;
+    } val;
 
 } a_asm;
 
 typedef struct asm_op {
-	OP_kind type;
-	int stack_offset;
-	union {
-		char *reg_id;
-		char *label_id;
-		char *func_id;
-		struct {
-			int id;
-		} temp;
-		int intconst;
-	} val;
-	
+    OP_kind type;
+    int stack_offset;
+    union {
+        char *reg_id;
+        char *label_id;
+        char *func_id;
+        struct {
+            int id;
+        } temp;
+        int intconst;
+    } val;
+
 } asm_op;
-
-
 
 a_asm *generate_program(body *body);
 
@@ -134,7 +132,7 @@ void make_cmp_label(char *buffer);
 
 void make_end_cmp_label(char *buffer);
 
-void make_bool_label(char *buffer); 
+void make_bool_label(char *buffer);
 
 void make_else_label(char *buffer);
 
@@ -153,7 +151,7 @@ struct asm_op *reg_RBP;
 
 struct asm_op *reg_RSP;
 
-//General purpose registers we can use. 
+//General purpose registers we can use.
 struct asm_op *reg_RAX;
 
 struct asm_op *reg_RBX;
