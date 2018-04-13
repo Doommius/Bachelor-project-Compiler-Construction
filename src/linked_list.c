@@ -298,6 +298,6 @@ int linked_list_contains(linked_list *list, void *element) {
             return 1;
         }
         current_node = current_node->next;
-    } while(current_node != list->head);
+    } while(current_node != list->meta->head);
     return 0;
 }

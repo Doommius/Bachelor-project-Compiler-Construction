@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include "error.h"
 #include "code.h"
 #include "linked_list.h"
