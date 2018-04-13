@@ -26,6 +26,8 @@ void forward_analysis(a_asm *head);
 
 void backward_analysis(a_asm *tail);
 
+void make_in_out(a_asm *head, a_asm *node);
+
 void graph_analysis(temporary_meta **meta);
 
 void set_temp(asm_op *operator, int pos, temporary_meta *temp_meta, temporary *temp);

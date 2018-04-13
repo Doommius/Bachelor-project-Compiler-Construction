@@ -29,8 +29,8 @@ typedef struct a_asm {
 	 */
 
 	// In and out sets
-	linked_list *pred;	// In
-	linked_list *succ;	// Out
+	linked_list *predecessors;	// In
+	linked_list *successors;	// Out
 	
 	// Uses and defs
 	linked_list *uses;
@@ -189,5 +189,7 @@ struct asm_op *op_PRINTF;
 unsigned get_num_temps();
 
 unsigned asm_list_length(a_asm *node);
+
+a_asm *find_in_flow(a_asm *head, OP_kind *kind, asm_op *op);
 
 #endif

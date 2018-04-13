@@ -7,9 +7,9 @@
 
 void liveness_analysis(a_asm *head) {
 
-	forward_analysis(head);
+    forward_analysis(head);
 
-	backward_analysis(head);
+    backward_analysis(head);
 
     /**
      * @brief Assign register values.
@@ -27,40 +27,73 @@ void graph_analysis(temporary_meta **meta) {
  * 
  * @param head 
  */
-void forward_analysis(a_asm *head) {
-	while (head != NULL) {
-		if(head->prev == NULL) {
-			switch(head->ins) {
-				case JMP:
-					head->succ = linked_list_init(head->)
-					break;
-				case JNE:
-					break;
-				case JG:
-					break;
-				case JL:
-					break;
-				case JGE:
-					break;
-				case JLE:
-					break;
-				case JE:
-					break;
-			}
-			// if(&head->val.one_op) {
-			// 	head->uses = linked_list_init(head->val.one_op.op);
-			// } else {
-			// 	head->uses = linked_list_init(head->val.two_op.op1);
-			// 	linked_list_insert_tail(head->uses, head->val.two_op.op2);
-			// }
-		} else if(head->next == NULL) {
-			
-		} else {
+void forward_analysis(a_asm *node) {
+    a_asm *head = node;
+    while (node != NULL) {
+        if (node->prev == NULL) {
+            switch (node->ins) {
+            case JMP:
+                // Add successor to node
+                a_asm *item = find_in_flow(head, node->val.one_op.op->type, node);
+                node->successors = linked_list_init(item);
 
-		}
+                // Add predecessor to successor node
+                if (!item->predecessors) {
+                    item->predecessors = linked_list_init(node);
+                } else {
+                    linked_list_insert_tail(item->predecessors, node);
+                }
+                break;
+            case JNE:
+                make_in_out(head, node);
+                break;
+            case JG:
+                make_in_out(head, node);
+                break;
+            case JL:
+                make_in_out(head, node);
+                break;
+            case JGE:
+                make_in_out(head, node);
+                break;
+            case JLE:
+                make_in_out(head, node);
+                break;
+            case JE:
+                make_in_out(head, node);
+                break;
+            }
+        } else if (head->next == NULL) {
 
-		head = head->next;
-	}
+        } else {
+        }
+
+        head = head->next;
+    }
+}
+
+void make_in_out(a_asm *head, a_asm *node) {
+    // Add successors node
+    a_asm *item_jmp = find_in_flow(head, node->val.one_op.op->type, node);
+    node->successors = linked_list_init(item_jmp);
+
+    a_asm *item_nojmp = node->next;
+    node->successors = linked_list_insert_tail(node->successors, item_nojmp);
+
+    // Add node to successors' predecessors
+    // Add node to item_jmp's predecessor
+    if (!item_jmp->predecessors) {
+        item_jmp->predecessors = linked_list_init(node);
+    } else {
+        linked_list_insert_tail(item_jmp->predecessors, node);
+    }
+
+    // Add node to item_nojmp's predecessor
+    if (!item_nojmp->predecessors) {
+        item_nojmp->predecessors = linked_list_init(node);
+    } else {
+        linked_list_insert_tail(item_nojmp->predecessors, node);
+    }
 }
 
 /**
@@ -69,7 +102,6 @@ void forward_analysis(a_asm *head) {
  * @param tail 
  */
 void backward_analysis(a_asm *tail) {
-
 }
 
 /**
