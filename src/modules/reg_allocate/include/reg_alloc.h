@@ -26,6 +26,14 @@ void forward_analysis(a_asm *head);
 
 void backward_analysis(a_asm *tail);
 
+void check_node_type(a_asm *item);
+
+void add_uses(a_asm *item);
+
+void add_defs_remove_uses(a_asm *item);
+
+void copy_content(linked_list *current, linked_list *copy_from);
+
 void make_in_out(a_asm *head, a_asm *node);
 
 void graph_analysis(temporary_meta **meta);

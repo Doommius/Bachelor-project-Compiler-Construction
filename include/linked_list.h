@@ -55,4 +55,6 @@ linked_list *linked_list_get(linked_list *list, int index);
 
 linked_list *linked_list_iterator(int move, int index,  linked_list *pseudo_list, direction d);
 
+int linked_list_contains(linked_list *list, void *element);
+
 #endif //COMPILER_LINKED_LIST_H

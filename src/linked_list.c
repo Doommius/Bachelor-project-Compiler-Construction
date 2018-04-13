@@ -290,3 +290,14 @@ linked_list *linked_list_iterator(int move, int index,  linked_list *pseudo_list
     pseudo_list->meta->current_element = pseudo_list;
     return pseudo_list;
 }
+
+int linked_list_contains(linked_list *list, void *element) {
+    linked_list *current_node = list;
+    do {
+        if(current_node->data == element) {
+            return 1;
+        }
+        current_node = current_node->next;
+    } while(current_node != list->head);
+    return 0;
+}

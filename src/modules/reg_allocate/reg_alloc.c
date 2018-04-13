@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "error.h"
 #include "code.h"
 #include "linked_list.h"
@@ -62,6 +63,16 @@ void forward_analysis(a_asm *node) {
         case JE:
             make_in_out(head, node);
             break;
+        default:
+            // Default case is used to create in and out sets for every other node.
+            // Add direct successor to node
+            item = node->next;
+            node->successors = linked_list_init(item);
+
+            // Add node to predecessor list of the successor
+            if (!item->predecessors) {
+                item->predecessors = linked_list_init(node);
+            }
         }
 
         node = node->next;
@@ -104,9 +115,57 @@ void make_in_out(a_asm *head, a_asm *node) {
  * @param tail 
  */
 void backward_analysis(a_asm *node) {
-	a_asm *head = node;
+    a_asm *head = node;
 
+    while (node != NULL) {
+        a_asm *item;
+        if (linked_list_length(node->predecessors) == 1) {
+            check_node_type(linked_list_get(node->predecessors, 0));
 
+        } else if (linked_list_length(node->predecessors) == 2) {
+            check_node_type(linked_list_get(node->predecessors, 0));
+            check_node_type(linked_list_get(node->predecessors, 1));
+
+            // Recurse into second predecessor.
+            backward_analysis(linked_list_get(node->predecessors, 1));
+        }
+        node = node->prev;
+    }
+}
+
+void check_node_type(a_asm *item) {
+
+    if (linked_list_length(item->successors) == 1) {
+        //TODO:  Add uses or defs based on node type
+
+    } else if (linked_list_length(item->successors) == 2) {
+        //TODO:  Add uses or defs based on node type
+    }
+}
+
+void add_uses(a_asm *item) {
+    // TODO: Add switch statements
+}
+
+void add_defs_remove_uses(a_asm *item) {
+    // TODO: Add switch statements
+}
+
+void copy_content(linked_list *current, linked_list *copy_from) {
+    if (linked_list_length(current) >= 0) {
+        do {
+            linked_list_insert_tail(current, copy_from);
+
+            copy_from = copy_from->next;
+        } while (copy_from != copy_from->meta->head);
+    } else {
+        do {
+            if (!linked_list_contains(current, copy_from->data)) {
+                linked_list_insert_tail(current, copy_from->data);
+            }
+            copy_from = copy_from->next;
+        } while (copy_from != copy_from->meta->head);
+    }
 }
 
 //Simple register allocation, using the stack
