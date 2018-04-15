@@ -142,7 +142,7 @@ void check_node_type(a_asm *item) {
             if (item->val.two_op.op1->val.temp.id != NULL) {
                 add_uses(item, item->val.two_op.op1->val.temp.id);
             } else if (item->val.two_op.op2->val.temp.id) {
-                add_defs(item, item->val.two_op.op2->val.temp.id);
+                add_defs_remove_uses(item, item->val.two_op.op2->val.temp.id);
             }
             break;
         case CMP:
@@ -153,14 +153,14 @@ void check_node_type(a_asm *item) {
             if (item->val.two_op.op1->val.temp.id != NULL) {
                 add_uses(item, item->val.two_op.op1->val.temp.id);
             } else if (item->val.two_op.op2->val.temp.id) {
-                add_defs(item, item->val.two_op.op2->val.temp.id);
+                add_defs_remove_uses(item, item->val.two_op.op2->val.temp.id);
             }
             break;
         case SUBQ:
             if (item->val.two_op.op1->val.temp.id != NULL) {
                 add_uses(item, item->val.two_op.op1->val.temp.id);
             } else if (item->val.two_op.op2->val.temp.id) {
-                add_defs(item, item->val.two_op.op2->val.temp.id);
+                add_defs_remove_uses(item, item->val.two_op.op2->val.temp.id);
             }
             break;
         case IMUL:
@@ -168,21 +168,24 @@ void check_node_type(a_asm *item) {
             copy_defs(item);
             break;
         case IDIV:
+            // TODO:
             break;
         case PUSH:
+            // TODO:
             break;
         case POP:
+            // TODO:
             break;
         }
 
     } else if (linked_list_length(item->successors) == 2) {
-        //TODO:  Add uses or defs based on node type
         // Only add uses and defs from previous flow-node.
+        copy_uses(item);
+        copy_defs(item);
     }
 }
 
 void add_uses(a_asm *item, int id) {
-    // TODO: Add switch statements
     if (!linked_list_contains(item->uses, id)) {
         linked_list_insert_tail(item->uses, id);
     }
@@ -190,6 +193,15 @@ void add_uses(a_asm *item, int id) {
 
 void add_defs(a_asm *item, int id) {
     if (!linked_list_contains(item->defs, id)) {
+        linked_list_insert_tail(item->defs, id);
+    }
+}
+
+void add_defs_remove_uses(a_asm *item, int id) {
+    if(linked_list_contains(item->uses, id)) {
+        // This define is never used.
+    } else {
+        linked_list_remove_at_index(item->uses, id);
         linked_list_insert_tail(item->defs, id);
     }
 }
@@ -272,10 +284,6 @@ void copy_defs(a_asm *item) {
         }
         item->defs_bool = 1;
     }
-}
-
-void add_defs_remove_uses(a_asm *item, int id) {
-    // TODO: Add switch statements
 }
 
 void copy_content(linked_list *current, linked_list *copy_from) {
