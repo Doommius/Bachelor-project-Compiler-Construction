@@ -166,9 +166,13 @@ void check_node_type(a_asm *item) {
         case IMUL:
             copy_uses(item);
             copy_defs(item);
+            break;
         case IDIV:
+            break;
         case PUSH:
+            break;
         case POP:
+            break;
         }
 
     } else if (linked_list_length(item->successors) == 2) {
