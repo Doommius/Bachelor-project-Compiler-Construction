@@ -3,7 +3,7 @@
 
 #include "tree.h"
 #include "linked_list.h"
-
+#include "bit_vector.h"
 
 
 
@@ -25,7 +25,6 @@ typedef struct a_asm {
 
 	union {
 
-		//Missing something for label
 
 		char *label_id;
 		struct {
@@ -37,6 +36,12 @@ typedef struct a_asm {
 			struct asm_op *op;
 		} one_op;
 	} val;
+
+	BITVECTOR use;
+	BITVECTOR def;
+	BITVECTOR in;
+	BITVECTOR out;
+
 
 } a_asm;
 
@@ -121,6 +126,11 @@ void make_else_label(char *buffer);
 
 void make_if_label(char *buffer);
 
+void make_loop_start_label(char *buffer);
+
+void make_loop_end_label(char *buffer);
+
+
 void init_regs();
 
 void get_next(a_asm **head, a_asm **tail);
@@ -166,5 +176,9 @@ struct asm_op *reg_R15;
 struct asm_op *wrt_INT;
 
 struct asm_op *op_PRINTF;
+
+unsigned get_temps();
+
+
 
 #endif

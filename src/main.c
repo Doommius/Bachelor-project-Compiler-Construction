@@ -24,6 +24,8 @@
 #include "print_asm.h"
 #include "reg_alloc.h"
 #include "peephole.h"
+#include "bit_vector.h"
+#include "liveness_analysis.h"
 
 
 int lineno;
@@ -121,10 +123,13 @@ int main(int argc, char **argv) {
     print_asm(program, "peep.s");
 
 
-    
-    //reg_alloc(program, 0);
+    printf("Starting Liveness Analysis\n");
+    liveness_analysis(program);
 
     print_asm(program, "a2.s");
+
+    
+
 
 
     printf("\n");

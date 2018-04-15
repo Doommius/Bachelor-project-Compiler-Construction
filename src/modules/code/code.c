@@ -15,10 +15,12 @@
 #include "code.h"
 #include "memory.h"
 #include "symbol.h"
+#include "reg_alloc.h"
 
-int temps = 1;
+int temps = AVAIL_REGS; //The predefined registers will be the first values in the bitvectors
 int cmps = 1;
 int ifs = 1;
+int loops = 1;
 int nullInserts = 0;
 int nonNullInserts = 0; 
 
@@ -355,6 +357,8 @@ a_asm *generate_stmt(statement *stmt){
     struct a_asm *tail;
 	char label_else[20];
 	char label_ifend[20];
+	char label_loop_start[20];
+	char label_loop_end[20];
 
 	head = NULL;
 	tail = NULL;
@@ -443,6 +447,24 @@ a_asm *generate_stmt(statement *stmt){
 			add_2_ins(&head, &tail, MOVQ, assignexp, var, "Assigning value to var");
 			break;
 
+		case (statement_WHILE):
+			
+			make_loop_start_label(label_loop_start);
+			make_loop_end_label(label_loop_end);
+			add_label(&head, &tail, label_loop_start, "Start of while");
+			expr = generate_exp(stmt->val.loop.expression);
+			asm_insert(&head, &tail, &expr);
+			ifexp = tail->val.two_op.op2;
+
+			add_2_ins(&head, &tail, CMP, make_op_const(1), ifexp, "Check if condition in while is true");
+			add_1_ins(&head, &tail, JNE, make_op_label(label_loop_end), "If condition is false, jump to end");
+			s1 = generate_stmt(stmt->val.loop.statement);
+			asm_insert(&head, &tail, &s1);
+			add_1_ins(&head, &tail, JMP, make_op_label(label_loop_start), "Jump to start of while");
+			add_label(&head, &tail, label_loop_end, "End of while");
+			break;
+
+
 
 
 
@@ -522,11 +544,47 @@ a_asm *generate_exp(expression *exp){
 	
 	if (exp->kind == exp_OR){
 		make_bool_label(label_bool);
+		temp = make_op_temp(); //Used to hold the result of the expression
+		add_2_ins(&head, &tail, MOVQ, make_op_const(1), temp, "Setting default value of result to true");
+		
 		add_2_ins(&head, &tail, CMP, make_op_const(1), left_target, "Compare left side of OR with true");
 		add_1_ins(&head, &tail, JE, make_op_label(label_bool), "If true, skip right expression");
-		add_label(&head, &tail, label_bool, "OR expression label");
+		
 		right_exp = generate_exp(exp->val.ops.right);
 		asm_insert(&head, &tail, &right_exp);
+		right_target = tail->val.two_op.op2;
+
+		//If this is excecuted, left expression was false, so the result depends entirely on the right expression
+		add_2_ins(&head, &tail, MOVQ, right_target, temp, "Result is set to the value of the right expression");
+
+		add_label(&head, &tail, label_bool, "OR expression label");
+
+		add_2_ins(&head, &tail, MOVQ, temp, temp, "Used to get target for next instruction");
+		
+		return head;
+
+	}
+
+	if (exp->kind == exp_AND){
+		make_bool_label(label_bool);
+		temp = make_op_temp();
+
+		add_2_ins(&head, &tail, MOVQ, make_op_const(0), temp, "Setting default value of result to false");
+		
+		add_2_ins(&head, &tail, CMP, make_op_const(0), left_target, "Compare left side of AND with false");
+		add_1_ins(&head, &tail, JE, make_op_label(label_bool), "If true, skip right expression");
+		
+		right_exp = generate_exp(exp->val.ops.right);
+		asm_insert(&head, &tail, &right_exp);
+		right_target = tail->val.two_op.op2;
+
+		//If this is excecuted, left expression was false, so the result depends entirely on the right expression
+		add_2_ins(&head, &tail, MOVQ, right_target, temp, "Result is set to the value of the right expression");
+
+		add_label(&head, &tail, label_bool, "AND expression label");
+
+		add_2_ins(&head, &tail, MOVQ, temp, temp, "Used to get target for next instruction");
+		
 		return head;
 
 	}
@@ -538,22 +596,27 @@ a_asm *generate_exp(expression *exp){
 	switch (exp->kind){
 
 		case (exp_MULT):
+			//TODO should probaly be changed to be the RDX register?
 			//IMUL uses the %rax register, so we must move one of the values to this register
 			//Put the resulting value in a temporary
 			add_2_ins(&head, &tail, MOVQ, left_target, reg_RAX, "Using RAX for multiplication");
-			add_2_ins(&head, &tail, MOVQ, right_target, reg_RBX, "Using RBX for multiplication");
-			add_1_ins(&head, &tail, IMUL, reg_RBX, "Multiplication using RAX and RBX");
+			add_2_ins(&head, &tail, MOVQ, right_target, reg_RDX, "Using RDX for multiplication");
+			add_1_ins(&head, &tail, IMUL, reg_RDX, "Multiplication using RAX and RDX");
 			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp(), "Storing result here (temp)");
 			break;
 
 		case (exp_DIV):
 			//IDIV uses the %rax register, so we must move one of the values to this register
 			//Should be change to a multiplication when optimizing, since that is faster than division
+			add_1_ins(&head, &tail, PUSH, reg_RDX, "Push RDX, since it will be overwritten from division");
+
 			add_2_ins(&head, &tail, MOVQ, left_target, reg_RAX, "Using RAX for division");
+			add_ins(&head, &tail, CDQ, "Sign-extend RAX into RDX");
 
 			//Need to add a check to see if this value is 0 or not
 			add_2_ins(&head, &tail, MOVQ, right_target, reg_RBX, "Using RBX for division");
 			add_1_ins(&head, &tail, IDIV, reg_RBX, "Division using RAX and RBX");
+			add_1_ins(&head, &tail, POP, reg_RDX, "Restoring RDX");
 			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp(), "Storing result here (temp)");
 			break;
 
@@ -598,7 +661,7 @@ a_asm *generate_exp(expression *exp){
 			break;
 
 		case (exp_GT):
-			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, EQ");
+			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, GT");
 			//Will hold either 1 or 0, depending on if the expression was true of false
 			temp = make_op_temp();
 			make_cmp_label(label_true);
@@ -614,7 +677,7 @@ a_asm *generate_exp(expression *exp){
 			break;
 
 		case (exp_LT):
-			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, EQ");
+			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, LT");
 			//Will hold either 1 or 0, depending on if the expression was true of false
 			temp = make_op_temp();
 			make_cmp_label(label_true);
@@ -630,7 +693,7 @@ a_asm *generate_exp(expression *exp){
 			break;
 
 		case (exp_GEQ):
-			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, EQ");
+			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, GEQ");
 			//Will hold either 1 or 0, depending on if the expression was true of false
 			temp = make_op_temp();
 			make_cmp_label(label_true);
@@ -646,7 +709,7 @@ a_asm *generate_exp(expression *exp){
 			break;
 		
 		case (exp_LEQ):
-			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, EQ");
+			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, LEQ");
 			//Will hold either 1 or 0, depending on if the expression was true of false
 			temp = make_op_temp();
 			make_cmp_label(label_true);
@@ -715,6 +778,14 @@ a_asm *generate_term(term *term){
         case (term_NUM):
 
 			add_2_ins(&head, &tail, MOVQ, make_op_const(term->val.num), make_op_temp(), "Moving constant to register");
+			break;
+
+		case (term_TRUE):
+			add_2_ins(&head, &tail, MOVQ, make_op_const(1), make_op_temp(), "Moving TRUE to register");
+			break;
+
+		case (term_FALSE):
+			add_2_ins(&head, &tail, MOVQ, make_op_const(0), make_op_temp(), "Moving FALSE to register");
 			break;
 
 		default:
@@ -970,6 +1041,17 @@ void make_if_label(char *buffer){
 
 }
 
+void make_loop_start_label(char *buffer){
+
+	sprintf(buffer, "loop_start_%d", loops);
+	loops++;
+
+}
+
+void make_loop_end_label(char *buffer){
+	sprintf(buffer, "loop_end_%d", loops-1);
+
+}
 
 asm_op *make_op_stack_loc(int offset){
 
@@ -995,6 +1077,10 @@ void add_simple_start(a_asm **head, a_asm **tail){
 void add_simple_end(a_asm **head, a_asm **tail){
 
 	add_2_ins(head, tail, MOVQ, reg_RBP, reg_RSP, "Restoring stack pointer");
-	add_1_ins(head, tail, PUSH, reg_RBP, "Restoring base pointer");
+	add_1_ins(head, tail, POP, reg_RBP, "Restoring base pointer");
 
+}
+
+unsigned get_temps(){
+	return temps;
 }

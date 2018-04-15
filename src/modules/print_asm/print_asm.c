@@ -102,6 +102,14 @@ void create_asm(a_asm *head){
             case (SUBQ):
                 create_2_op("subq", head->val.two_op.op1, head->val.two_op.op2, head->comment);
                 break;
+
+            case (CDQ):
+                create_ins("cdqo", "", head->comment);
+                break;
+             
+            case (ANDQ):
+                create_2_op("andq", head->val.two_op.op1, head->val.two_op.op2, head->comment);
+                break;
             
 
 
