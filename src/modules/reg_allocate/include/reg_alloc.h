@@ -28,9 +28,15 @@ void backward_analysis(a_asm *tail);
 
 void check_node_type(a_asm *item);
 
-void add_uses(a_asm *item);
+void add_uses(a_asm *item, int id);
 
-void add_defs_remove_uses(a_asm *item);
+void add_defs(a_asm *item, int id);
+
+void copy_uses(a_asm *item);
+
+void copy_defs(a_asm *item);
+
+void add_defs_remove_uses(a_asm *item, int id);
 
 void copy_content(linked_list *current, linked_list *copy_from);
 

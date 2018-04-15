@@ -73,7 +73,8 @@ void forward_analysis(a_asm *node) {
                 item->predecessors = linked_list_init(node);
             }
         }
-
+        node->uses_bool = 0;
+        node->defs_bool = 0;
         node = node->next;
     }
 }
@@ -136,17 +137,140 @@ void check_node_type(a_asm *item) {
 
     if (linked_list_length(item->successors) == 1) {
         //TODO:  Add uses or defs based on node type
+        switch (item->ins) {
+        case MOVQ:
+            if (item->val.two_op.op1->val.temp.id != NULL) {
+                add_uses(item, item->val.two_op.op1->val.temp.id);
+            } else if (item->val.two_op.op2->val.temp.id) {
+                add_defs(item, item->val.two_op.op2->val.temp.id);
+            }
+            break;
+        case CMP:
+            add_uses(item, item->val.two_op.op1->val.temp.id);
+            add_uses(item, item->val.two_op.op2->val.temp.id);
+            break;
+        case ADDQ:
+            if (item->val.two_op.op1->val.temp.id != NULL) {
+                add_uses(item, item->val.two_op.op1->val.temp.id);
+            } else if (item->val.two_op.op2->val.temp.id) {
+                add_defs(item, item->val.two_op.op2->val.temp.id);
+            }
+            break;
+        case SUBQ:
+            if (item->val.two_op.op1->val.temp.id != NULL) {
+                add_uses(item, item->val.two_op.op1->val.temp.id);
+            } else if (item->val.two_op.op2->val.temp.id) {
+                add_defs(item, item->val.two_op.op2->val.temp.id);
+            }
+            break;
+        case IMUL:
+            copy_uses(item);
+            copy_defs(item);
+        case IDIV:
+        case PUSH:
+        case POP:
+        }
 
     } else if (linked_list_length(item->successors) == 2) {
         //TODO:  Add uses or defs based on node type
+        // Only add uses and defs from previous flow-node.
     }
 }
 
-void add_uses(a_asm *item) {
+void add_uses(a_asm *item, int id) {
     // TODO: Add switch statements
+    if (!linked_list_contains(item->uses, id)) {
+        linked_list_insert_tail(item->uses, id);
+    }
 }
 
-void add_defs_remove_uses(a_asm *item) {
+void add_defs(a_asm *item, int id) {
+    if (!linked_list_contains(item->defs, id)) {
+        linked_list_insert_tail(item->defs, id);
+    }
+}
+
+void copy_uses(a_asm *item) {
+    if (item->uses_bool == 0) {
+        if (linked_list_length(item->successors) == 1) {
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 0)); ++i) {
+                linked_list_insert_tail(item->uses, linked_list_get(linked_list_get(item->successors, 0), i));
+            }
+        } else if (linked_list_length(item->successors) == 2) {
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 0)); ++i) {
+                linked_list_insert_tail(item->uses, linked_list_get(linked_list_get(item->successors, 0), i));
+            }
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 1)); ++i) {
+                if (!linked_list_contains(item->uses, linked_list_get(linked_list_get(item->successors, 1), i))) {
+                    linked_list_insert_tail(item->uses, linked_list_get(linked_list_get(item->successors, 1), i));
+                }
+            }
+        }
+        item->uses_bool = 1;
+    } else {
+        if (linked_list_length(item->successors) == 1) {
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 0)); ++i) {
+                if (!linked_list_contains(item->uses, linked_list_get(linked_list_get(item->successors, 0), i))) {
+                    linked_list_insert_tail(item->uses, linked_list_get(linked_list_get(item->successors, 0), i));
+                }
+            }
+        } else if (linked_list_length(item->successors) == 2) {
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 0)); ++i) {
+                if (!linked_list_contains(item->uses, linked_list_get(linked_list_get(item->successors, 0), i))) {
+                    linked_list_insert_tail(item->uses, linked_list_get(linked_list_get(item->successors, 0), i));
+                }
+            }
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 1)); ++i) {
+                if (!linked_list_contains(item->uses, linked_list_get(linked_list_get(item->successors, 1), i))) {
+                    linked_list_insert_tail(item->uses, linked_list_get(linked_list_get(item->successors, 1), i));
+                }
+            }
+        }
+        item->uses_bool = 1;
+    }
+}
+
+void copy_defs(a_asm *item) {
+     if (item->defs_bool == 0) {
+        if (linked_list_length(item->successors) == 1) {
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 0)); ++i) {
+                linked_list_insert_tail(item->defs, linked_list_get(linked_list_get(item->successors, 0), i));
+            }
+        } else if (linked_list_length(item->successors) == 2) {
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 0)); ++i) {
+                linked_list_insert_tail(item->defs, linked_list_get(linked_list_get(item->successors, 0), i));
+            }
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 1)); ++i) {
+                if (!linked_list_contains(item->defs, linked_list_get(linked_list_get(item->successors, 1), i))) {
+                    linked_list_insert_tail(item->defs, linked_list_get(linked_list_get(item->successors, 1), i));
+                }
+            }
+        }
+        item->defs_bool = 1;
+    } else {
+        if (linked_list_length(item->successors) == 1) {
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 0)); ++i) {
+                if (!linked_list_contains(item->defs, linked_list_get(linked_list_get(item->successors, 0), i))) {
+                    linked_list_insert_tail(item->defs, linked_list_get(linked_list_get(item->successors, 0), i));
+                }
+            }
+        } else if (linked_list_length(item->successors) == 2) {
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 0)); ++i) {
+                if (!linked_list_contains(item->defs, linked_list_get(linked_list_get(item->successors, 0), i))) {
+                    linked_list_insert_tail(item->defs, linked_list_get(linked_list_get(item->successors, 0), i));
+                }
+            }
+            for (unsigned i = 0; i < linked_list_length(linked_list_get(item->successors, 1)); ++i) {
+                if (!linked_list_contains(item->defs, linked_list_get(linked_list_get(item->successors, 1), i))) {
+                    linked_list_insert_tail(item->defs, linked_list_get(linked_list_get(item->successors, 1), i));
+                }
+            }
+        }
+        item->defs_bool = 1;
+    }
+}
+
+void add_defs_remove_uses(a_asm *item, int id) {
     // TODO: Add switch statements
 }
 

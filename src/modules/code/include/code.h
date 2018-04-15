@@ -36,6 +36,9 @@ typedef struct a_asm {
     linked_list *uses;
     linked_list *defs;
 
+    unsigned uses_bool;
+    unsigned defs_bool;
+
     /**
 	 * 
 	 * Should probably contain information about the head and tail of the current block
