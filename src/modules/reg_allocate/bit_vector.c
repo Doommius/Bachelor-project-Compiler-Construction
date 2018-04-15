@@ -14,7 +14,7 @@ int B_VECTOR_INDECES = 0;
 BITVECTOR init_vector(){
     if (!defined){
         B_VECTOR_SIZE = round_up(get_temps());
-        B_VECTOR_TYPE_SIZE =  sizeof(int);
+        B_VECTOR_TYPE_SIZE =  sizeof(unsigned);
         B_VECTOR_BYTES = (B_VECTOR_SIZE / 8);
         B_VECTOR_INDECES  = (B_VECTOR_BYTES / B_VECTOR_TYPE_SIZE);
         defined++;
@@ -99,9 +99,10 @@ BITVECTOR vector_difference(BITVECTOR vec1, BITVECTOR vec2){
 
 }
 
+//Returns true if vec1 == vec2
 int vector_compare(BITVECTOR vec1, BITVECTOR vec2){
     for (int i = 0; i < B_VECTOR_INDECES; i++){
-        if (vec1[i] != vec2[i]){
+        if ((vec1[i] ^ vec2[i]) != 0){
             return 0;
         }
     }

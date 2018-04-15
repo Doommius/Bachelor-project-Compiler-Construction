@@ -9,7 +9,7 @@
 
 int defined;
 
-typedef int *BITVECTOR;
+typedef unsigned *BITVECTOR;
 
 BITVECTOR init_vector();
 

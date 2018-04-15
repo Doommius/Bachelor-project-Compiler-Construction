@@ -216,13 +216,15 @@ void analysis(graph *g){
     struct a_asm *temp;
     struct a_asm *successor;
     int changes;
+    int iterations;
     BITVECTOR in;
     BITVECTOR tempV;
 
-    changes = 8;
-    while (changes > 0){
-
-        list = get_nodes(g);
+    
+    while (1){
+        changes = 0;
+        iterations++;
+        list = g->last;
         while (list != NULL){
             temp = (struct a_asm *) get_data(list->head);
             in = temp->in;
@@ -234,16 +236,18 @@ void analysis(graph *g){
                 succ = succ->next;
             }
             temp->in = vector_union(temp->use, vector_difference(tempV, temp->def));
-            print_sets(list->head);
             
+            changes = changes | !vector_compare(in, temp->in);
 
-            free(in);
-            free(tempV);
-
-            list = list->next;
+            list = list->prev;
         }
-        printf("\n\n");
-        changes = changes -1;
+        print_sets(g->nodes);
+        printf("Iteration: %d\n\n", iterations);
+        
+        if (!changes){
+            printf("Iterations before fix point found: %d\n", iterations);
+            break;
+        }
 
     }
 
@@ -251,18 +255,24 @@ void analysis(graph *g){
 }
 
 
-void print_sets(graph_node *node){
+void print_sets(graph_nodelist *list){
     struct a_asm *temp;
-    temp = (struct a_asm *) get_data(node);
-    if (temp->ins != LABEL && temp->ins != JMP){
-        printf("Node %d, use: ", node->key);
-        vector_print(temp->use);
-        printf(" def: ");
-        vector_print(temp->def);
-        printf(" in: ");
-        vector_print(temp->in);
-        printf("\n");   
+    struct graph_node *node;
+    while (list != NULL){
+        node = list->head;
+        temp = (struct a_asm *) get_data(node);
+        if (temp->ins != LABEL && temp->ins != JMP){
+            printf("Node %d, use: ", node->key);
+            vector_print(temp->use);
+            printf(" def: ");
+            vector_print(temp->def);
+            printf(" in: ");
+            vector_print(temp->in);
+            printf("\n");   
+        }
+        list = list->next;
     }
+    
 
 }
 

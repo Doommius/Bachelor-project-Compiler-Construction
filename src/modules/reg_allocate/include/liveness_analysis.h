@@ -15,7 +15,7 @@ graph *build_flowgraph(a_asm *program);
 
 graph_nodelist *find_label_node(graph *g, char *label);
 
-void print_sets(graph_node *node);
+void print_sets(graph_nodelist *list);
 
 //Reverse fix point analysis
 void analysis(graph *g);
