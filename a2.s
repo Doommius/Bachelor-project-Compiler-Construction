@@ -2,9 +2,6 @@
     .string "%d\n"            # String used for printing integers
 .globl main
 main:                         # Start of body
-    push %rbp                 # Pushing base pointer
-    movq %rsp, %rbp           # Making stack pointer new base pointer
-    subq $64, %rsp            # Reserving space for temps in body
     movq $1, t16              # Moving constant to register
     movq t16, t14             # Assigning value to var
     movq $4, t17              # Moving constant to register
@@ -35,7 +32,5 @@ loop_end_1:                   # End of while
     call printf               # Calling printf
     pop %rax                  # Restoring RAX
 main_end:                     # End of body
-    movq %rbp, %rsp           # Restoring stack pointer
-    pop %rbp                  # Restoring base pointer
     movq $0, %rax             # Return "no error" exit code
     ret                       # Program return

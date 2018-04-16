@@ -123,8 +123,8 @@ int main(int argc, char **argv) {
     print_asm(program, "peep.s");
 
 
-    printf("Starting Liveness Analysis\n");
-    liveness_analysis(program);
+    printf("Starting Register allocation\n");
+    reg_alloc(program, 0);
 
     print_asm(program, "a2.s");
 

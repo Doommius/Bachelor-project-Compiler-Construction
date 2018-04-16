@@ -103,16 +103,13 @@ void liveness_analysis(a_asm *program){
     int line;
     line = 1;
 
-    // flowgraph = build_flowgraph(program);
+    flowgraph = build_flowgraph(program);
 
-    // show_graph(stdout, get_nodes(flowgraph));
+    show_graph(stdout, get_nodes(flowgraph));
 
-    // // printf("Printing in reverse order:\n");
-    // // show_graph_rev(stdout, flowgraph->last);
+    analysis(flowgraph);
 
-    // analysis(flowgraph);
-
-    test_known_program();
+    //test_known_program();
 
     
 
@@ -265,7 +262,11 @@ BITVECTOR calc_new_set(graph_nodelist *list){
 
         successor = (struct a_asm *) get_data(succ->head);
         if (succ->head->key > list->head->key){
-            tempV = vector_union(tempV, calc_new_set(succ));
+
+            tempV = vector_union(tempV, successor->new);
+
+            //Don't know if this works properly, always finds fix point in 2 iterations
+            //tempV = vector_union(tempV, calc_new_set(succ));
         } else {
             tempV = vector_union(tempV, successor->old);
         }   
@@ -334,13 +335,7 @@ void test_known_program(){
 
     print_asm(head, "tester.s");
 
-    g = build_flowgraph(head);
-    
-    list = get_nodes(g);
-    show_graph(stdout, list);
-
-    analysis(g);
-
+    reg_alloc(head, 0);
     
 
 

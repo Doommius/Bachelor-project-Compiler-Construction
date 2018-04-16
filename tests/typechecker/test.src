@@ -1,5 +1,8 @@
 func factorial(n: int): int
-   return n+2+1;
+   if (n == 0) || (n == 1) then
+      return 1;
+   else
+      return n * factorial(n-1);
 end factorial
 
 

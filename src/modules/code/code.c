@@ -189,16 +189,16 @@ a_asm *generate_body(body *body, char *start_label, char *end_label){
 	temp->val.two_op.op1 = make_op_const(8 * tmps);
 	temp->val.two_op.op2 = reg_RSP;
 	
-	add_simple_start(&head, &tail);
+	//add_simple_start(&head, &tail);
 
-	asm_insert(&head, &tail, &temp);
+	//asm_insert(&head, &tail, &temp);
 
 	asm_insert(&head, &tail, &head2);
 
 
 
 	add_label(&head, &tail, end_label, "End of body");
-	add_simple_end(&head, &tail);
+	//add_simple_end(&head, &tail);
 
 	return head;
 	
