@@ -131,8 +131,8 @@ graph *build_flowgraph(a_asm *program){
 
     //Init - create sets for instruction, and insert it as a node in the graph
     while (temp != NULL){
-        temp->in = init_vector();
-        temp->out = init_vector();
+        temp->old = init_vector();
+        temp->new = init_vector();
         set_use_def(temp);
 
         insert_node(g, temp);
@@ -217,29 +217,26 @@ void analysis(graph *g){
     struct a_asm *successor;
     int changes;
     int iterations;
-    BITVECTOR in;
+    BITVECTOR old;
+    BITVECTOR new;
     BITVECTOR tempV;
 
     
     while (1){
         changes = 0;
         iterations++;
-        list = g->last;
+        list = get_nodes(g);
         while (list != NULL){
-            temp = (struct a_asm *) get_data(list->head);
-            in = temp->in;
-            tempV = init_vector();
-            succ = get_succs(list->head);
-            while (succ != NULL){
-                successor = (struct a_asm *) get_data(succ->head);
-                tempV = vector_union(tempV, successor->in);
-                succ = succ->next;
-            }
-            temp->in = vector_union(temp->use, vector_difference(tempV, temp->def));
-            
-            changes = changes | !vector_compare(in, temp->in);
 
-            list = list->prev;
+            temp = (struct a_asm *) get_data(list->head);
+            old = temp->old;
+
+            temp->new = calc_new_set(list);
+            
+            changes = changes | !vector_compare(old, temp->new);
+
+            temp->old = temp->new;
+            list = list->next;
         }
         print_sets(g->nodes);
         printf("Iteration: %d\n\n", iterations);
@@ -251,6 +248,33 @@ void analysis(graph *g){
 
     }
 
+
+}
+
+
+BITVECTOR calc_new_set(graph_nodelist *list){
+    struct a_asm *temp;
+    struct a_asm *successor;
+    struct graph_nodelist *succ;
+    BITVECTOR tempV;
+
+    temp = (struct a_asm *) get_data(list->head);
+    succ = get_succs(list->head);
+    tempV = init_vector();
+    while (succ != NULL){
+
+        successor = (struct a_asm *) get_data(succ->head);
+        if (succ->head->key > list->head->key){
+            tempV = vector_union(tempV, calc_new_set(succ));
+        } else {
+            tempV = vector_union(tempV, successor->old);
+        }   
+        succ = succ->next;
+
+    }
+    temp->new = vector_union(temp->use, vector_difference(tempV, temp->def));
+    
+    return temp->new;
 
 }
 
@@ -267,7 +291,7 @@ void print_sets(graph_nodelist *list){
             printf(" def: ");
             vector_print(temp->def);
             printf(" in: ");
-            vector_print(temp->in);
+            vector_print(temp->new);
             printf("\n");   
         }
         list = list->next;

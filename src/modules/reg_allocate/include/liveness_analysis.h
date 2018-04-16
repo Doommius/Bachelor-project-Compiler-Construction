@@ -17,6 +17,8 @@ graph_nodelist *find_label_node(graph *g, char *label);
 
 void print_sets(graph_nodelist *list);
 
+BITVECTOR calc_new_set(graph_nodelist *list);
+
 //Reverse fix point analysis
 void analysis(graph *g);
 

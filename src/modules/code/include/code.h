@@ -39,8 +39,8 @@ typedef struct a_asm {
 
 	BITVECTOR use;
 	BITVECTOR def;
-	BITVECTOR in;
-	BITVECTOR out;
+	BITVECTOR old;
+	BITVECTOR new;
 
 
 } a_asm;
