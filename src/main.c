@@ -124,7 +124,8 @@ int main(int argc, char **argv) {
 
 
     printf("Starting Register allocation\n");
-    reg_alloc(program, 0);
+    //test_known_program();
+    reg_alloc(program);
 
     print_asm(program, "a2.s");
 

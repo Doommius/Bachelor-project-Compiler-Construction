@@ -6,9 +6,6 @@
 
 
 
-
-int defined;
-
 typedef unsigned *BITVECTOR;
 
 BITVECTOR init_vector();
@@ -19,9 +16,14 @@ void clear_bit(BITVECTOR bv, int bit);
 
 int get_bit(BITVECTOR bv, int bit);
 
+//Returns true if the bitvector is empty
+int vector_empty(BITVECTOR bv);
+
 BITVECTOR vector_union(BITVECTOR vec1, BITVECTOR vec2);
 
 BITVECTOR vector_difference(BITVECTOR vec1, BITVECTOR vec2);
+
+BITVECTOR vector_intersect(BITVECTOR vec1, BITVECTOR vec2);
 
 int vector_compare(BITVECTOR vec1, BITVECTOR vec2);
 

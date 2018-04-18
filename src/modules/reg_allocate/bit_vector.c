@@ -2,16 +2,16 @@
 #include <stdlib.h>
 #include "bit_vector.h"
 #include "code.h"
+#include "memory.h"
 
-int defined = 0;
-int B_VECTOR_SIZE = 0;
+    int defined;
 
-int B_VECTOR_TYPE_SIZE = 0;
-int B_VECTOR_BYTES = 0;
-int B_VECTOR_INDECES = 0;
+    int B_VECTOR_SIZE = 0;
+    int B_VECTOR_TYPE_SIZE = 0;
+    int B_VECTOR_BYTES = 0;
+    int B_VECTOR_INDECES = 0;
 
-
-BITVECTOR init_vector(){
+BITVECTOR init_vector(int size){
     if (!defined){
         B_VECTOR_SIZE = round_up(get_temps());
         B_VECTOR_TYPE_SIZE =  sizeof(unsigned);
@@ -20,7 +20,8 @@ BITVECTOR init_vector(){
         defined++;
     }
     
-    BITVECTOR bv = malloc(B_VECTOR_SIZE);
+    BITVECTOR bv = malloc(B_VECTOR_BYTES);
+    
     for (int i = 0; i < B_VECTOR_INDECES; i++){
         bv[i] = 0;
     }
@@ -78,10 +79,20 @@ int get_bit(BITVECTOR bv, int bit){
 
 }
 
+//Returns true if the bitvector is empty
+int vector_empty(BITVECTOR bv){
+    for (int i = 0; i < B_VECTOR_INDECES; i++){
+        if (bv[i] != 0){
+            return 0;
+        }
+    }
+    return 1;
+}
+
 //Returns a new bitvector that is a union of two other bitvectors
 BITVECTOR vector_union(BITVECTOR vec1, BITVECTOR vec2){
     BITVECTOR vec3;
-    vec3 = init_vector();
+    vec3 = init_vector(B_VECTOR_SIZE);
     for (int i = 0; i < B_VECTOR_INDECES; i++){
         vec3[i] = vec1[i] | vec2[i];
     }
@@ -91,9 +102,20 @@ BITVECTOR vector_union(BITVECTOR vec1, BITVECTOR vec2){
 //Returns a new bitvector that is the difference of two other bitvectors
 BITVECTOR vector_difference(BITVECTOR vec1, BITVECTOR vec2){
     BITVECTOR vec3;
-    vec3 = init_vector();
+    vec3 = init_vector(B_VECTOR_SIZE);
     for (int i = 0; i < B_VECTOR_INDECES; i++){
         vec3[i] = vec1[i] & (~vec2[i]);
+    }
+    return vec3;
+
+}
+
+//Returns a new bitvector that is the intersection of two other bitvectors
+BITVECTOR vector_intersect(BITVECTOR vec1, BITVECTOR vec2){
+    BITVECTOR vec3;
+    vec3 = init_vector(B_VECTOR_SIZE);
+    for (int i = 0; i < B_VECTOR_INDECES; i++){
+        vec3[i] = vec1[i] & vec2[i];
     }
     return vec3;
 

@@ -206,7 +206,7 @@ graph_nodelist *find_label_node(graph *g, char *label){
     return NULL;
 }
 
-//Reverse fix point analysis
+//"Turbo" fix point analysis
 void analysis(graph *g){
     struct graph_nodelist *list;
     struct graph_nodelist *succ;
@@ -222,7 +222,7 @@ void analysis(graph *g){
     while (1){
         changes = 0;
         iterations++;
-        list = get_nodes(g);
+        list = g->last;
         while (list != NULL){
 
             temp = (struct a_asm *) get_data(list->head);
@@ -233,7 +233,7 @@ void analysis(graph *g){
             changes = changes | !vector_compare(old, temp->new);
 
             temp->old = temp->new;
-            list = list->next;
+            list = list->prev;
         }
         print_sets(g->nodes);
         printf("Iteration: %d\n\n", iterations);
@@ -265,8 +265,6 @@ BITVECTOR calc_new_set(graph_nodelist *list){
 
             tempV = vector_union(tempV, successor->new);
 
-            //Don't know if this works properly, always finds fix point in 2 iterations
-            //tempV = vector_union(tempV, calc_new_set(succ));
         } else {
             tempV = vector_union(tempV, successor->old);
         }   
