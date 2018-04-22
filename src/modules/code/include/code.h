@@ -96,6 +96,8 @@ a_asm *generate_elist(exp_list *elist);
 
 void asm_insert(a_asm **head, a_asm **tail, a_asm **new);
 
+void asm_insert_one(a_asm **head, a_asm **tail, a_asm **next);
+
 a_asm *find_tail(a_asm *node);
 
 void add_2_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, asm_op *op2, char *comment);

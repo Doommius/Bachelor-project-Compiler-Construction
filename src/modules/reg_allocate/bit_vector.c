@@ -81,6 +81,7 @@ int get_bit(BITVECTOR bv, int bit){
 
 //Returns true if the bitvector is empty
 int vector_empty(BITVECTOR bv){
+
     for (int i = 0; i < B_VECTOR_INDECES; i++){
         if (bv[i] != 0){
             return 0;
@@ -124,7 +125,7 @@ BITVECTOR vector_intersect(BITVECTOR vec1, BITVECTOR vec2){
 //Returns true if vec1 == vec2
 int vector_compare(BITVECTOR vec1, BITVECTOR vec2){
     for (int i = 0; i < B_VECTOR_INDECES; i++){
-        if ((vec1[i] ^ vec2[i]) != 0){
+        if (vec1[i] != vec2[i]){
             return 0;
         }
     }
@@ -195,4 +196,17 @@ int round_up(int v){
     }
     return min;
 
+}
+
+
+int vector_size(BITVECTOR bv){
+    int size;
+    size = 0;
+    for (int i = 0; i < B_VECTOR_SIZE; i++){
+        if (get_bit(bv, i)){
+            size++;
+        }
+    
+    }
+    return size;
 }

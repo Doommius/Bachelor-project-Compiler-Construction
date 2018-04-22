@@ -76,19 +76,19 @@ typedef enum {
                JGE, //jump greater or equal
                JL,  //Jump less
                JLE, //Jump less or equal
-               IMUL,
-               IDIV,
-               MOVQ,
-               ADDQ,
-               SUBQ,
+               IMUL,                //One op
+               IDIV,                //One op
+               MOVQ,                //Two op
+               ADDQ,                //Two op
+               SUBQ,                //Two op
                CALL,
                RET,
 
-               PUSH,
-               POP,
+               PUSH,                //One op
+               POP,                 //One op
                ANDQ, //Just for testing
 
-               CMP,
+               CMP,                 //Two op
                CDQ
 } ASM_kind;
 

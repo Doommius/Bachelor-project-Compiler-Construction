@@ -78,4 +78,8 @@ int spill_worklist_invariant();
 void assign_colors();
 
 a_asm *rewrite_program(a_asm *theprogram);
+
+a_asm *rewrite_spill_reg(asm_op **op);
+
+int is_precolored(int reg);
 #endif

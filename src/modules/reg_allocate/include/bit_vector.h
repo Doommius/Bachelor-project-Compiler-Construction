@@ -33,5 +33,6 @@ char *vector_as_text(BITVECTOR bv, char *buffer);
 
 int round_up(int v);
 
+int vector_size(BITVECTOR bv);
 
 #endif

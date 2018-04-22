@@ -33,8 +33,8 @@ void table_enter(table *t, void *key, void *value){
       
 }
 
-//Look up mosst recent binding for key
-void *table_look(table *t, int key){
+//Look up most recent binding for key
+void *table_look(table *t, void *key){
     int index;
     binder *b;
     index = ((unsigned) key) % TABSIZE;

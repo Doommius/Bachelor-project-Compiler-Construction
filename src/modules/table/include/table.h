@@ -35,7 +35,7 @@ binder *table_binder(void *key, void *value, binder *next, void *prevtop);
 void table_enter(table *t, void *key, void *value);
 
 //Look up mosst recent binding for key
-void *table_look(table *t, int key);
+void *table_look(table *t, void *key);
 
 //Pop most recent binding, and return its key
 void *table_pop(table *t);

@@ -27,10 +27,8 @@ main:                         # Start of body
     addq %rdx, %rcx           # Addition
     addq %rcx, %rbx           # Addition
     addq %rbx, %rsi           # Addition
-    movq %rsi, %rsi           # Assigning value to var
     push %rax                 # Saving value of RAX before printf call
     movq $.wrt_INT, %rdi      # First argument for printf
-    movq %rsi, %rsi           # Second argument for printf
     movq $0, %rax             # No vector arguments
     call printf               # Calling printf
     pop %rax                  # Restoring RAX

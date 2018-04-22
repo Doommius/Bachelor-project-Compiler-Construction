@@ -9,6 +9,7 @@
 #include "stack.h"
 #include "memory.h"
 #include "table.h"
+#include "rewriter.h"
 
 //Register allocation implementation based on the implementation in the book, page 249-256
 
@@ -142,24 +143,26 @@ a_asm *reg_alloc(a_asm *h){
         do {
             printf("Iteration: %d\n", iter);
             if (!vector_empty(simplify_worklist)){
-                printf("Simplifying\n");
+                printf("\tSIMPLIFYING\n");
                 simplify();
             } else if (!vector_empty(worklist_moves)){
-                printf("Coaelescing\n");
+                printf("\tCOALESCING\n");
                 coalesce();
             } else if (!vector_empty(freeze_worklist)){
-                printf("Freezing\n");
+                printf("\tFREEZInG\n");
                 freeze();
-                if (vector_empty(spill_worklist)){
-                    printf("Spill list is empty\n");
-                } else {
-                    printf("Spill list is NOT empty\n");
-                }
+                
             } else if (!vector_empty(spill_worklist)){
-                printf("Selecting spill\n");
+                printf("\tSELECTING SPILL\n");
                 select_spill();
             }
             iter++;
+            if (vector_empty(spill_worklist)){
+                printf("Spill list is empty, size: %d\n", vector_size(spill_worklist));
+            } else {
+                printf("Spill list is NOT empty, size: %d\n", vector_size(spill_worklist));
+
+            }
         } while ( !(vector_empty(simplify_worklist) && 
                     vector_empty(worklist_moves) && 
                     vector_empty(freeze_worklist) && 
@@ -173,7 +176,7 @@ a_asm *reg_alloc(a_asm *h){
     
 
 
-    return h;
+    return final_rewrite(color, h);
 
 
 }
@@ -194,7 +197,7 @@ void *build_interference_graph(a_asm *program){
             
             //Store the instruction a table, so we can retrieve them later
             table_enter(move_table, (void *) move_counter, program);
-            printf("Inserting move: %d\n", move_counter);
+            //printf("Inserting move: %d\n", move_counter);
             set_bit(worklist_moves, move_counter);
             
 
@@ -230,7 +233,7 @@ void *build_interference_graph(a_asm *program){
 //Builds the initial worklist
 void make_worklist(){
     for (int i = 0; i < temps; i++){
-        if (get_bit(initial, i));{
+        if (get_bit(initial, i)){
             clear_bit(initial, i);
             if (degree[i] >= AVAIL_REGS){
                 set_bit(spill_worklist, i);
@@ -257,63 +260,58 @@ int is_move_instruction(a_asm *instruction){
 
 //Returns a number given an asm_op. This number corresponds to the registers/temps place in a bitvector
 int get_reg(asm_op *op){
-    switch (op->type){
-        
-        case (op_TEMP):
-            return op->val.temp.id;
-            break;
-        
-        //Would be nice with a switch, but you can't switch on a pointer
-        case (op_REGISTER):
-            if (op == reg_RAX){
-                return 0;
-            }
-            if (op == reg_RBX){
-                return 1;
-            }
-            if (op == reg_RCX){
-                return 2;
-            }
-            if (op == reg_RDX){
-                return 3;
-            }
-            if (op == reg_RSI){
-                return 4;
-            }
-            if (op == reg_RDI){
-                return 5;
-            }
-            if (op == reg_R8){
-                return 6;
-            }
-            if (op == reg_R9){
-                return 7;
-            }
-            if (op == reg_R10){
-                return 8;
-            }
-            if (op == reg_R11){
-                return 9;
-            }
-            if (op == reg_R12){
-                return 10;
-            }
-            if (op == reg_R13){
-                return 11;
-            }
-            if (op == reg_R14){
-                return 12;
-            }
-            if (op == reg_R15){
-                return 13;
-            }
-            break;
-
-        default:
-            break;
-
-
+    
+    
+    if (op->type == op_TEMP){
+        return op->val.temp.id;
     }
+    //Would be nice with a switch, but you can't switch on a pointer
+    if (op->type == op_REGISTER){
+
+        if (op == reg_RAX){
+            return 0;
+        }
+        if (op == reg_RBX){
+            return 1;
+        }
+        if (op == reg_RCX){
+            return 2;
+        }
+        if (op == reg_RDX){
+            return 3;
+        }
+        if (op == reg_RSI){
+            return 4;
+        }
+        if (op == reg_RDI){
+            return 5;
+        }
+        if (op == reg_R8){
+            return 6;
+        }
+        if (op == reg_R9){
+            return 7;
+        }
+        if (op == reg_R10){
+            return 8;
+        }
+        if (op == reg_R11){
+            return 9;
+        }
+        if (op == reg_R12){
+            return 10;
+        }
+        if (op == reg_R13){
+            return 11;
+        }
+        if (op == reg_R14){
+            return 12;
+        }
+        if (op == reg_R15){
+            return 13;
+        }
+    }
+
     return -1;
 }
 
@@ -397,7 +395,7 @@ int move_related(int i){
     BITVECTOR temp;
     int test;
     temp = node_moves(i);
-    test = vector_empty(temp);
+    test = !vector_empty(temp);
     return test;
 
 }
@@ -450,7 +448,7 @@ void coalesce(){
     for (int i = 0; i < move_counter; i++){
         if (get_bit(worklist_moves, i)){
             //printf("Got move at :%d\n", i);
-            temp = (a_asm *) table_look(move_table, (void *)i);
+            temp = (a_asm *) table_look(move_table, (void *) i);
             
             //printf("Casted temp\n");
             x = get_alias(get_reg(temp->val.two_op.op1));
@@ -471,24 +469,24 @@ void coalesce(){
             V = check_for_node(v);
 
             if (u == v){
-                //printf("Case 1, u: %d, v: %d\n", u, v);
+                printf("Case 1, u: %d, v: %d\n", u, v);
                 set_bit(coalesced_moves, i);
                 add_worklist(u);
 
             } else if (get_bit(precolored, v) || check_edge(U, V)){
-                //printf("Case 2, u: %d, v: %d\n", u, v);
+                printf("Case 2, u: %d, v: %d\n", u, v);
                 set_bit(constrained_moves, i);
                 add_worklist(u);
                 add_worklist(v);
-            } else if (get_bit(precolored, u) && check_adjacent_low_degree(v, U) ||
-                        (!get_bit(precolored, u) && conservative(u, v))){
-                //printf("Case 3, u: %d, v: %d\n", u, v);
-                clear_bit(coalesced_moves, i);
+            } else if ((get_bit(precolored, u) && (check_adjacent_low_degree(v, U))) ||
+                        (!get_bit(precolored, u) && (conservative(u, v)))){
+                printf("Case 3, u: %d, v: %d\n", u, v);
+                set_bit(coalesced_moves, i);
                 combine(u, v);
                 add_worklist(u);
 
             } else {
-                //printf("Case 3, u: %d, v: %d\n", u, v);
+                printf("Case 4, u: %d, v: %d\n", u, v);
                 set_bit(active_moves, i);
             }
 
@@ -521,10 +519,10 @@ void select_spill(){
                 current_best = temp;
                 reg = i;
             }
-            printf("Value of (%d): %d", i, temp);
+            printf("Value of (%d): %d\n", i, temp);
         }
     }
-    printf("Chose to spill reg: %d", reg);
+    printf("Chose to spill reg: %d\n", reg);
     clear_bit(spill_worklist, reg);
     set_bit(simplify_worklist, reg);
     freeze_moves(reg);
@@ -665,8 +663,8 @@ void combine(int u, int v){
     temp = init_vector();
     //Change is in the errata
     move_list[u] = vector_union(move_list[u], move_list[v]);
-    set_bit(temp, v);
-    enable_moves(temp);
+    // set_bit(temp, v);
+    // enable_moves(temp);
     
     adj = adjacent(v);
     for (int i = 0; i < temps; i++){
@@ -722,7 +720,7 @@ void assign_colors(){
     BITVECTOR okColors;
     ins = stack_read(select_stack);
 
-
+    okColors = init_vector();
     while (ins != NULL){
         stack_pop(select_stack);
         reg = (int) get_data(ins);
@@ -739,7 +737,7 @@ void assign_colors(){
                 printf(", %d (%d)", j, alias);
 
                 if (get_bit(vector_union(colored_nodes, precolored), alias)){
-                    clear_bit(okColors, alias);
+                    clear_bit(okColors, color[alias]);
                 }
 
             }
@@ -775,7 +773,57 @@ void assign_colors(){
 
 a_asm *rewrite_program(a_asm *theprogram){
     printf("Rewriting program\n");
-    
+    struct a_asm *head;
+    struct a_asm *tail;
+    head = NULL;
+    tail = NULL;
+    while (theprogram != NULL){
+        switch (theprogram->ins){
+            case (LABEL):
+            case (CALL):
+            case (JMP):
+            case (JE):
+            case (JG):
+            case (JGE):
+            case (JL):
+            case (JLE):
+            case (JNE):
+            case (RET):
+            case (CDQ):
+                asm_insert_one(&head, &tail, &theprogram);
+                break;
+
+            case (MOVQ):
+                asm_insert(&head, &tail, rewrite_spill_reg(&theprogram));
+                break;
+                
+
+
+            default:
+                break;
+        }
+
+        theprogram = theprogram->next;
+        
+    }
+
+}
+
+a_asm *rewrite_spill_reg(asm_op **op){
+    int reg;
+    reg = get_reg((*op));
+    if (reg == -1){
+        return NULL;
+    }
+
+    if (get_bit(spilled_nodes, reg)){
+        switch ((*op)->type){
+            case (op_TEMP):
+
+                break;
+        }
+
+    }
 
 }
 
@@ -870,4 +918,12 @@ int spill_worklist_invariant(){
     }
     return 1;
 
+}
+
+
+int is_precolored(int reg){
+    if (get_bit(precolored, reg)){
+        return 1;
+    }
+    return 0;
 }

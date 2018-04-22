@@ -333,7 +333,7 @@ void test_known_program(){
 
     print_asm(head, "tester.s");
 
-    reg_alloc(head, 0);
+    reg_alloc(head);
     
 
 

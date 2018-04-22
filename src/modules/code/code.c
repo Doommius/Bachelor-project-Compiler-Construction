@@ -871,6 +871,18 @@ void asm_insert(a_asm **head, a_asm **tail, a_asm **new){
 
 }
 
+void asm_insert_one(a_asm **head, a_asm **tail, a_asm **next){
+	if ((*head) == NULL){
+		*head = *next;
+		*tail = *next;
+
+	} else {
+		(*next)->prev = *tail;
+		(*tail)->new = *next;
+		(*tail) = *next;
+	}
+}
+
 //Add instruction with 2 operators
 void add_2_ins(a_asm **head, a_asm **tail, ASM_kind ins, asm_op *op1, asm_op *op2, char* comment){
 	get_next(head, tail);

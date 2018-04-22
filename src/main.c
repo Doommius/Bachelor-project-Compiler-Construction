@@ -125,9 +125,15 @@ int main(int argc, char **argv) {
 
     printf("Starting Register allocation\n");
     //test_known_program();
-    reg_alloc(program);
+    program = reg_alloc(program);
 
     print_asm(program, "a2.s");
+
+    peephole(program);
+
+
+    print_asm(program, "a3.s");
+    
 
     
 
