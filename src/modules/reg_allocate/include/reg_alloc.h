@@ -79,7 +79,9 @@ void assign_colors();
 
 a_asm *rewrite_program(a_asm *theprogram);
 
-a_asm *rewrite_spill_reg(asm_op **op);
+a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp);
+
+void replace_temp_op(asm_op **op, asm_op *replacer);
 
 int is_precolored(int reg);
 #endif

@@ -17,7 +17,7 @@
 #include "symbol.h"
 #include "reg_alloc.h"
 
-int temps = AVAIL_REGS; //The predefined registers will be the first values in the bitvectors
+extern int temps = AVAIL_REGS; //The predefined registers will be the first values in the bitvectors
 int cmps = 1;
 int ifs = 1;
 int loops = 1;
@@ -849,7 +849,7 @@ void asm_insert(a_asm **head, a_asm **tail, a_asm **new){
 	}
 
     
-    if ((*new) != NULL){
+    if (new != NULL && (*new) != NULL){
 		if (*tail != NULL){
 			temp = (*tail)->next;
 			(*tail)->next = (*new);
@@ -1000,6 +1000,7 @@ asm_op *make_op_temp(){
 
 	op->type = op_TEMP;
 	op->val.temp.id = temps;
+	op->val.temp.spill = NULL;
 	temps++;
 	return op;
 
@@ -1013,6 +1014,18 @@ asm_op *make_op_label(char *label){
 	op->type = op_LABEL;
 	op->val.label_id = malloc(sizeof(char) * 20);
 	sprintf(op->val.label_id, "%s", label);
+	return op;
+
+}
+
+
+asm_op *make_op_spill(){
+	struct asm_op *op;
+	op = NEW(asm_op);
+
+	op->type = op_SPILL;
+	op->stack_offset = -1;
+
 	return op;
 
 }
@@ -1091,8 +1104,4 @@ void add_simple_end(a_asm **head, a_asm **tail){
 	add_2_ins(head, tail, MOVQ, reg_RBP, reg_RSP, "Restoring stack pointer");
 	add_1_ins(head, tail, POP, reg_RBP, "Restoring base pointer");
 
-}
-
-unsigned get_temps(){
-	return temps;
 }

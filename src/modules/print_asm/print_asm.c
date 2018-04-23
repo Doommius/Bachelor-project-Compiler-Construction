@@ -196,6 +196,10 @@ void get_opt(asm_op *op, char *dest){
         case (op_TEMP):
             sprintf(dest, "t%i", op->val.temp.id);
             break;
+
+        case (op_SPILL):
+            sprintf(dest, "%d(%%rbp)", op->stack_offset *8 +8);
+            break;
         
 
     }

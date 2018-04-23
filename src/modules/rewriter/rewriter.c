@@ -9,7 +9,9 @@
 a_asm *final_rewrite(int *colors, a_asm *program){
 
     struct a_asm *temp;
+    int stack_offset;
     temp = program;
+    stack_offset = 0;
     while (temp != NULL){
         
         switch (temp->ins){
@@ -18,13 +20,13 @@ a_asm *final_rewrite(int *colors, a_asm *program){
             case (ADDQ):
             case (SUBQ):
             case (CMP):
-                rewrite_op(colors, &temp->val.two_op.op1);
-                rewrite_op(colors, &temp->val.two_op.op2);
+                rewrite_op(colors, &temp->val.two_op.op1, &stack_offset);
+                rewrite_op(colors, &temp->val.two_op.op2, &stack_offset);
                 break;
 
             case (IMUL):
             case (IDIV):
-                rewrite_op(colors, &temp->val.one_op.op);
+                rewrite_op(colors, &temp->val.one_op.op, &stack_offset);
                 break;
 
 
@@ -42,15 +44,27 @@ a_asm *final_rewrite(int *colors, a_asm *program){
 }
 
 
-void rewrite_op(int *colors, asm_op **op){
+void rewrite_op(int *colors, asm_op **op, int *stack_offset){
     struct asm_op *new_reg;
-    int temp = get_reg((*op));
-    if (temp != -1){
-        if (!is_precolored(temp)){
-            new_reg = get_corresponding_reg(colors[temp]);
-            (*op) = new_reg;
+    int temp;
+    
+    if ((*op)->type == op_SPILL){
+        if ((*op)->stack_offset == -1){
+            (*stack_offset)++;
+            (*op)->stack_offset = (*stack_offset);
+        }
+
+    } else {
+        temp = get_reg((*op));
+        if (temp != -1){    
+            if (!is_precolored(temp)){
+                new_reg = get_corresponding_reg(colors[temp]);
+                (*op) = new_reg;
+            }
         }
     }
+
+    
 
     
 }

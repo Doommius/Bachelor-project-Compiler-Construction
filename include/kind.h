@@ -99,7 +99,8 @@ typedef enum { op_INTCONST,
                op_LABEL,
                op_CONST,
 
-               op_TEMP //Temporary until we find out what register/stack location it should be in, atleast i hope so.
+               op_TEMP, //Temporary until we find out what register/stack location it should be in, atleast i hope so.
+               op_SPILL
 
 } OP_kind;
 

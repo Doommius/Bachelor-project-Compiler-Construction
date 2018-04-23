@@ -6,7 +6,7 @@
 #include "bit_vector.h"
 
 
-
+extern int temps;
 
 //Abstract assembly node, with a build in linked list.
 //To be expanded
@@ -54,6 +54,7 @@ typedef struct asm_op {
 		char *func_id;
 		struct {
 			int id;
+			struct asm_op *spill;
 		} temp;
 		int intconst;
 	} val;
@@ -118,6 +119,8 @@ asm_op *make_op_label(char *label);
 
 asm_op *make_op_stack_loc(int offset);
 
+asm_op *make_op_spill();
+
 void make_cmp_label(char *buffer);
 
 void make_end_cmp_label(char *buffer);
@@ -179,7 +182,6 @@ struct asm_op *wrt_INT;
 
 struct asm_op *op_PRINTF;
 
-unsigned get_temps();
 
 
 

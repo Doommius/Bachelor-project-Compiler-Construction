@@ -5,7 +5,7 @@
 
 a_asm *final_rewrite(int *colors, a_asm *program);
 
-void rewrite_op(int *colors, asm_op **op);
+void rewrite_op(int *colors, asm_op **op, int *stack_offset);
 
 //Returns the register corresponding to the given number
 asm_op *get_corresponding_reg(int reg);

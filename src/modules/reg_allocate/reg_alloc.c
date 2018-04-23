@@ -37,7 +37,6 @@ BITVECTOR *move_list;                   //A mapping from a node to the list of m
 int *alias;                             //When a move (tU, tV) has been coalesced, and V put in coalesced_nodes, then alias[V] = U
 int *color;                             //The color cosen by the algorithm for a node; for precolored nodes this is initialized to the given color.
 
-int temps;
 int move_counter;                       //Counts the amount of move instructions in the program
 BITVECTOR select_nodes;
 table *move_table;                      //Table containing move instructions, used in coalesce
@@ -60,11 +59,13 @@ a_asm *reg_alloc(a_asm *h){
     tail = NULL;
     int result;
 
-    liveness_analysis(h);
 
-    temps = get_temps();
 
     do {
+
+
+        liveness_analysis(h);
+
         //Initialize data structures                   
         simplify_worklist = init_vector();         
         freeze_worklist = init_vector();              
@@ -361,7 +362,7 @@ graph_node *check_for_node(int i){
         list = list->next;
     }
 
-    node = insert_node(adj_set, i);
+    node = insert_node(adj_set, (void *) i);
     return node;
 
 
@@ -507,19 +508,21 @@ void freeze(){
     
 }
 
+//We want to choose a node such that we remove a lot of interferences in the graph. Also, hopefully a node that does not get used too much
 void select_spill(){
-    int temp;
     int current_best;
     int reg;
     reg = -1;
     for (int i = 0; i < temps; i++){
         if (get_bit(spill_worklist, i)){
-            temp = uses[i] / degree[i];
+            printf("Uses of (%d): %d, degree: %d\n", i, uses[i], degree[i]);
+            double temp;
+            temp = uses[i] / (double) degree[i];
             if (reg == -1 || current_best > temp){
                 current_best = temp;
                 reg = i;
             }
-            printf("Value of (%d): %d\n", i, temp);
+            printf("Value of (%d): %f\n", i, temp);
         }
     }
     printf("Chose to spill reg: %d\n", reg);
@@ -719,7 +722,6 @@ void assign_colors(){
     int alias;
     BITVECTOR okColors;
     ins = stack_read(select_stack);
-
     okColors = init_vector();
     while (ins != NULL){
         stack_pop(select_stack);
@@ -768,16 +770,22 @@ void assign_colors(){
             printf("Alias for (%d) = (%d), colored %d\n", i, get_alias(i), color[i]);
         }
     }
-
 }
 
 a_asm *rewrite_program(a_asm *theprogram){
     printf("Rewriting program\n");
     struct a_asm *head;
     struct a_asm *tail;
+
+    struct a_asm *left;
+    struct a_asm *right;
     head = NULL;
     tail = NULL;
     while (theprogram != NULL){
+
+        //new_temp is used if we need to create a new temporary and use it later
+        struct asm_op *new_temp;
+        new_temp = NULL;
         switch (theprogram->ins){
             case (LABEL):
             case (CALL):
@@ -790,11 +798,38 @@ a_asm *rewrite_program(a_asm *theprogram){
             case (JNE):
             case (RET):
             case (CDQ):
+                //Nothing to be stored or fetched
                 asm_insert_one(&head, &tail, &theprogram);
                 break;
 
             case (MOVQ):
-                asm_insert(&head, &tail, rewrite_spill_reg(&theprogram));
+                //Fetch op1 if it's spilled, store op2 if it's spilled
+                left = rewrite_spill_reg(&theprogram->val.two_op.op1, 1, NULL);
+                asm_insert(&head, &tail, &left);
+
+                asm_insert_one(&head, &tail, &theprogram);
+
+                right = rewrite_spill_reg(&theprogram->val.two_op.op2, 0, NULL);
+                asm_insert(&head, &tail, &right);
+                break;
+
+            case (ADDQ):
+            case (SUBQ):
+                //Fetch op1 if it's spilled, fetch op2 into a new temp, 
+                left = rewrite_spill_reg(&theprogram->val.two_op.op1, 1, NULL);
+                asm_insert(&head, &tail, &left);
+
+                right = rewrite_spill_reg(&theprogram->val.two_op.op2, 1, &new_temp);
+                asm_insert(&head, &tail, &right);
+                
+                asm_insert_one(&head, &tail, &theprogram);
+
+                free(right);
+
+                right = rewrite_spill_reg(&theprogram->val.two_op.op2, 0, &new_temp);
+                
+                asm_insert(&head, &tail, &right);
+                
                 break;
                 
 
@@ -806,27 +841,81 @@ a_asm *rewrite_program(a_asm *theprogram){
         theprogram = theprogram->next;
         
     }
+    return head;
 
 }
 
-a_asm *rewrite_spill_reg(asm_op **op){
+//Add a store an fetch before a register, if it's spilled
+a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp){
+    struct a_asm *head;
+    struct a_asm *tail;
+    struct asm_op **target;
+    struct asm_op *spill;
+    struct asm_op *temp;
     int reg;
+    head = NULL;
+    tail = NULL;
+
     reg = get_reg((*op));
     if (reg == -1){
         return NULL;
     }
 
+        printf("Spilled nodes: ");
+    vector_print(spilled_nodes);
+
+    printf("\n");
+
     if (get_bit(spilled_nodes, reg)){
         switch ((*op)->type){
             case (op_TEMP):
-
+                target = op;
                 break;
         }
+
+        //Create new spill op
+        if ((*target)->val.temp.spill == NULL){
+            (*target)->val.temp.spill = make_op_spill();
+        }
+        spill = (*target)->val.temp.spill;
+
+        if (new_temp == NULL){
+            temp = make_op_temp();
+            replace_temp_op(op, temp);
+        } else if ((*new_temp) == NULL){
+            temp = make_op_temp();
+            (*new_temp) = temp;
+
+        } else {
+            temp = (*new_temp);
+            replace_temp_op(op, temp);
+        }
+
+
+        if (fetch){
+            add_2_ins(&head, &tail, MOVQ, spill, temp, "Fetch spilled temp from stack");
+
+        } else {
+            add_2_ins(&head, &tail, MOVQ, temp, spill, "Store spilled temp to stack");
+        }
+        return head;
 
     }
 
 }
 
+void replace_temp_op(asm_op **op, asm_op *replacer){
+    switch ((*op)->type){
+
+        case (op_TEMP):
+            (*op) = replacer;
+            break;
+
+        default:
+            break;
+
+    }
+}
 
 
 //Check invariants after building graph
