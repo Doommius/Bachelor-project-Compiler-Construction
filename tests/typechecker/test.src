@@ -12,7 +12,9 @@ var l : int;
 var m : int;
 var n : int;
 var o : int;
+var p : int;
 var q : int;
+
 b = 50;
 c = 1;
 d = 2;
@@ -27,6 +29,7 @@ l = 2;
 m = 2;
 n = 2;
 o = 1;
+p = 1;
 
 q = b+c+d+e+f+g+h+i+j+k+l+m+n+o;
 

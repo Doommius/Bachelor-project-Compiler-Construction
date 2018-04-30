@@ -25,6 +25,10 @@ void set_op_bit(asm_op *op, BITVECTOR use, BITVECTOR def, int used, int defined)
                 }   
             }
             break;
+        
+        case (op_STACK_LOC):
+            set_op_bit(op->val.stack.reg, use, def, 1, 0);
+            break;
 
         default:
             break;
@@ -58,10 +62,17 @@ void set_use_def(a_asm *op){
             break;
 
         case (ADDQ):
-        case (SUBQ):
+        case (XORQ):
+        case (SARQ):
             set_op_bit(op->val.two_op.op1, use, def, 1, 0);
             set_op_bit(op->val.two_op.op2, use, def, 1, 1);
             break;
+
+        case (SUBQ):
+            set_op_bit(op->val.two_op.op1, use, def, 1, 1);
+            set_op_bit(op->val.two_op.op2, use, def, 1, 0);
+            break;
+        
 
         case (CMP):
             set_op_bit(op->val.two_op.op1, use, def, 1, 0);
@@ -76,10 +87,39 @@ void set_use_def(a_asm *op){
             set_op_bit(op->val.one_op.op, use, def, 0, 1);
             break;
 
+        case (CDQ):
+            //Manually set the registers used and defined by CDQ, since CDQ has no register arguments
+            set_bit(use, 0);
+            set_bit(def, 0);
+            set_bit(def, 3);
+            break;
+
+        case (RET):
+            //RET uses RAX when storing the return value
+            set_bit(use, 0);
+            break;
+
+        case (CALL):
+            //CALL defines RAX, since thats where the return value will be placed
+            set_bit(def, 0);
+            
+            //If passing less than PLACE_IN_REGS arguments, define those registers as used
+            if (op->func_args <= PLACE_IN_REGS){
+                for (int i = 0; i < op->func_args; i++){
+                    set_bit(use, AVAIL_REGS-i-1);
+                }
+            }
+            break;
+
+        //Used in test, not actually an instruction we use
         case (ANDQ):
             set_op_bit(op->val.two_op.op1, use, def, 1, 0);
             set_op_bit(op->val.two_op.op2, use, def, 0, 1);
             break;
+        
+        
+
+
         
 
         default:
@@ -187,7 +227,7 @@ graph *build_flowgraph(a_asm *program){
 
 }
 
-
+//Find the node corresponding to the given label
 graph_nodelist *find_label_node(graph *g, char *label){
     struct graph_nodelist *list;
     struct a_asm *temp;
@@ -196,7 +236,7 @@ graph_nodelist *find_label_node(graph *g, char *label){
     while (list != NULL){
         temp = (struct a_asm *) get_data(list->head);
         if (temp->ins == LABEL){
-            if (strcmp(temp->val.label_id, label) == 0){
+            if (strcmp(temp->val.label.label_id, label) == 0){
                 return list->next;
             }
         }

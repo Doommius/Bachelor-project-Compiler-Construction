@@ -185,3 +185,25 @@ SYMBOL *check_local(symbol_table *t, char *name) {
 void print_symbol(SYMBOL *symbol) {
     printf("(%s, %i)", symbol->name, symbol->value);
 }
+
+/**
+ * Calculate depth of a symbol, used for static linking
+ */
+int get_symbol_depth(symbol_table *t, char *name){
+    struct symbol_table *temp;
+    struct SYMBOL *s;
+    int depth;
+    temp = t;
+    depth = 0;
+
+    s = check_local(t, name);
+
+    while (s == NULL){
+        temp = temp->next;
+        s = check_local(temp, name);
+        depth++;
+    }
+
+    return depth;
+    
+}

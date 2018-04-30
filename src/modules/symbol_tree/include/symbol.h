@@ -64,4 +64,6 @@ SYMBOL *check_local(symbol_table *t, char *name);
 
 void print_symbol(SYMBOL *symbol);
 
+int get_symbol_depth(symbol_table *t, char *name);
+
 #endif

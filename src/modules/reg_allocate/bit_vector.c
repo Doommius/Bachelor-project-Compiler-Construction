@@ -189,7 +189,7 @@ int round_up(int v){
     int min;
     min = 32;
 
-    while (v > min){
+    while (v >= min){
         //We smart
         min = min + 32;
         

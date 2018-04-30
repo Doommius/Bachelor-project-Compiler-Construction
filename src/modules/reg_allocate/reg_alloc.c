@@ -266,6 +266,9 @@ int get_reg(asm_op *op){
     if (op->type == op_TEMP){
         return op->val.temp.id;
     }
+    if (op->type == op_STACK_LOC){
+        return get_reg(op->val.stack.reg);
+    }
     //Would be nice with a switch, but you can't switch on a pointer
     if (op->type == op_REGISTER){
 
@@ -512,11 +515,12 @@ void freeze(){
 void select_spill(){
     int current_best;
     int reg;
+    double temp;
     reg = -1;
     for (int i = 0; i < temps; i++){
         if (get_bit(spill_worklist, i)){
             printf("Uses of (%d): %d, degree: %d\n", i, uses[i], degree[i]);
-            double temp;
+            
             temp = uses[i] / (double) degree[i];
             if (reg == -1 || current_best > temp){
                 current_best = temp;
@@ -798,6 +802,10 @@ a_asm *rewrite_program(a_asm *theprogram){
             case (JNE):
             case (RET):
             case (CDQ):
+            case (IDIV):
+            case (IMUL):
+            case (BEGIN_CALL):
+            case (END_CALL):
                 //Nothing to be stored or fetched
                 asm_insert_one(&head, &tail, &theprogram);
                 break;
@@ -815,6 +823,8 @@ a_asm *rewrite_program(a_asm *theprogram){
 
             case (ADDQ):
             case (SUBQ):
+            case (XORQ):
+            case (SARQ):
                 //Fetch op1 if it's spilled, fetch op2 into a new temp, 
                 left = rewrite_spill_reg(&theprogram->val.two_op.op1, 1, NULL);
                 asm_insert(&head, &tail, &left);
@@ -831,7 +841,19 @@ a_asm *rewrite_program(a_asm *theprogram){
                 asm_insert(&head, &tail, &right);
                 
                 break;
-                
+
+            case (PUSH):
+                left = rewrite_spill_reg(&theprogram->val.one_op.op, 1, NULL);
+
+                asm_insert(&head, &tail, &left);
+                break;
+
+            case (POP):
+                asm_insert_one(&head, &tail, &theprogram);
+                left = rewrite_spill_reg(&theprogram->val.one_op.op, 0, NULL);
+
+                asm_insert(&head, &tail, &left);
+                break;
 
 
             default:
@@ -868,6 +890,11 @@ a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp){
 
     if (get_bit(spilled_nodes, reg)){
         switch ((*op)->type){
+            case (op_STACK_LOC):
+                target = &(*op)->val.stack.reg;
+                break;
+
+
             case (op_TEMP):
                 target = op;
                 break;

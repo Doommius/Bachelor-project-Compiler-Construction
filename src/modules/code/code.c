@@ -16,23 +16,14 @@
 #include "memory.h"
 #include "symbol.h"
 #include "reg_alloc.h"
+#include "rewriter.h"
 
-extern int temps = AVAIL_REGS; //The predefined registers will be the first values in the bitvectors
+extern int temps = AVAIL_REGS; 					//The predefined registers will be the first values in the bitvectors
 int cmps = 1;
 int ifs = 1;
 int loops = 1;
 int nullInserts = 0;
 int nonNullInserts = 0; 
-
-/**
- * TODO here
- * Have not yet implemented pushes of RBP and RSP and such, before calling functions
- * A possibility for doing this would be to add an instruction with a special type "FUNC_START" and "FUNC_END" or such
- * Where we replace the "FUNC_START" with instructions to push the correct registers and such
- * And in "FUNC_END" we restore those registers.
- * 
- */
-
 
 /**
  * Initialize register operators
@@ -107,11 +98,25 @@ void init_regs(){
 
 	wrt_INT = NEW(asm_op);
 	wrt_INT->type = op_CONST;
-	wrt_INT->val.label_id = ".wrt_INT";
+	wrt_INT->val.const_id = ".wrt_INT";
+
+	wrt_TRUE = NEW(asm_op);
+	wrt_TRUE->type = op_CONST;
+	wrt_TRUE->val.const_id = ".wrt_TRUE";
+	
+	wrt_FALSE = NEW(asm_op);
+	wrt_FALSE->type = op_CONST;
+	wrt_FALSE->val.const_id = ".wrt_FALSE";
 
 	op_PRINTF = NEW(asm_op);
 	op_PRINTF->type = op_LABEL;
-	op_PRINTF->val.func_id = "printf";
+	op_PRINTF->val.label_id = "printf";
+
+	op_STATIC_LINK = NEW(asm_op);
+	op_STATIC_LINK->type = op_LABEL;
+	op_STATIC_LINK->val.label_id = "8(%rbp)";
+
+	
 
 }
 
@@ -128,7 +133,7 @@ a_asm *generate_program(body *body){
 
 
 	printf("Generating body\n");
-	b = generate_body(body, "main", "main_end");
+	b = generate_body(body, "main", "main_end", NULL);
 
 	asm_insert(&head, &tail, &b);
 	printf("Done generating program\n");
@@ -143,9 +148,9 @@ a_asm *generate_program(body *body){
    
 }
 
-a_asm *generate_body(body *body, char *start_label, char *end_label){
+//Body needs to also get "head", otherwise, fetching the function parameters gets inserted before the function label
+a_asm *generate_body(body *body, char *start_label, char *end_label, head *h){
 	int vars;
-	int tmps = 0;
 
 	struct a_asm *sl;
 	struct a_asm *dl;
@@ -153,7 +158,7 @@ a_asm *generate_body(body *body, char *start_label, char *end_label){
     struct a_asm *tail;
 	struct a_asm *head2;
 	struct a_asm *tail2;
-	struct a_asm *temp;
+	struct a_asm *func_head;
 	head = NULL;
 	tail = NULL;
 	head2 = NULL;
@@ -166,39 +171,31 @@ a_asm *generate_body(body *body, char *start_label, char *end_label){
 	printf("In body, generating d_list\n");
 	dl = generate_dlist(body->d_list);
 	asm_insert(&head, &tail, &dl);
-	tmps = temps;
-	printf("In body, done generating d_list, created %d temps for now in body: %s\n", tmps, start_label);
 
 	//We want "main" to be the last label in the file.
-	add_label(&head, &tail, start_label, "Start of body");
+	add_func_label(&head, &tail, start_label, "Start of body", vars);
+
+	if (h != NULL){
+		func_head = generate_head(h);
+		asm_insert(&head, &tail, &func_head);
+	}
 
 	printf("In body, generating s_list\n");
 	sl = generate_slist(body->s_list);
 	asm_insert(&head2, &tail2, &sl);
 
 	
-	tmps = temps - tmps;
 	printf("In body, done generating s_list\n");
 
 
-	//This is not nice
-	temp = NEW(a_asm);
-	temp->comment = "Reserving space for temps in body";
-	temp->ins = SUBQ;
-	printf("Reserving space for %d temps in body of: %s\n", tmps, start_label);
-	temp->val.two_op.op1 = make_op_const(8 * tmps);
-	temp->val.two_op.op2 = reg_RSP;
 	
-	//add_simple_start(&head, &tail);
-
-	//asm_insert(&head, &tail, &temp);
 
 	asm_insert(&head, &tail, &head2);
 
 
 
 	add_label(&head, &tail, end_label, "End of body");
-	//add_simple_end(&head, &tail);
+	tail->val.label.type = label_FUNC_END;
 
 	return head;
 	
@@ -212,10 +209,8 @@ a_asm *generate_function(function *func){
 	head = NULL;
 	tail = NULL;
 
-	h = generate_head(func->head);
-	asm_insert(&head, &tail, &h);
 
-	b = generate_body(func->body, func->start_label, func->end_label);
+	b = generate_body(func->body, func->start_label, func->end_label, func->head);
 	asm_insert(&head, &tail, &b);
 
 	add_ins(&head, &tail, RET, "Return from function");
@@ -233,13 +228,13 @@ a_asm *generate_head(head *h){
 	head = NULL;
 	tail = NULL;
 
-	pdl = generate_pdl(h->list);
+	pdl = generate_pdl(h->list, h->args);
 	asm_insert(&head, &tail, &pdl);
 
 	return head;
 }
 
-a_asm *generate_pdl(par_decl_list *pdl){
+a_asm *generate_pdl(par_decl_list *pdl, int args){
 	struct a_asm *head;
     struct a_asm *tail;
 	struct a_asm *vdl;
@@ -249,42 +244,45 @@ a_asm *generate_pdl(par_decl_list *pdl){
     
 	if (pdl->kind != pdl_EMPTY){
 		offset = 1;
-		vdl = generate_vdl(pdl->list, offset);
+		vdl = generate_vdl(pdl->list, &offset, args);
 		asm_insert(&head, &tail, &vdl);
 	}
 
 	return head;
 }
 
-a_asm *generate_vdl(var_decl_list *vdl, int offset){
+a_asm *generate_vdl(var_decl_list *vdl, int *offset, int args){
 	struct a_asm *head;
     struct a_asm *tail;
 	struct a_asm *l;
+	struct asm_op *target;
 	SYMBOL *s;
 	head = NULL;
 	tail = NULL;
 
 	s = get_symbol(vdl->vartype->table, vdl->vartype->id);
 
-	//Possibly -8 instead of 8
-	s->offset = 8 * offset;
-	offset++;
+	//If "PLACE_IN_REGS" or fewer parameters, we want to place it in regs, instead of stack
+	if (args <= PLACE_IN_REGS){
+		//Create a new temp for the corresponding symbol
+		printf("Args: %d, upper bound: %d\n", args, PLACE_IN_REGS);
+		//Use "least used" reg to place parameter in
+		target = get_corresponding_reg(AVAIL_REGS - (*offset));
+		s->offset = 0;
+		s->op = make_op_temp();
+		add_2_ins(&head, &tail, MOVQ, target, s->op, "Move parameter to register in function");
+
+	} else {
+		s->offset = -8*(*offset);
+	}
+
+	(*offset)++;
 	printf("Offset of var: %s = %d\n", s->name, s->offset);
 	if ( vdl->kind == vdl_LIST && vdl->list != NULL){
-		l = generate_vdl(vdl->list, offset);
+		l = generate_vdl(vdl->list, offset, args);
 		asm_insert(&head, &tail, &l);
 	}
     
-	return head;
-}
-
-a_asm *generate_vtype(var_type *vtype){
-	struct a_asm *head;
-    struct a_asm *tail;
-	head = NULL;
-	tail = NULL;
-    
-
 	return head;
 }
 
@@ -336,15 +334,20 @@ a_asm *generate_slist(statement_list *slist){
 	tail = NULL;
 
 
-	stmt = generate_stmt(slist->statement);
-	
-	asm_insert(&head, &tail, &stmt);
 
 
-	if (slist->kind !=NULL){
+	if (slist != NULL){
+			
+		stmt = generate_stmt(slist->statement);
+
+		asm_insert(&head, &tail, &stmt);
+
+		if (slist->list != NULL){
+
+			sl = generate_slist(slist->list);
+			asm_insert(&head, &tail, &sl);
+		}
 		
-		sl = generate_slist(slist->list);
-		asm_insert(&head, &tail, &sl);
 	}
 
 	// Could possibly be a struct = {head, tail}, so we didn't have to loop through and find the tail later.
@@ -359,6 +362,8 @@ a_asm *generate_stmt(statement *stmt){
 	char label_ifend[20];
 	char label_loop_start[20];
 	char label_loop_end[20];
+	char label_wrt_true[20];
+	char label_wrt_end[20];
 
 	head = NULL;
 	tail = NULL;
@@ -379,7 +384,7 @@ a_asm *generate_stmt(statement *stmt){
 		case (statement_RETURN):
 			expr = generate_exp(stmt->val.ret);
 			asm_insert(&head, &tail, &expr);
-			ret = tail->val.two_op.op2;
+			ret = get_return_reg(tail);
 			add_2_ins(&head, &tail, MOVQ, ret, reg_RAX, "Return value placed in RAX");
 			add_1_ins(&head, &tail, JMP, make_op_label(stmt->function->end_label), "Jump to functions end label");
 			break;
@@ -388,23 +393,65 @@ a_asm *generate_stmt(statement *stmt){
 
 			expr = generate_exp(stmt->val.wrt);
 			asm_insert(&head, &tail, &expr);
-			wrt = tail->val.two_op.op2;
-			//Should probably be some more pushing before creating a print
-			add_1_ins(&head, &tail, PUSH, reg_RAX, "Saving value of RAX before printf call");
+			wrt = get_return_reg(tail);
+			if (stmt->val.wrt->stype->type == type_INT){
+				//Should probably be some more pushing before creating a print
 
-			add_2_ins(&head, &tail, MOVQ, wrt_INT, reg_RDI, "First argument for printf");
-			add_2_ins(&head, &tail, MOVQ, wrt, reg_RSI, "Second argument for printf");
-			add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RAX, "No vector arguments");
-			add_1_ins(&head, &tail, CALL, op_PRINTF, "Calling printf");
+				//add_1_ins(&head, &tail, PUSH, reg_RAX, "Saving value of RAX before printf call");
 
-			add_1_ins(&head, &tail, POP, reg_RAX, "Restoring RAX");
+				add_ins(&head, &tail, BEGIN_CALL, "Beginning of function call");
 
+				add_2_ins(&head, &tail, MOVQ, wrt_INT, reg_RDI, "First argument for printf");
+				add_2_ins(&head, &tail, MOVQ, wrt, reg_RSI, "Second argument for printf");
+				add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RAX, "No vector arguments");
+				add_1_ins(&head, &tail, CALL, op_PRINTF, "Calling printf");
+
+				//add_1_ins(&head, &tail, POP, reg_RAX, "Restoring RAX");
+				add_ins(&head, &tail, END_CALL, "End of function call");
+
+			}
+			if (stmt->val.wrt->stype->type == type_BOOl){
+				make_cmp_label(label_wrt_true);
+				make_end_cmp_label(label_wrt_end);
+
+				add_2_ins(&head, &tail, CMP, make_op_const(0), wrt, "Compare boolean operator");
+				add_1_ins(&head, &tail, JNE, make_op_label(label_wrt_true), "If true, jump to true part");
+
+				//Should probably be some more pushing before creating a print
+
+				//add_1_ins(&head, &tail, PUSH, reg_RAX, "Saving value of RAX before printf call");
+
+				add_ins(&head, &tail, BEGIN_CALL, "Beginning of function call");
+
+				add_2_ins(&head, &tail, MOVQ, wrt_FALSE, reg_RDI, "First argument for printf");
+				add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RAX, "No vector arguments");
+				add_1_ins(&head, &tail, CALL, op_PRINTF, "Calling printf");
+
+				//add_1_ins(&head, &tail, POP, reg_RAX, "Restoring RAX");
+				add_ins(&head, &tail, END_CALL, "End of function call");
+
+				add_1_ins(&head, &tail, JMP, make_op_label(label_wrt_end), "Jump to end of write sequence");
+				add_label(&head, &tail, label_wrt_true, "If expression is true, print TRUE");
+
+				add_ins(&head, &tail, BEGIN_CALL, "Beginning of function call");
+
+				add_2_ins(&head, &tail, MOVQ, wrt_TRUE, reg_RDI, "First argument for printf");
+				add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RAX, "No vector arguments");
+				add_1_ins(&head, &tail, CALL, op_PRINTF, "Calling printf");
+
+				//add_1_ins(&head, &tail, POP, reg_RAX, "Restoring RAX");
+				add_ins(&head, &tail, END_CALL, "End of function call");
+
+				add_label(&head, &tail, label_wrt_end, "End of write sequence");
+			}
+
+			
 			break;
 
 		case (statement_IF):
 			expr = generate_exp(stmt->val.ifthen.expression);
 			asm_insert(&head, &tail, &expr);
-			ifexp = tail->val.two_op.op2;
+			ifexp = get_return_reg(tail);
 			make_if_label(label_ifend);
 			add_2_ins(&head, &tail, CMP, make_op_const(1), ifexp, "Check if IF expression is true");
 			add_1_ins(&head, &tail, JNE, make_op_label(label_ifend), "Expression is false, skip IF part");
@@ -417,7 +464,7 @@ a_asm *generate_stmt(statement *stmt){
 		case (statement_IF_ELSE):
 			expr = generate_exp(stmt->val.ifthen.expression);
 			asm_insert(&head, &tail, &expr);
-			ifexp = tail->val.two_op.op2;
+			ifexp = get_return_reg(tail);
 			make_else_label(label_else);
 			make_if_label(label_ifend);
 			add_2_ins(&head, &tail, CMP, make_op_const(1), ifexp, "Check if IF expression is true");
@@ -437,11 +484,11 @@ a_asm *generate_stmt(statement *stmt){
 		case (statement_ASSIGNMENT):
 			expr = generate_exp(stmt->val.assignment.expression);
 			asm_insert(&head, &tail, &expr);
-			assignexp = tail->val.two_op.op2;
+			assignexp = get_return_reg(tail);
 
 			v = generate_var(stmt->val.assignment.variable);
 			asm_insert(&head, &tail, &v);
-			var = tail->val.two_op.op2;
+			var = get_return_reg(tail);
 
 
 			add_2_ins(&head, &tail, MOVQ, assignexp, var, "Assigning value to var");
@@ -454,7 +501,7 @@ a_asm *generate_stmt(statement *stmt){
 			add_label(&head, &tail, label_loop_start, "Start of while");
 			expr = generate_exp(stmt->val.loop.expression);
 			asm_insert(&head, &tail, &expr);
-			ifexp = tail->val.two_op.op2;
+			ifexp = get_return_reg(tail);
 
 			add_2_ins(&head, &tail, CMP, make_op_const(1), ifexp, "Check if condition in while is true");
 			add_1_ins(&head, &tail, JNE, make_op_label(label_loop_end), "If condition is false, jump to end");
@@ -463,6 +510,18 @@ a_asm *generate_stmt(statement *stmt){
 			add_1_ins(&head, &tail, JMP, make_op_label(label_loop_start), "Jump to start of while");
 			add_label(&head, &tail, label_loop_end, "End of while");
 			break;
+
+		case (statement_ALLOCATE):
+			break;
+
+		case (statement_ALLOCATE_LENGTH):
+			break;
+
+		case (statement_LIST):
+			s1 = generate_slist(stmt->val.list);
+			asm_insert(&head, &tail, &s1);
+			break;
+		
 
 
 
@@ -481,11 +540,15 @@ a_asm *generate_stmt(statement *stmt){
 a_asm *generate_var(variable *var){
 	struct a_asm *head;
     struct a_asm *tail;
-	head = NULL;
-	tail = NULL;
 
 	struct asm_op *v;
 	struct asm_op *temp;
+	struct asm_op *static_link;
+
+	int depth;
+	head = NULL;
+	tail = NULL;
+
 
 	SYMBOL *s;
 
@@ -493,14 +556,49 @@ a_asm *generate_var(variable *var){
 
 		case (var_ID):
 			s = get_symbol(var->table, var->id);
-			if (s->offset == 0){
-				v = s->op;
-				add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
+			depth = get_symbol_depth(var->table, var->id);
+			printf("Depth of symbol %s: %d\n", var->id, depth);
+			
+			//If depth == 0, local variable, no need to check the static link
+			if (depth == 0){
+				if (s->offset == 0){
+					v = s->op;
+					add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
+				} else {
+					v = make_op_stack_loc(s->offset, &reg_RBP);
+					add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
+
+				}	
 			} else {
-				v = make_op_stack_loc(s->offset);
+				
+				static_link = make_op_temp();
+				add_2_ins(&head, &tail, MOVQ, op_STATIC_LINK, static_link, "Copy static link to new reg");
+
+				//Resolve static link
+				depth--;
+
+				while (depth > 0){
+					temp = make_op_stack_loc(0, &static_link);
+					static_link = make_op_temp();
+					add_2_ins(&head, &tail, MOVQ, temp, static_link, "Copying static link");
+					depth--;
+
+				}
+				v = make_op_stack_loc((s->offset), &static_link);
+
 				add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
 
+
 			}
+
+			
+			break;
+
+		case (var_EXP):
+
+			break;
+
+		case (var_RECORD):
 			break;
 
 
@@ -540,8 +638,8 @@ a_asm *generate_exp(expression *exp){
 
     left_exp = generate_exp(exp->val.ops.left);
     asm_insert(&head, &tail, &left_exp);
-	left_target = tail->val.two_op.op2;
-	
+	left_target = get_return_reg(tail);
+		
 	if (exp->kind == exp_OR){
 		make_bool_label(label_bool);
 		temp = make_op_temp(); //Used to hold the result of the expression
@@ -552,7 +650,7 @@ a_asm *generate_exp(expression *exp){
 		
 		right_exp = generate_exp(exp->val.ops.right);
 		asm_insert(&head, &tail, &right_exp);
-		right_target = tail->val.two_op.op2;
+		right_target = get_return_reg(tail);
 
 		//If this is excecuted, left expression was false, so the result depends entirely on the right expression
 		add_2_ins(&head, &tail, MOVQ, right_target, temp, "Result is set to the value of the right expression");
@@ -576,7 +674,7 @@ a_asm *generate_exp(expression *exp){
 		
 		right_exp = generate_exp(exp->val.ops.right);
 		asm_insert(&head, &tail, &right_exp);
-		right_target = tail->val.two_op.op2;
+		right_target = get_return_reg(tail);
 
 		//If this is excecuted, left expression was false, so the result depends entirely on the right expression
 		add_2_ins(&head, &tail, MOVQ, right_target, temp, "Result is set to the value of the right expression");
@@ -591,7 +689,7 @@ a_asm *generate_exp(expression *exp){
 
 	right_exp = generate_exp(exp->val.ops.right);
 	asm_insert(&head, &tail, &right_exp);
-	right_target = tail->val.two_op.op2;
+	right_target = get_return_reg(tail);
 
 	switch (exp->kind){
 
@@ -623,9 +721,10 @@ a_asm *generate_exp(expression *exp){
 		case (exp_PLUS):
 			add_2_ins(&head, &tail, ADDQ, left_target, right_target, "Addition");
 			break;
-
+		
+		//Should probably be changed
 		case (exp_MIN):
-			add_2_ins(&head, &tail, SUBQ, left_target, right_target, "Subtraction");
+			add_2_ins(&head, &tail, SUBQ, right_target, left_target, "Subtraction");
 			break;
 
 		case (exp_EQ):
@@ -746,7 +845,20 @@ a_asm *generate_term(term *term){
 	SYMBOL *s;
 
 	struct asm_op *target;
+	struct asm_op *reg;
+	struct asm_op *static_link;
+	struct asm_op *temp;
+	struct asm_op *temp2;
+	struct asm_op *res;
+
+	struct a_asm *t;
 	struct a_asm *el;
+	struct a_asm *expr;
+	struct exp_list *elist;
+	int arg_count;
+	int used_reg;
+	int depth;
+	arg_count = 0;
 
     switch (term->kind){
 
@@ -758,15 +870,130 @@ a_asm *generate_term(term *term){
 			break;
 
 		case (term_LIST):
+
+			add_ins(&head, &tail, BEGIN_CALL, "Beginning of function call");
 			s = get_symbol(term->table, term->val.list.id);
 			//printf("Calling function: %s, args: %d\n", s->name, s->stype->val.func_type.func->head->args);
 			if (term->val.list.list->kind != al_EMPTY){
-				el = generate_elist(term->val.list.list->list);
-				asm_insert(&head, &tail, &el);
+
+				//If more than "PLACE_IN_REGS" parameter, place parameters on stack
+				if (s->stype->val.func_type.func->head->args > PLACE_IN_REGS){
+
+					el = generate_elist(term->val.list.list->list, &arg_count);
+
+					asm_insert(&head, &tail, &el);
+					printf("Args pushed: %d\n", arg_count);
+				} else {
+					elist = term->val.list.list->list;
+					used_reg = AVAIL_REGS-1;
+					while (elist != NULL){
+
+						reg = get_corresponding_reg(used_reg);
+						expr = generate_exp(elist->expression);
+						asm_insert(&head, &tail, &expr);
+						target = get_return_reg(tail);
+						add_2_ins(&head, &tail, MOVQ, target, reg, "Moving function parameter to register");
+						arg_count++;
+						used_reg--;
+
+						if (elist->kind == el_LIST){
+							elist = elist->list;
+						} else {
+							elist = NULL;
+						}
+
+					}
+
+				}
+			
 
 			}
+			//Set up static link
+			depth = get_symbol_depth(term->table, term->val.list.id);
+			static_link = make_op_temp();
+			
+			if (depth == 0){
+				printf("Non-recursive function: %s, depth: %d\n", term->val.list.id, depth);
+
+				add_2_ins(&head, &tail, MOVQ, reg_RBP, static_link, "Setting address wanted for static link");
+				add_2_ins(&head, &tail, ADDQ, make_op_const(8), static_link, "Adding offset of 8 to static link");
+				add_1_ins(&head, &tail, PUSH, static_link, "Storing static link for function");
+
+			} else {
+				printf("Possibly recursive function: %s, depth: %d\n", term->val.list.id, depth);
+				
+				add_2_ins(&head, &tail, MOVQ, op_STATIC_LINK, static_link, "Retrieving static link");
+				
+				//Resolve static link
+				depth--;
+
+				while (depth > 0){
+					temp = make_op_stack_loc(0, &static_link);
+					static_link = make_op_temp();
+					add_2_ins(&head, &tail, MOVQ, temp, static_link, "Copying static link");
+					depth--;
+
+				}
+
+				add_1_ins(&head, &tail, PUSH, static_link, "Storing static link for function");
+
+			}
+
 			add_1_ins(&head, &tail, CALL, make_op_label(s->name), "Calling function");
+			tail->func_args = arg_count;
+
+			if (s->stype->val.func_type.func->head->args > PLACE_IN_REGS){
+
+				add_2_ins(&head, &tail, ADDQ, make_op_const((arg_count+1)*8), reg_RSP, "Removing arguments and static link");
+
+			} else {
+				add_2_ins(&head, &tail, ADDQ, make_op_const(8), reg_RSP, "Remove static link");
+			}
+
 			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp(), "Saving return value from function in temp");
+
+			add_ins(&head, &tail, END_CALL, "End of function call");
+
+			break;
+		
+		case (term_PAR):
+			expr = generate_exp(term->val.expression);
+			asm_insert(&head, &tail, &expr);
+			break;
+
+		case (term_ABS):
+			expr = generate_exp(term->val.expression);
+			asm_insert(&head, &tail, &expr);
+			if (term->val.expression->stype->type == symbol_INT){
+
+				//ABS implementation is based on the C library version
+				target = get_return_reg(tail);
+				temp = make_op_temp();
+				add_2_ins(&head, &tail, MOVQ, target, temp, "Moving argument to new reg");
+				add_2_ins(&head, &tail, SARQ, make_op_const(31), temp, "Shift arithmetic right");
+				temp2 = make_op_temp();
+				add_2_ins(&head, &tail, MOVQ, temp, temp2, "Copying shifted value");
+
+				add_2_ins(&head, &tail, XORQ,  target, temp2, "XOR'ing the two values");
+
+				res = make_op_temp();
+				add_2_ins(&head, &tail, MOVQ, temp2, res, "Moving value to reg");
+
+
+				add_2_ins(&head, &tail, SUBQ, temp,  res, "Subtracting the last value");
+
+				add_2_ins(&head, &tail, MOVQ, res, res, "Used to get target for next instruction");
+
+			}
+
+			break;
+
+		case (term_NOT):
+			t = generate_term(term->val.term_not);
+			asm_insert(&head, &tail, &t);
+			target = get_return_reg(tail);
+
+			add_2_ins(&head, &tail, XORQ, make_op_const(1), target, "XOR with 1 will give the NOT of the term");
 
 			break;
 
@@ -776,7 +1003,6 @@ a_asm *generate_term(term *term){
 
 
         case (term_NUM):
-
 			add_2_ins(&head, &tail, MOVQ, make_op_const(term->val.num), make_op_temp(), "Moving constant to register");
 			break;
 
@@ -786,6 +1012,10 @@ a_asm *generate_term(term *term){
 
 		case (term_FALSE):
 			add_2_ins(&head, &tail, MOVQ, make_op_const(0), make_op_temp(), "Moving FALSE to register");
+			break;
+
+		case (term_NULL):
+			add_2_ins(&head, &tail, MOVQ, make_op_const(0), make_op_temp(), "Moving NULL to register");
 			break;
 
 		default:
@@ -800,17 +1030,7 @@ a_asm *generate_term(term *term){
     
 }
 
-a_asm *generate_alist(act_list *alist){
-	struct a_asm *head;
-    struct a_asm *tail;
-	head = NULL;
-	tail = NULL;
-    
-
-	return head;
-}
-
-a_asm *generate_elist(exp_list *elist){
+a_asm *generate_elist(exp_list *elist, int *count){
 	struct a_asm *head;
     struct a_asm *tail;
 	head = NULL;
@@ -822,14 +1042,15 @@ a_asm *generate_elist(exp_list *elist){
 
 
 	if (elist->kind == el_LIST){
-		el = generate_elist(elist->list);
+		el = generate_elist(elist->list, count);
 		asm_insert(&head, &tail, &el);
 	}
 
 	expr = generate_exp(elist->expression);
 	asm_insert(&head, &tail, &expr);
-	target = tail->val.two_op.op2;
+	target = get_return_reg(tail);
 	add_1_ins(&head, &tail, PUSH, target, "Push argument for function");
+	(*count)++;
 
     
 
@@ -921,11 +1142,27 @@ void add_label(a_asm **head, a_asm **tail, char *label, char *comment){
 	get_next(head, tail);
 
 	(*tail)->ins = LABEL;
-	(*tail)->val.label_id = malloc(sizeof(char) *20);
-	sprintf((*tail)->val.label_id, "%s", label);
+	(*tail)->val.label.label_id = malloc(sizeof(char) *20);
+	(*tail)->val.label.type = label_NORMAL;
+	(*tail)->val.label.func_vars = 0;
+	
+	sprintf((*tail)->val.label.label_id, "%s", label);
 	(*tail)->comment = comment;
 	(*tail)->next = NULL;
 
+}
+
+void add_func_label(a_asm **head, a_asm **tail, char *label, char *comment, int vars){
+	get_next(head, tail);
+
+	(*tail)->ins = LABEL;
+	(*tail)->val.label.label_id = malloc(sizeof(char) *20);
+	(*tail)->val.label.type = label_FUNC_START;
+	(*tail)->val.label.func_vars = vars;
+	
+	sprintf((*tail)->val.label.label_id, "%s", label);
+	(*tail)->comment = comment;
+	(*tail)->next = NULL;
 }
 
 
@@ -943,17 +1180,59 @@ void get_next(a_asm **head1, a_asm **tail1){
 
 }
 
+a_asm *get_return_reg(a_asm *tail){
+	if (tail->ins == END_CALL){
+		return tail->prev->val.two_op.op2;
+	}
+	return tail->val.two_op.op2;
+}
+
 //Assign temp to every local variable
 int local_init(decl_list *dlist){
 	struct decl_list *d_temp;
 	struct var_decl_list *v_temp;
 	SYMBOL *s;
 	int vars;
+	int contains_function;
+	int offset;
 	vars = 0;
+	contains_function = 0;
+	offset = 1;
 
 	d_temp = dlist;
 
-	while(d_temp->kind != dl_EMPTY){
+	while (d_temp->kind != dl_EMPTY){
+		if (d_temp->decl->kind == decl_FUNC){
+			printf("Declaration contains a function\n");
+			contains_function = 1;
+			break;
+		}
+		d_temp = d_temp->list;
+
+	}
+
+	d_temp = dlist;
+
+	//If the program contains functions, put variables on the stack, so we can reach them with static link
+	if (contains_function){
+		while (d_temp->kind != dl_EMPTY){
+			if (d_temp->decl->kind == decl_VAR){
+				v_temp = d_temp->decl->val.list;
+				while (v_temp != NULL){
+					s = get_symbol(dlist->table, v_temp->vartype->id);
+					printf("Setting offset of %s to %d\n", s->name, offset);
+					s->offset = offset;
+					offset++;
+					v_temp = v_temp->list;
+				}
+			}
+			d_temp = d_temp->list;
+		}
+		return offset;
+	}
+
+	//If no functions, we can just keep the variables in registers/temps
+	while (d_temp->kind != dl_EMPTY){
 		if (d_temp->decl->kind == decl_VAR){
 			v_temp = d_temp->decl->val.list;
 			while (v_temp != NULL){
@@ -1078,16 +1357,23 @@ void make_loop_end_label(char *buffer){
 
 }
 
-asm_op *make_op_stack_loc(int offset){
+asm_op *make_op_stack_loc(int offset, asm_op **reg){
 
 	struct asm_op *op;
 	op = NEW(asm_op);
 
-	//Not exactly a label, but it fits with the printing
+	if (reg != reg_RBP){
+		op->type = op_STACK_LOC;
+		op->val.stack.reg = (*reg);
+		op->val.stack.offset = offset;
+		return op;
+	}
+
 	op->type = op_LABEL;
 	op->val.label_id = malloc(sizeof(char) *20);
-	sprintf(op->val.label_id, "%d(%%rbp)", offset);
+	sprintf(op->val.label_id, "%d(%%rbp)", -8 * offset);
 	op->stack_offset = offset;
+
 	return op;
 
 }

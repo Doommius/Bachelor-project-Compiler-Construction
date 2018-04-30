@@ -16,4 +16,6 @@ int ever_used(a_asm *from, a_asm *to, asm_op *target);
 
 a_asm *remove_indirect_move(a_asm *head);
 
+int rec_cmp(asm_op *op1, asm_op *op2);
+
 #endif
