@@ -37,5 +37,8 @@ char *concat_string(char const *prefix, char const *suffix) {
 
     strcpy(result, prefix);
     strcat(result, suffix);
+
+	prefix = result;
+	//printf(prefix);
     return result;
 }

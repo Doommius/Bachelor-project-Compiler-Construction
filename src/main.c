@@ -89,6 +89,7 @@ int main(int argc, char **argv)
 			{
 				if (ends_with(argv[i], ".src"))
 				{
+					filename = get_filename(argv[i], ".src");
 					freopen(argv[i], "r", stdin);
 				}
 			}
@@ -151,9 +152,15 @@ int main(int argc, char **argv)
 
 	if (assemble_flag == 1)
 	{
-		system(concat_string("gcc -c ",
-							 concat_string(directory,
-										   concat_string(filename, "_a2.s"))));
+		int len = strlen("gcc -o ");
+		char *compile_string[1024];
+		snprintf(compile_string, 1024, "gcc -o %s %s%s_a2.s",filename,directory,filename);
+
+		printf("%s\n",compile_string);
+		// system(concat_string("gcc -o ", concat_string(filename,concat_string(" ",
+		// 											  concat_string(directory,
+		// 															concat_string(filename, "_a2.s"))))));
+		system(compile_string);
 	}
 
 	printf("\n");
