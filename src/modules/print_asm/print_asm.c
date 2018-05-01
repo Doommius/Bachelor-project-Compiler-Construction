@@ -27,6 +27,10 @@ void create_asm(a_asm *head){
     //Should probably make a check to see if we even use this label
     create_label(".wrt_INT", "Integer write label");
     create_ins(".string", "\"%d\\n\"", "String used for printing integers");
+    create_label(".wrt_TRUE", "TRUE write label");
+    create_ins(".string", "\"TRUE\\n\"", "String used to print TRUE");
+    create_label(".wrt_FALSE", "FALSE write label");
+    create_ins(".string", "\"FALSE\\n\"", "String used for printing FALSE");
     fprintf(out, ".globl main\n");
     while (head != NULL){
         switch (head->ins){
@@ -56,7 +60,7 @@ void create_asm(a_asm *head){
                 break;
 
             case (LABEL):
-                create_label(head->val.label_id, head->comment);
+                create_label(head->val.label.label_id, head->comment);
                 break;
 
             case (CMP):
@@ -103,8 +107,16 @@ void create_asm(a_asm *head){
                 create_2_op("subq", head->val.two_op.op1, head->val.two_op.op2, head->comment);
                 break;
 
+            case (XORQ):
+                create_2_op("xorq", head->val.two_op.op1, head->val.two_op.op2, head->comment);
+                break;
+
+            case (SARQ):
+                create_2_op("sarq", head->val.two_op.op1, head->val.two_op.op2, head->comment);
+                break;
+
             case (CDQ):
-                create_ins("cdqo", "", head->comment);
+                create_ins("cdq", "", head->comment);
                 break;
              
             case (ANDQ):
@@ -175,10 +187,11 @@ void create_2_op(char *ins, asm_op *op1, asm_op *op2, char *comment){
 }
 
 void get_opt(asm_op *op, char *dest){
+    char reg[20];
     switch (op->type){
 
         case (op_CONST):
-            sprintf(dest, "$%s", op->val.func_id);
+            sprintf(dest, "$%s", op->val.const_id);
             break;
 
         case (op_INTCONST):
@@ -195,6 +208,15 @@ void get_opt(asm_op *op, char *dest){
 
         case (op_TEMP):
             sprintf(dest, "t%i", op->val.temp.id);
+            break;
+
+        case (op_SPILL):
+            sprintf(dest, "%d(%%rbp)", op->stack_offset *8 +8);
+            break;
+
+        case (op_STACK_LOC):
+            get_opt(op->val.stack.reg, reg);
+            sprintf(dest, "-%d(%s)", 8 * op->val.stack.offset, reg);
             break;
         
 

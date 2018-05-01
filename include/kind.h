@@ -81,6 +81,8 @@ typedef enum {
                MOVQ,                //Two op
                ADDQ,                //Two op
                SUBQ,                //Two op
+               XORQ,
+               SARQ,
                CALL,
                RET,
 
@@ -89,7 +91,9 @@ typedef enum {
                ANDQ, //Just for testing
 
                CMP,                 //Two op
-               CDQ
+               CDQ,
+               BEGIN_CALL,          //Used to signal the beginning of a call instruction, meaning we have to save registers
+               END_CALL             //Used to signal the end of a call instruction, meaning we have to retore registers
 } ASM_kind;
 
 typedef enum { op_INTCONST,
@@ -99,8 +103,15 @@ typedef enum { op_INTCONST,
                op_LABEL,
                op_CONST,
 
-               op_TEMP //Temporary until we find out what register/stack location it should be in, atleast i hope so.
+               op_TEMP, //Temporary until we find out what register/stack location it should be in, atleast i hope so.
+               op_SPILL
 
 } OP_kind;
+
+typedef enum { label_NORMAL,
+               label_FUNC_START,
+               label_FUNC_END
+
+} LABEL_kind;
 
 #endif //COMPILER_KIND_H

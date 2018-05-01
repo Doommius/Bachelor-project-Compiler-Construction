@@ -6,7 +6,7 @@
 #include "bit_vector.h"
 
 
-
+extern int temps;
 
 //Abstract assembly node, with a build in linked list.
 //To be expanded
@@ -16,6 +16,7 @@ typedef struct a_asm {
 	struct a_asm *next;
 	char *comment;
 	int ops;
+	int func_args;
 
 	/**
 	 * 
@@ -25,8 +26,12 @@ typedef struct a_asm {
 
 	union {
 
+		struct {
+			LABEL_kind type;
+			int func_vars;
+			char *label_id;
 
-		char *label_id;
+		} label;
 		struct {
 			struct asm_op *op1;
 			struct asm_op *op2;
@@ -51,10 +56,15 @@ typedef struct asm_op {
 	union {
 		char *reg_id;
 		char *label_id;
-		char *func_id;
+		char *const_id;
 		struct {
 			int id;
+			struct asm_op *spill;
 		} temp;
+		struct {
+			struct asm_op *reg;
+			int offset;
+		} stack;
 		int intconst;
 	} val;
 	
@@ -64,17 +74,15 @@ typedef struct asm_op {
 
 a_asm *generate_program(body *body);
 
-a_asm *generate_body(body *body, char *start_label, char *end_label);
+a_asm *generate_body(body *body, char *start_label, char *end_label, head *head);
 
 a_asm *generate_function(function *func);
 
 a_asm *generate_head(head *h);
 
-a_asm *generate_pdl(par_decl_list *pdl);
+a_asm *generate_pdl(par_decl_list *pdl, int args);
 
-a_asm *generate_vdl(var_decl_list *vdl, int offset);
-
-a_asm *generate_vtype(var_type *vtype);
+a_asm *generate_vdl(var_decl_list *vdl, int *offset, int args);
 
 a_asm *generate_dlist(decl_list *dlist);
 
@@ -90,9 +98,7 @@ a_asm *generate_exp(expression *exp);
 
 a_asm *generate_term(term *term);
 
-a_asm *generate_alist(act_list *alist);
-
-a_asm *generate_elist(exp_list *elist);
+a_asm *generate_elist(exp_list *elist, int *count);
 
 void asm_insert(a_asm **head, a_asm **tail, a_asm **new);
 
@@ -108,6 +114,8 @@ void add_ins(a_asm **head, a_asm **tail, ASM_kind ins, char *comment);
 
 void add_label(a_asm **head, a_asm **tail, char *label, char *comment);
 
+void add_func_label(a_asm **head, a_asm **tail, char *label, char *comment, int vars);
+
 int local_init(decl_list *dlist);
 
 asm_op *make_op_const(int i);
@@ -116,7 +124,9 @@ asm_op *make_op_temp();
 
 asm_op *make_op_label(char *label);
 
-asm_op *make_op_stack_loc(int offset);
+asm_op *make_op_stack_loc(int offset, asm_op **reg);
+
+asm_op *make_op_spill();
 
 void make_cmp_label(char *buffer);
 
@@ -132,6 +142,7 @@ void make_loop_start_label(char *buffer);
 
 void make_loop_end_label(char *buffer);
 
+a_asm *get_return_reg(a_asm *tail);
 
 void init_regs();
 
@@ -179,7 +190,12 @@ struct asm_op *wrt_INT;
 
 struct asm_op *op_PRINTF;
 
-unsigned get_temps();
+struct asm_op *wrt_TRUE;
+
+struct asm_op *wrt_FALSE;
+
+struct asm_op *op_STATIC_LINK;
+
 
 
 
