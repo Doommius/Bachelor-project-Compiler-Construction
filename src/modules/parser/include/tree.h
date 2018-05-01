@@ -47,14 +47,14 @@ typedef struct type {
 } type;
 
 typedef struct par_decl_list {
-    struct symbol_table*table;
+    struct symbol_table *table;
     int lineno;
     PDL_kind kind;
     struct var_decl_list *list;
 } par_decl_list;
 
 typedef struct var_decl_list {
-    struct symbol_table*table;
+    struct symbol_table *table;
     int lineno;
     VDL_kind kind;
     struct var_decl_list *list;
@@ -62,7 +62,7 @@ typedef struct var_decl_list {
 } var_decl_list;
 
 typedef struct var_type {
-    struct symbol_table*table;
+    struct symbol_table *table;
     struct SYMBOL *symbol;
     int lineno;
     char *id;
@@ -70,7 +70,7 @@ typedef struct var_type {
 } var_type;
 
 typedef struct body {
-    struct symbol_table*table;
+    struct symbol_table *table;
     int lineno;
     struct decl_list *d_list;
     struct statement_list *s_list;

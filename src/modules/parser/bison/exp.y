@@ -1,6 +1,7 @@
 
 //Comments
-// String followed by : is detected as a decleartion evening when within a string, the code still works, but syntax highlighting is broken.
+// String followed by : is detected as a decleartion evening when within a string, 
+//the code still works, but syntax highlighting is broken.
 
 %{
 #include <stdio.h>

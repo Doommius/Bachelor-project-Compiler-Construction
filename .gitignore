@@ -27,3 +27,7 @@ y.output
 *.fls
 *.fdb_latexmk
 *.aux
+*.toc
+*.synctex.gz
+*.pdf
+*.s

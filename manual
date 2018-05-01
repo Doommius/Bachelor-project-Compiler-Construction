@@ -14,6 +14,18 @@ The compiler does not take any options. However, you can supply filename to comp
 help
 .br
 .br
+.B -a
+Assemble/compile program
+.br
+.br 
+.B -c
+file to compile
+.br
+.br
+.B -o
+output directory
+.br
+.br
 .B @file
 input file to compile
 .br
