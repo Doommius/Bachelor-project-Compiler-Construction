@@ -188,11 +188,6 @@ a_asm *add_prefix(int offset){
 
     add_1_ins(&head, &tail, PUSH, reg_RBP, "Push old base pointer to stack");
     add_2_ins(&head, &tail, MOVQ, reg_RSP, reg_RBP, "Move stack pointer to base pointer");
-    // add_1_ins(&head, &tail, PUSH, reg_RBX, "RBX should be preserved across function calls");
-    // add_1_ins(&head, &tail, PUSH, reg_R12, "R12 should be preserved across function calls");
-    // add_1_ins(&head, &tail, PUSH, reg_R13, "R13 should be preserved across function calls");
-    // add_1_ins(&head, &tail, PUSH, reg_R14, "R14 should be preserved across function calls");
-    // add_1_ins(&head, &tail, PUSH, reg_R15, "R15 should be preserved across function calls");
 
     //Add space for variables and spills in function
 
@@ -214,11 +209,6 @@ a_asm *add_postfix(int offset){
         add_2_ins(&head, &tail, ADDQ, make_op_const(offset * 8), reg_RSP, "Remove space for variables and spills");
     }
 
-    // add_1_ins(&head, &tail, POP, reg_R15, "R15 should be preserved across function calls");
-    // add_1_ins(&head, &tail, POP, reg_R14, "R14 should be preserved across function calls");
-    // add_1_ins(&head, &tail, POP, reg_R13, "R13 should be preserved across function calls");
-    // add_1_ins(&head, &tail, POP, reg_R12, "R12 should be preserved across function calls");
-    // add_1_ins(&head, &tail, POP, reg_RBX, "RBX should be preserved across function calls");
     add_2_ins(&head, &tail, MOVQ, reg_RBP, reg_RSP, "Retore old stack pointer");
     add_1_ins(&head, &tail, POP, reg_RBP, "Restore old base pointer");
 

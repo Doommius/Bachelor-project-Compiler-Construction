@@ -9,57 +9,21 @@ factorial:                    # Start of body
     push %rbp                 # Push old base pointer to stack
     movq %rsp, %rbp           # Move stack pointer to base pointer
     movq %r15, %r15           # Move parameter to register in function
+    movq 8(%rbp), %rsi        # Copy static link to new reg
+    movq %rsi, %rsi           # Copy val to new temp, to not harm it
+    movq $.wrt_INT, %rdi      # First argument for printf
+    movq %rsi, %rsi           # Second argument for printf
+    movq $0, %rax             # No vector arguments
+    call printf               # Calling printf
     movq %r15, %r15           # Copy val to new temp, to not harm it
-    movq $0, %rax             # Moving constant to register
-    cmp %r15, %rax            # Compare, EQ
-    je cmpTrue_1              # If true, jump to label
-    movq $0, %rbx             # Setting result to 0 (false)
-    jmp endCMP_1              # Jump to after compare label
-cmpTrue_1:                    # Compare true label
-    movq $1, %rbx             # Setting result to 1 (true)
-endCMP_1:                     # After compare label
-    movq $1, %rax             # Setting default value of result to true
-    cmp $1, %rbx              # Compare left side of OR with true
-    je endBoolCMP_2           # If true, skip right expression
-    movq %r15, %r15           # Copy val to new temp, to not harm it
-    movq $1, %rax             # Moving constant to register
-    cmp %r15, %rax            # Compare, EQ
-    je cmpTrue_3              # If true, jump to label
-    movq $0, %rax             # Setting result to 0 (false)
-    jmp endCMP_3              # Jump to after compare label
-cmpTrue_3:                    # Compare true label
-    movq $1, %rax             # Setting result to 1 (true)
-endCMP_3:                     # After compare label
-    movq %rax, %rax           # Result is set to the value of the right expression
-endBoolCMP_2:                 # OR expression label
-    cmp $1, %rax              # Check if IF expression is true
-    jne else_1                # Expression is false, jump to ELSE part
-    movq %r15, %r15           # Copy val to new temp, to not harm it
-    movq %r15, %rax           # Return value placed in RAX
-    jmp end_factorial         # Jump to functions end label
-    jmp if_end_1              # Skip ELSE part
-else_1:                       # Start of ELSE
-    movq %r15, %rbx           # Copy val to new temp, to not harm it
-    push %r15                 # Register is live in function, so saving it before CALL
-    push %rbx                 # Register is live in function, so saving it before CALL
-    movq %r15, %r15           # Copy val to new temp, to not harm it
-    movq $1, %rax             # Moving constant to register
-    subq %rax, %r15           # Subtraction
-    movq %r15, %r15           # Moving function parameter to register
-    movq 8(%rbp), %rax        # Retrieving static link
-    push %rax                 # Storing static link for function
-    call factorial            # Calling function
-    addq $8, %rsp             # Remove static link
-    movq %rax, %rdx           # Saving return value from function in temp
-    pop %rbx                  # Register was live in function, so restoring it after CALL
-    pop %r15                  # Register was live in function, so restoring it after CALL
-    movq %rbx, %rax           # Using RAX for multiplication
+    movq 8(%rbp), %rdx        # Copy static link to new reg
+    movq %rdx, %rdx           # Copy val to new temp, to not harm it
+    movq %r15, %rax           # Using RAX for multiplication
     movq %rdx, %rdx           # Using RDX for multiplication
     imul %rdx                 # Multiplication using RAX and RDX
     movq %rax, %rax           # Storing result here (temp)
     movq %rax, %rax           # Return value placed in RAX
     jmp end_factorial         # Jump to functions end label
-if_end_1:                     # End of IF
 end_factorial:                # End of body
     movq %rbp, %rsp           # Retore old stack pointer
     pop %rbp                  # Restore old base pointer
@@ -67,7 +31,9 @@ end_factorial:                # End of body
 main:                         # Start of body
     push %rbp                 # Push old base pointer to stack
     movq %rsp, %rbp           # Move stack pointer to base pointer
-    subq $8, %rsp             # Make space for variables and spills
+    subq $16, %rsp            # Make space for variables and spills
+    movq $2, %rax             # Moving constant to register
+    movq %rax, -8(%rbp)       # Assigning value to var
     push %r15                 # Register is live in function, so saving it before CALL
     movq $5, %r15             # Moving constant to register
     movq %r15, %r15           # Moving function parameter to register
@@ -83,7 +49,7 @@ main:                         # Start of body
     movq $0, %rax             # No vector arguments
     call printf               # Calling printf
 main_end:                     # End of body
-    addq $8, %rsp             # Remove space for variables and spills
+    addq $16, %rsp            # Remove space for variables and spills
     movq %rbp, %rsp           # Retore old stack pointer
     pop %rbp                  # Restore old base pointer
     movq $0, %rax             # Return "no error" exit code
