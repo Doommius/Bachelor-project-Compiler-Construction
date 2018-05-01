@@ -127,21 +127,14 @@ a_asm *generate_program(body *body){
 	head = NULL;
 	tail = NULL;
     
-	printf("Initializing registers\n");
 
 	init_regs();
 
-
-	printf("Generating body\n");
 	b = generate_body(body, "main", "main_end", NULL);
 
 	asm_insert(&head, &tail, &b);
-	printf("Done generating program\n");
 	add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RAX, "Return \"no error\" exit code");
 	add_ins(&head, &tail, RET, "Program return");
-
-	printf("Null tail inserts: %d\n", nullInserts);
-	printf("Non-Null tail inserts: %d\n", nonNullInserts);
 
 
 	return head;
@@ -165,10 +158,8 @@ a_asm *generate_body(body *body, char *start_label, char *end_label, head *h){
 	tail2 = NULL;
 	
 	vars = local_init(body->d_list);
-	printf("Vars: %d, in function: %s\n", vars, start_label);
 
 
-	printf("In body, generating d_list\n");
 	dl = generate_dlist(body->d_list);
 	asm_insert(&head, &tail, &dl);
 
@@ -179,15 +170,9 @@ a_asm *generate_body(body *body, char *start_label, char *end_label, head *h){
 		func_head = generate_head(h);
 		asm_insert(&head, &tail, &func_head);
 	}
-
-	printf("In body, generating s_list\n");
+	
 	sl = generate_slist(body->s_list);
 	asm_insert(&head2, &tail2, &sl);
-
-	
-	printf("In body, done generating s_list\n");
-
-
 	
 
 	asm_insert(&head, &tail, &head2);

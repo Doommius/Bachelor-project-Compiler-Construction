@@ -6,6 +6,7 @@
 #include "memory.h"
 #include "error.h"
 #include "bit_vector.h"
+#include "main.h"
 
 //Made separate file for the rewriters helper functions, since they filled a lot
 
@@ -23,7 +24,11 @@ a_asm *final_rewrite(int *colors, a_asm *program){
     temp = program;
     stack_offset = 0;
     line = 1;
-    printf("Final rewriting of program\n");
+
+    if (verbose){
+        printf("\nFinal rewriting of program\n\n");
+    }
+
     while (temp != NULL){
         
         switch (temp->ins){
@@ -72,7 +77,6 @@ a_asm *final_rewrite(int *colors, a_asm *program){
                 break;
 
             case (CALL):
-                printf("Adding push at line: %d\n", line);
                 call = temp;
                 temp2 = add_push_of_live(program, colors, call);
                 asm_insert(&temp, &begin_call, &temp2);
@@ -84,19 +88,12 @@ a_asm *final_rewrite(int *colors, a_asm *program){
                 break;
 
             case (END_CALL):
-                printf("Adding pop at line: %d\n", line);
                 //Restore saved registers
                 temp2 = add_pop_of_live(program, colors, call);
                 asm_insert(&temp, &temp, &temp2);
                 
                 call = NULL;
                 break;
-
-            
-
-
-
-
 
         }
 
@@ -234,7 +231,6 @@ a_asm *add_pop_of_live(a_asm *program, int *colors, a_asm *call){
     for (int j = temps-1; j >= 0; j--){
         if (get_bit(call->new, j) && regs[colors[j]] && popped_regs[colors[j]]){
             popped_regs[colors[j]] = 0;
-            printf("Popping: %d\n", colors[j]);
             add_1_ins(&head, &tail, POP, get_corresponding_reg(colors[j]), "Register was live in function, so restoring it after CALL");
         }
     }
@@ -261,7 +257,6 @@ a_asm *add_push_of_live(a_asm *program, int *colors, a_asm *call){
     for (int j = 0; j < temps; j++){
         if (get_bit(call->new, j) && regs[colors[j]] && pushed_regs[colors[j]]){
             pushed_regs[colors[j]] = 0;
-            printf("Pushing: %d\n", colors[j]);
             add_1_ins(&head, &tail, PUSH, get_corresponding_reg(colors[j]), "Register is live in function, so saving it before CALL");
         }
     }

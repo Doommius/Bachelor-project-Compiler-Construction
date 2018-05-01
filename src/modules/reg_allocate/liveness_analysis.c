@@ -6,6 +6,7 @@
 #include "graph.h"
 #include "liveness_analysis.h"
 #include "print_asm.h"
+#include "main.h"
 
 
 void set_op_bit(asm_op *op, BITVECTOR use, BITVECTOR def, int used, int defined){
@@ -145,7 +146,9 @@ void liveness_analysis(a_asm *program){
 
     flowgraph = build_flowgraph(program);
 
-    show_graph(stdout, get_nodes(flowgraph));
+    if (verbose){
+        show_graph(stdout, get_nodes(flowgraph));
+    }
 
     analysis(flowgraph);
 
@@ -220,9 +223,6 @@ graph *build_flowgraph(a_asm *program){
     }
 
 
-
-    printf("Nodes in graph: %d, last key: %d\n", g->nodecount, g->last->head->key);
-
     return g;
 
 }
@@ -275,11 +275,11 @@ void analysis(graph *g){
             temp->old = temp->new;
             list = list->prev;
         }
-        print_sets(g->nodes);
-        printf("Iteration: %d\n\n", iterations);
         
         if (!changes){
-            printf("Iterations before fix point found: %d\n", iterations);
+            if (verbose){
+                print_sets(g->nodes);
+            }
             break;
         }
 
@@ -337,45 +337,4 @@ void print_sets(graph_nodelist *list){
     }
     
 
-}
-
-//Just for testing, same program as in the notes on liveness analysis, just for comparison
-void test_known_program(){
-    struct graph *g;
-    struct a_asm *head;
-    struct a_asm *tail;
-    struct graph_nodelist *list;
-    head = NULL;
-    tail = NULL;
-
-    add_2_ins(&head, &tail, MOVQ, make_op_const(1), reg_RBX, "RBX is nr. 1");
-    add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RCX, "RCX is nr. 2");
-    add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RDX, "RDX is nr. 3");
-    add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RSI, "RSI is nr. 4");
-    add_label(&head, &tail, "loop", "loop");
-    add_2_ins(&head, &tail, ANDQ, reg_RBX, reg_RDI, "");
-    add_2_ins(&head, &tail, CMP, make_op_const(0), reg_RDI, "compare");
-    add_1_ins(&head, &tail, JNE, make_op_label("else"), "jump");
-    add_2_ins(&head, &tail, ADDQ,  reg_RBX, reg_RCX, "add");
-
-    add_1_ins(&head, &tail, JMP, make_op_label("endif"), "jump");
-    add_label(&head, &tail, "else", "");
-
-    add_2_ins(&head, &tail, ADDQ,  reg_RBX, reg_RDX, "add");
-    add_label(&head, &tail, "endif", "");
-
-    add_2_ins(&head, &tail, ADDQ,  reg_RBX, reg_RSI, "add");
-
-    add_2_ins(&head, &tail, ADDQ,  make_op_const(1), reg_RBX, "add");
-    add_2_ins(&head, &tail, CMP, make_op_const(9), reg_RBX, "");
-
-    add_1_ins(&head, &tail, JLE, make_op_label("loop"), "");
-
-    print_asm(head, "tester.s");
-
-    reg_alloc(head);
-    
-
-
-    
 }

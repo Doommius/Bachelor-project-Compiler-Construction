@@ -10,6 +10,7 @@
 #include "memory.h"
 #include "table.h"
 #include "rewriter.h"
+#include "main.h"
 
 //Register allocation implementation based on the implementation in the book, page 249-256
 
@@ -50,7 +51,7 @@ BITVECTOR precolored;
 
 
 a_asm *reg_alloc(a_asm *h){
-    printf("Allocating regs\n");
+    
     struct a_asm *head;
     struct a_asm *tail;
     struct a_asm *target1;
@@ -130,40 +131,29 @@ a_asm *reg_alloc(a_asm *h){
         
 
         make_worklist();
-        printf("Interference graph:\n");
-        show_adj_graph(stdout, get_nodes(adj_set));
-        for (int n = 0; n < temps; n++){
-            if (get_bit(spill_worklist, n)){
-                printf("Degree for reg (%d): %d\n", n, degree[n]);
-            }
+
+
+        if (verbose){
+            printf("Interference graph:\n");
+            show_adj_graph(stdout, get_nodes(adj_set));
         }
+        
 
 
         int iter;
         iter = 1;
         do {
-            printf("Iteration: %d\n", iter);
             if (!vector_empty(simplify_worklist)){
-                printf("\tSIMPLIFYING\n");
                 simplify();
             } else if (!vector_empty(worklist_moves)){
-                printf("\tCOALESCING\n");
                 coalesce();
             } else if (!vector_empty(freeze_worklist)){
-                printf("\tFREEZInG\n");
                 freeze();
                 
             } else if (!vector_empty(spill_worklist)){
-                printf("\tSELECTING SPILL\n");
                 select_spill();
             }
             iter++;
-            if (vector_empty(spill_worklist)){
-                printf("Spill list is empty, size: %d\n", vector_size(spill_worklist));
-            } else {
-                printf("Spill list is NOT empty, size: %d\n", vector_size(spill_worklist));
-
-            }
         } while ( !(vector_empty(simplify_worklist) && 
                     vector_empty(worklist_moves) && 
                     vector_empty(freeze_worklist) && 
@@ -473,24 +463,20 @@ void coalesce(){
             V = check_for_node(v);
 
             if (u == v){
-                printf("Case 1, u: %d, v: %d\n", u, v);
                 set_bit(coalesced_moves, i);
                 add_worklist(u);
 
             } else if (get_bit(precolored, v) || check_edge(U, V)){
-                printf("Case 2, u: %d, v: %d\n", u, v);
                 set_bit(constrained_moves, i);
                 add_worklist(u);
                 add_worklist(v);
             } else if ((get_bit(precolored, u) && (check_adjacent_low_degree(v, U))) ||
                         (!get_bit(precolored, u) && (conservative(u, v)))){
-                printf("Case 3, u: %d, v: %d\n", u, v);
                 set_bit(coalesced_moves, i);
                 combine(u, v);
                 add_worklist(u);
 
             } else {
-                printf("Case 4, u: %d, v: %d\n", u, v);
                 set_bit(active_moves, i);
             }
 
@@ -519,17 +505,14 @@ void select_spill(){
     reg = -1;
     for (int i = 0; i < temps; i++){
         if (get_bit(spill_worklist, i)){
-            printf("Uses of (%d): %d, degree: %d\n", i, uses[i], degree[i]);
             
             temp = uses[i] / (double) degree[i];
             if (reg == -1 || current_best > temp){
                 current_best = temp;
                 reg = i;
             }
-            printf("Value of (%d): %f\n", i, temp);
         }
     }
-    printf("Chose to spill reg: %d\n", reg);
     clear_bit(spill_worklist, reg);
     set_bit(simplify_worklist, reg);
     freeze_moves(reg);
@@ -553,7 +536,6 @@ void decrement_degree(int i){
     degree[i]--;
     d = degree[i];
     if (d == AVAIL_REGS){
-        printf("Decrementing degree for (%d), degree: %d\n", i, degree[i]);
         adj = adjacent(i);
         set_bit(adj, i);
         enable_moves(adj);
@@ -730,7 +712,10 @@ void assign_colors(){
     while (ins != NULL){
         stack_pop(select_stack);
         reg = (int) get_data(ins);
-        printf("Colors adjacent to (%d): ", reg);
+        
+        if (verbose){
+            printf("Colors adjacent to (%d): ", reg);
+        }
 
 
         for (int i = 0; i < AVAIL_REGS; i++){
@@ -740,7 +725,10 @@ void assign_colors(){
         for (int j = 0; j < temps; j++){
             if (get_bit(adj_list[reg], j)){
                 alias = get_alias(j);
-                printf(", %d (%d)", j, alias);
+
+                if (verbose){
+                    printf(", %d (%d)", j, alias);
+                }
 
                 if (get_bit(vector_union(colored_nodes, precolored), alias)){
                     clear_bit(okColors, color[alias]);
@@ -752,13 +740,21 @@ void assign_colors(){
 
         if (vector_empty(okColors)){
             set_bit(spilled_nodes, reg);
-            printf(", Reg is spilled\n");
+            
+            if (verbose){
+                printf(", Reg is spilled\n");
+            }
+
         } else {
             set_bit(colored_nodes, reg);
             for (int n = 0; n < AVAIL_REGS; n++){
                 if (get_bit(okColors, n)){
                     color[reg] = n;
-                    printf(", Colored %d\n", n);
+
+                    if (verbose){
+                        printf(", Colored %d\n", n);
+                    }
+
                     break;
                 }
             }
@@ -771,13 +767,17 @@ void assign_colors(){
     for (int i = 0; i < temps; i++){
         if (get_bit(coalesced_nodes, i)){
             color[i] = color[get_alias(i)];
-            printf("Alias for (%d) = (%d), colored %d\n", i, get_alias(i), color[i]);
+
+            if (verbose){
+                printf("Alias for (%d) = (%d), colored %d\n", i, get_alias(i), color[i]);
+            }
+
         }
     }
 }
 
 a_asm *rewrite_program(a_asm *theprogram){
-    printf("Rewriting program\n");
+    
     struct a_asm *head;
     struct a_asm *tail;
 
@@ -883,10 +883,11 @@ a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp){
         return NULL;
     }
 
+    if (verbose){
         printf("Spilled nodes: ");
-    vector_print(spilled_nodes);
-
-    printf("\n");
+        vector_print(spilled_nodes);
+        printf("\n");
+    }
 
     if (get_bit(spilled_nodes, reg)){
         switch ((*op)->type){

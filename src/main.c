@@ -28,6 +28,7 @@
 #include "liveness_analysis.h"
 
 int lineno;
+extern int verbose = 0;
 
 body *theprogram;
 
@@ -36,6 +37,9 @@ int main(int argc, char **argv)
 	int helpflag = 0;
 	int assemble_flag = 0;
 	int bflag = 0;
+	int printpeep = 0;
+	int prettyprint = 0;
+	
 	char *cvalue = NULL;
 	char *directory = "./";
 	char *filename;
@@ -47,7 +51,7 @@ int main(int argc, char **argv)
 
 	int files[argc];
 
-	while ((c = getopt(argc, argv, "hc:o:a")) != -1)
+	while ((c = getopt(argc, argv, "ho:avmp:")) != -1) //removed "c:"
 	{
 		switch (c)
 		{
@@ -63,9 +67,21 @@ int main(int argc, char **argv)
 			directory = optarg;
 			files[optind - 2] = 1;
 			break;
-		case 'c':
-			filename = get_filename(optarg, ".src");
-			freopen(optarg, "r", stdin);
+		// case 'c':
+		// 	filename = get_filename(optarg, ".src");
+		// 	freopen(optarg, "r", stdin);
+		// 	break;
+		case 'm':
+			printpeep = 1;
+			files[optind - 2] = 1;
+			break;
+		case 'p':
+			prettyprint = atoi(optarg);
+			files[optind - 2] = 1;
+			break;
+		case 'v':
+			verbose = 1;
+			files[optind - 2] = 1;
 			break;
 		case '?':
 			printf("Unknown option, try again.\n");
@@ -99,68 +115,95 @@ int main(int argc, char **argv)
 	lineno = 1;
 	yyparse();
 
-	printf("\nStarting weeder\n\n");
+	if (verbose){
+		printf("\nStarting weeder\n\n");
+	}
+	
 
 	if (theprogram == NULL)
 	{
 		printf("You appear to be missing any function calls\n");
 		return 0;
 	}
-
-	printf("\nAt least one function call\n\n");
 	weeder_init(theprogram);
-	types = 0;
-	//prettyProgram(theprogram);
 
-	printf("\nStarting typechecking\n\n");
+	if (prettyprint == 1){
 
-#if debugflag > 0
-	printf("\nStarting typechecking\n\n");
-#endif
+		types = 0;
+		prettyProgram(theprogram);
+
+	}
+
+	if (verbose){
+		printf("\nStarting typechecking\n\n");
+	}
 
 	typecheck(theprogram);
 
-#if debugflag > 0
-	printf("\nAfter typechecking\n\n");
-#endif
+	if (prettyprint == 2){
+		types = 1;
+		prettyProgram(theprogram);
+	}
 
-	types = 1;
-	prettyProgram(theprogram);
+	if (verbose){
+		printf("\nStarting code generation\n\n");
+	}
 
 	program = generate_program(theprogram);
 
-	printf("Printing asm without peep\n");
+	if (printpeep){
+		if (verbose){	
+			printf("Printing asm without peep\n");
+		}
+		print_asm(program, concat_string(filename, "_nopeep.s"));
 
-	print_asm(program, concat_string(directory, concat_string(filename, "_nopeep.s")));
+	}
 
-	printf("Peepholing\n");
+
+	if (verbose){
+		printf("First peephole\n");
+	}
+
+	
 	peephole(program);
 
-	printf("Printing asm with peep\n");
+	if (printpeep){
+		if (verbose){	
+			printf("Printing asm with peep\n");
+		}
+		print_asm(program, concat_string(filename, "_peep.s"));
 
-	print_asm(program, concat_string(directory, concat_string(filename, "_peep.s")));
+	}
 
-	printf("Starting Register allocation\n");
-	//test_known_program();
+	if (verbose){
+		printf("Starting Liveness analysis and Register allocation\n");
+	}
+	
 	program = reg_alloc(program);
 
-	print_asm(program, concat_string(directory, concat_string(filename, "_a2.s")));
+	if (verbose){
+		printf("Second peephole\n");
+	}
 
 	peephole(program);
 
-	print_asm(program, concat_string(directory, concat_string(filename, "_a3.s")));
+	if (verbose){
+		printf("Outputting final program\n");
+	}
+
+	print_asm(program, concat_string(filename, ".s"));
 
 	if (assemble_flag == 1)
 	{
-		int len = strlen("gcc -o ");
-		char *compile_string[1024];
-		snprintf(compile_string, 1024, "gcc -o %s %s%s_a2.s",filename,directory,filename);
+		// int len = strlen("gcc -o ");
+		// char *compile_string[1024];
+		// snprintf(compile_string, 1024, "gcc -o %s %s%s_a2.s",filename,directory,filename);
 
-		printf("%s\n",compile_string);
-		// system(concat_string("gcc -o ", concat_string(filename,concat_string(" ",
-		// 											  concat_string(directory,
-		// 															concat_string(filename, "_a2.s"))))));
-		system(compile_string);
+		// printf("%s\n",compile_string);
+
+		system(concat_string("gcc -o ", concat_string(filename,concat_string(" ",
+																	concat_string(filename, ".s")))));
+		//system(compile_string);
 	}
 
 	printf("\n");

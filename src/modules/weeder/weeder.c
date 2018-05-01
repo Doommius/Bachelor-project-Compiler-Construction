@@ -63,7 +63,6 @@ function *weed_function(function *func){
 }
 
 head *weed_head(head *head){
-    printf("Weeding head\n");
     head->list = weed_pdl(head->list);
     head->type = weed_type(head->type);
     return head;
@@ -72,7 +71,6 @@ head *weed_head(head *head){
 
 type *weed_type(type *type){
 
-    ////printf("Weeding type\n");
     switch (type->kind){
         case (type_ARRAY):
             type->val.type = weed_type(type->val.type);
@@ -90,7 +88,6 @@ type *weed_type(type *type){
 }
 
 par_decl_list *weed_pdl(par_decl_list *pdl){
-    ////printf("Weeding pdl\n");
     if (pdl->kind == pdl_EMPTY){
         return pdl;
     }
@@ -116,7 +113,6 @@ var_decl_list *weed_vdl(var_decl_list *vdl){
 }
 
 var_type *weed_vtype(var_type *vtype){
-    ////printf("Weeding vtype\n");
 
     vtype->type = weed_type(vtype->type);
     return vtype;
@@ -124,7 +120,6 @@ var_type *weed_vtype(var_type *vtype){
 }
 
 decl_list *weed_dlist(decl_list *dlist){
-    printf("Weeding dlist\n");
     if (dlist->kind == dl_EMPTY){
         //Nothing to do
         return dlist;
@@ -136,7 +131,6 @@ decl_list *weed_dlist(decl_list *dlist){
 }
 
 declaration *weed_decl(declaration *decl){
-    ////printf("Weeding decl\n");
     switch (decl->kind){
 
         case (decl_TYPE):
@@ -211,7 +205,6 @@ statement_list *weed_slist(statement_list *slist){
 }
 
 statement *weed_stmt(statement *stmt){
-    //printf("Weeding statement, kind: %d\n", stmt->kind);
 
     struct function *f;
 
@@ -323,21 +316,15 @@ statement *weed_stmt(statement *stmt){
             stmt->contains_ret = stmt->val.list->contains_ret;
             break;
     }
-
-    //printf("\n");
-    //prettySTMT(stmt);
-    //printf("\n\n");
         
     return stmt;
 
 }
 
 variable *weed_variable(variable *variable){
-    //printf("Weeding variable, kind: %d\n", variable->kind);
     switch (variable->kind){
 
         case (var_ID):
-            //printf("ID of variable: %s\n", variable->id);
             break;
 
 
@@ -360,7 +347,6 @@ variable *weed_variable(variable *variable){
 }
 
 expression *weed_expression(expression *expression){
-    //printf("Weeding expression, kind: %d\n", expression->kind);
 
     struct expression *left_exp;
     struct expression *right_exp;
@@ -373,9 +359,7 @@ expression *weed_expression(expression *expression){
 
 
     if (expression->kind == exp_TERM){
-        //printf("Weeding single term of kind: %d, expression kind: %d\n", expression->val.term->kind, expression->kind);
         expression->val.term = weed_term(expression->val.term);
-        //printf("New term kind: %d\n", expression->val.term->kind);
         return expression;
     }
 
@@ -545,17 +529,14 @@ expression *weed_expression(expression *expression){
     
     if (temp != NULL){
         //We reduced something
-        //printf("Reduced something\n");
         expression->kind = exp_TERM;
         expression->val.term = temp;
-        //printf("Done with expression, new kind: %d\n", expression->val.term->kind);
     }
 
     return expression;
 }
 
 term *weed_term(term *term){
-    //printf("Weeding term, kind: %d\n", term->kind);
     struct expression *e;
 
     switch(term->kind){
@@ -647,7 +628,6 @@ term *weed_term(term *term){
 }
 
 act_list *weed_alist(act_list *alist){
-    //printf("Weeding alist\n");
     if (alist->kind == al_EMPTY){
         return alist;
     }
@@ -657,7 +637,6 @@ act_list *weed_alist(act_list *alist){
 }
 
 exp_list *weed_elist(exp_list *elist){
-    //printf("Weeding elist\n");
 
     elist->expression = weed_expression(elist->expression);
     

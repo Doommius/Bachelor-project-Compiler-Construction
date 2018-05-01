@@ -26,6 +26,18 @@ file to compile
 output directory
 .br
 .br
+.B -m
+output file before peephole optimizaion and after peephole optimization
+.br
+.br
+.B -v
+verbose, outputs statements when starting different modules of the compiler. Also outputs the result of liveness analysis, the graph created in liveness analysis, the inteference graph made in register allocation, process of assigning colors in register allocation and the spilled nodes when the compiler takes care of those
+.br
+.br
+.B -p
+pretty prints the program, 1 for just pretty printing, 2 for types aswell
+.br
+.br
 .B @file
 input file to compile
 .br

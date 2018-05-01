@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "auxiliary.h"
 #include <libgen.h>
+#include <string.h>
 
 int ends_with(char const *str, char const *suffix) {
     size_t l0 = strlen(str);
