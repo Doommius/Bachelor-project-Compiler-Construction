@@ -2,32 +2,25 @@
     .string "%d\n"            # String used for printing integers
 .globl main
 main:                         # Start of body
-    movq $50, %r15            # Moving constant to register
-    movq $1, %r14             # Moving constant to register
-    movq $2, %r13             # Moving constant to register
-    movq $3, %r12             # Moving constant to register
-    movq $4, %r11             # Moving constant to register
-    movq $2, %r10             # Moving constant to register
-    movq $2, %r9              # Moving constant to register
-    movq $2, %r8              # Moving constant to register
-    movq $2, %rdi             # Moving constant to register
-    movq $2, %rdx             # Moving constant to register
-    movq $2, %rcx             # Moving constant to register
-    movq $2, %rbx             # Moving constant to register
-    movq $2, %rsi             # Moving constant to register
-    addq %r15, %r14           # Addition
-    addq %r14, %r13           # Addition
-    addq %r13, %r12           # Addition
-    addq %r12, %r11           # Addition
-    addq %r11, %r10           # Addition
-    addq %r10, %r9            # Addition
-    addq %r9, %r8             # Addition
-    addq %r8, %rdi            # Addition
-    addq %rdi, %rdx           # Addition
-    addq %rdx, %rcx           # Addition
-    addq %rcx, %rbx           # Addition
-    addq %rbx, %rsi           # Addition
-    movq %rsi, %rsi           # Assigning value to var
+    movq $1, %rdx             # Moving constant to register
+    movq $4, %rcx             # Moving constant to register
+loop_start_1:                 # Start of while
+    cmp %rdx, %rcx            # Compare, LT
+    jl cmpTrue_1              # If true, jump to label
+    movq $0, %rbx             # Setting result to 0 (false)
+    jmp endCMP_1              # Jump to after compare label
+cmpTrue_1:                    # Compare true label
+    movq $1, %rbx             # Setting result to 1 (true)
+endCMP_1:                     # After compare label
+    cmp $1, %rbx              # Check if condition in while is true
+    jne loop_end_1            # If condition is false, jump to end
+    movq %rsi, %rsi           # Copy val to new temp, to not harm it
+    movq $1, %rbx             # Moving constant to register
+    addq %rsi, %rbx           # Addition
+    movq %rbx, %rsi           # Assigning value to var
+    jmp loop_start_1          # Jump to start of while
+loop_end_1:                   # End of while
+    movq %rsi, %rsi           # Copy val to new temp, to not harm it
     push %rax                 # Saving value of RAX before printf call
     movq $.wrt_INT, %rdi      # First argument for printf
     movq %rsi, %rsi           # Second argument for printf

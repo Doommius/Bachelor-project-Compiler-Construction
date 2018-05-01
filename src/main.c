@@ -87,13 +87,18 @@ int main(int argc, char **argv) {
     lineno = 1;
     yyparse();
     
-    //printf("\nStarting weeder\n\n");
+    printf("\nStarting weeder\n\n");
+
+	if(theprogram->d_list->list == NULL) {
+		printf("You appear to be missing any function calls\n");
+		return 0;
+	}
     weeder_init(theprogram);
     types = 0;
     //prettyProgram(theprogram);
 
 
-    //printf("\nStarting typechecking\n\n");
+    printf("\nStarting typechecking\n\n");
 
 #if debugflag > 0
     printf("\nStarting typechecking\n\n");

@@ -39,14 +39,15 @@ body *weeder_init(body *program){
 }
 
 body *weed_body(body *body){
-    ////printf("Weeding body\n");
+    printf("Weeding body\n");
     body->d_list = weed_dlist(body->d_list);
+	printf("Weeding statements\n");
     body->s_list = weed_slist(body->s_list);
     return body;
 }
 
 function *weed_function(function *func){
-
+	
     stack_push(function_stack, func);
 
     func->body = weed_body(func->body);
@@ -64,7 +65,7 @@ function *weed_function(function *func){
 }
 
 head *weed_head(head *head){
-    ////printf("Weeding head\n");
+    printf("Weeding head\n");
     head->list = weed_pdl(head->list);
     head->type = weed_type(head->type);
     return head;
@@ -125,7 +126,7 @@ var_type *weed_vtype(var_type *vtype){
 }
 
 decl_list *weed_dlist(decl_list *dlist){
-    ////printf("Weeding dlist\n");
+    printf("Weeding dlist\n");
     if (dlist->kind == dl_EMPTY){
         //Nothing to do
         return dlist;
