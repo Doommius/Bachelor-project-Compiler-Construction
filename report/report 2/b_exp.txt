@@ -6,7 +6,7 @@ extern char *yytext;
 //extern EXP *theexpression;
 extern body *theprogram;
 void yyerror() {
-   printf("syntax error before %s\n",yytext);
+   printf("Syntax error before %s\n",yytext);
 }
 %}
 

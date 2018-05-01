@@ -1,10 +1,13 @@
 # Code generation, realistic example of recursive code
+var a : int;
 func factorial(n: int): int
-   if (n == 0) || (n == 1) then
-      return n;
-   else
-      return n * factorial(n-1);
+{
+   write a;
+   return n * a;
+}
 end factorial
+
+a = 2;
 
 
 write factorial(5);

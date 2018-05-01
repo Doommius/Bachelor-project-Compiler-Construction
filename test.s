@@ -4,22 +4,25 @@
 main:
     push %rbp
     movq %rsp, %rbp
-    push %r15
+    subq $16, %rsp
+    movq $2, %rax
+    movq %rax, -8(%rbp)
+    movq $16, 0(%rbp)
+    movq %rbp, %rbx
+    subq $8, %rbx
 
-    movq $5, %rax
-    movq $2, %rdx
-    imul %rdx
+    
 
     
 
     movq $.wrt_INT, %rdi      # First argument for printf
-    movq %rdx, %rsi           # Second argument for printf
+    movq 8(%rsp), %rsi           # Second argument for printf
     movq $0, %rax             # No vector arguments
     call printf               # Calling printf
    
     movq $0, %rax             # Return "no error" exit code
 
-    pop %r15
+    addq $16, %rsp
     movq %rbp, %rsp
     pop %rbp
     ret                       # Program return

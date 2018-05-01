@@ -12,7 +12,7 @@ extern char *yytext;
 extern body *theprogram;
 extern int lineno;
 void yyerror() {
-   printf("syntax error before %s at line %d\n",yytext, lineno);
+   printf("Syntax error before %s at line %d\n",yytext, lineno);
 }
 %}
 
