@@ -86,13 +86,13 @@ int main(int argc, char **argv) {
 
     lineno = 1;
     yyparse();
-    
-    printf("\nStarting weeder\n\n");
 
-	if(theprogram->d_list->list == NULL) {
+
+	if(theprogram == NULL) {
 		printf("You appear to be missing any function calls\n");
 		return 0;
 	}
+
     weeder_init(theprogram);
     types = 0;
     //prettyProgram(theprogram);

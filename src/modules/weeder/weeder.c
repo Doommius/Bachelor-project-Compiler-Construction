@@ -39,9 +39,7 @@ body *weeder_init(body *program){
 }
 
 body *weed_body(body *body){
-    printf("Weeding body\n");
     body->d_list = weed_dlist(body->d_list);
-	printf("Weeding statements\n");
     body->s_list = weed_slist(body->s_list);
     return body;
 }
