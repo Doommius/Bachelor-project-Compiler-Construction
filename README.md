@@ -38,6 +38,17 @@ For compiler:
 ./compiler
 ```
 
+Ideal run:
+
+```bash
+./compiler -c <filename> -o <output-directory | ./out/ > -a
+```
+
+or
+```bash
+./compiler <filename> -o <output-directory | ./out/ > -a
+```
+
 For tests:
 
 ```bash

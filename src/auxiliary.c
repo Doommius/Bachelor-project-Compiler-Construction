@@ -8,14 +8,34 @@
 
 #include <stdlib.h>
 #include "auxiliary.h"
+#include <libgen.h>
 
 int ends_with(char const *str, char const *suffix) {
     size_t l0 = strlen(str);
     size_t l1 = strlen(suffix);
 
     if (l0 < l1) {
-		return 0;
-	}
+        return 0;
+    }
 
     return strcmp(str + l0 - l1, suffix) == 0;
+}
+
+char *get_filename(char const *str, char const *suffix) {
+    char *base = basename(str);
+    return remove_suffix(base, suffix);
+}
+
+char *remove_suffix(char const *str, char const *suffix) {
+    char *result = malloc(strlen(str) - strlen(suffix));
+    memcpy(result, str, strlen(str)- strlen(suffix));
+    return result;
+}
+
+char *concat_string(char const *prefix, char const *suffix) {
+    char *result = malloc(strlen(prefix) + strlen(suffix) + 1);
+
+    strcpy(result, prefix);
+    strcat(result, suffix);
+    return result;
 }
