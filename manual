@@ -23,7 +23,7 @@ file to compile
 .br
 .br
 .B -o
-output directory
+[@output directory | ./ ]
 .br
 .br
 .B -m
@@ -35,7 +35,7 @@ verbose, outputs statements when starting different modules of the compiler. Als
 .br
 .br
 .B -p
-pretty prints the program, 1 for just pretty printing, 2 for types aswell
+[ 1 | 2 ] pretty prints the program, 1 for just pretty printing, 2 for types aswell
 .br
 .br
 .B @file

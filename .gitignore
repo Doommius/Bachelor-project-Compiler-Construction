@@ -14,8 +14,10 @@ exp
 *.tab.h
 lex.yy.c
 tests/exp
+out/
 .vscode
 y.output
+*.out
 
 # checkwrap
 # execwrap

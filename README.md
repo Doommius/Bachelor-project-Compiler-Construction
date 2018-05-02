@@ -8,12 +8,12 @@
 
 ## TODO
 
-Properly resolve recursive static link
-Create code generation for lists, records and allocate statement
-Fix conflicts in parser
-Implement "for" loop in grammar
-Runtime error checks
-More peephole optimization
+* Properly resolve recursive static link
+* Create code generation for lists, records and allocate statement
+* Fix conflicts in parser
+* Implement "for" loop in grammar
+* Runtime error checks
+* More peephole optimization
 
 ## How to run
 
@@ -50,10 +50,11 @@ For compiler:
 Ideal run:
 
 ```bash
-./compiler <filename> 
+./compiler <filename>
 ```
 
 Compile program and create executable:
+
 ```bash
 ./compiler -a <filename>
 ```
