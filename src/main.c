@@ -188,7 +188,7 @@ int main(int argc, char **argv) {
         // snprintf(compile_string, 1024, "gcc -o %s %s%s_a2.s",filename,directory,filename);
 
         // printf("%s\n",compile_string);
-		char* compile_string = concat_string("gcc -shared -fPIC -o ", filename);
+		char* compile_string = concat_string("gcc -no-pie -o", filename);
 		compile_string = concat_string(compile_string, " ");
 		compile_string = concat_string(compile_string, directory);
 		compile_string = concat_string(compile_string, filename);
