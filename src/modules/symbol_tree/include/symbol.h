@@ -25,6 +25,7 @@ typedef struct SYMBOL {
     struct symbol_type *stype;
     struct asm_op *op;
     int offset;
+    int is_on_stack;
 } SYMBOL;
 
 typedef struct symbol_table {

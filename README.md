@@ -8,7 +8,6 @@
 
 ## TODO
 
-* Properly resolve recursive static link
 * Create code generation for lists, records and allocate statement
 * Fix conflicts in parser
 * Implement "for" loop in grammar

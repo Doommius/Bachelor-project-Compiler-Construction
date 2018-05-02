@@ -193,7 +193,7 @@ int main(int argc, char **argv) {
 		compile_string = concat_string(compile_string, directory);
 		compile_string = concat_string(compile_string, filename);
 		compile_string = concat_string(compile_string, ".s");
-		printf("\n%s\n",compile_string);
+		//printf("\n%s\n",compile_string);
 		system(compile_string);
     }
 

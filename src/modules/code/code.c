@@ -254,12 +254,14 @@ a_asm *generate_vdl(var_decl_list *vdl, int *offset, int args){
 		//Use "least used" reg to place parameter in
 		target = get_corresponding_reg(AVAIL_REGS - (*offset));
 		s->offset = 0;
+		s->is_on_stack = 0;
 		s->op = make_op_temp();
 		add_2_ins(&head, &tail, MOVQ, target, s->op, "Move parameter to register in function");
 
 	} else {
 		//Have to add 2, since one place is for static link, and one is for pushing of base pointer in new function
-		s->offset = ((*offset) +2 ) * -1;
+		s->is_on_stack = 1;
+		s->offset = ((*offset)+2) * -1;
 	}
 	
 	(*offset)++;
@@ -548,7 +550,7 @@ a_asm *generate_var(variable *var){
 			
 			//If depth == 0, local variable, no need to check the static link
 			if (depth == 0){
-				if (s->offset == 0){
+				if (!s->is_on_stack){
 					v = s->op;
 					add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
 				} else {
@@ -565,13 +567,13 @@ a_asm *generate_var(variable *var){
 				depth--;
 
 				while (depth > 0){
-					temp = make_op_stack_loc(0, &static_link);
+					temp = make_op_stack_loc(-2, &static_link);
 					static_link = make_op_temp();
 					add_2_ins(&head, &tail, MOVQ, temp, static_link, "Copying static link");
 					depth--;
 
 				}
-				v = make_op_stack_loc(1+(s->offset), &static_link);
+				v = make_op_stack_loc((s->offset), &static_link);
 
 				add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
 
@@ -903,7 +905,6 @@ a_asm *generate_term(term *term){
 				printf("Non-recursive function: %s, depth: %d\n", term->val.list.id, depth);
 
 				add_2_ins(&head, &tail, MOVQ, reg_RBP, static_link, "Setting address wanted for static link");
-				add_2_ins(&head, &tail, ADDQ, make_op_const(8), static_link, "Adding offset of 8 to static link");
 				add_1_ins(&head, &tail, PUSH, static_link, "Storing static link for function");
 
 			} else {
@@ -1184,7 +1185,7 @@ int local_init(decl_list *dlist){
 	int offset;
 	vars = 0;
 	contains_function = 0;
-	offset = 1;
+	offset = 0;
 
 	d_temp = dlist;
 
@@ -1209,6 +1210,7 @@ int local_init(decl_list *dlist){
 					s = get_symbol(dlist->table, v_temp->vartype->id);
 					printf("Setting offset of %s to %d\n", s->name, offset);
 					s->offset = offset;
+					s->is_on_stack = 1;
 					offset++;
 					v_temp = v_temp->list;
 				}
@@ -1225,6 +1227,8 @@ int local_init(decl_list *dlist){
 			while (v_temp != NULL){
 				s = get_symbol(dlist->table, v_temp->vartype->id);
 				s->op = make_op_temp();
+				s->is_on_stack = 0;
+				
 				v_temp = v_temp->list;
 				vars++;
 			}

@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 #define AVAIL_REGS 14
-#define PLACE_IN_REGS 2
+#define PLACE_IN_REGS 0
 
 //Register allocation implementation based on the implementation in the book, page 249-256
 
