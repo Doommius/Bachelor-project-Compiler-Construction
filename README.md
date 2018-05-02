@@ -50,10 +50,11 @@ For compiler:
 Ideal run:
 
 ```bash
-./compiler <filename> 
+./compiler <filename>
 ```
 
 Compile program and create executable:
+
 ```bash
 ./compiler -a <filename>
 ```
