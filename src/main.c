@@ -50,8 +50,7 @@ int main(int argc, char **argv) {
 
     int files[argc];
 
-    while ((c = getopt(argc, argv, "ho:avmp:")) != -1) //removed "c:"
-    {
+    while ((c = getopt(argc, argv, "ho:avmp:")) != -1) {
         switch (c) {
         case 'h':
             helpflag = 1;
@@ -63,7 +62,7 @@ int main(int argc, char **argv) {
             break;
         case 'o':
             directory = optarg;
-			files[optind - 3] = 1;
+            files[optind - 3] = 1;
             files[optind - 2] = 1;
             break;
         // case 'c':
@@ -76,7 +75,7 @@ int main(int argc, char **argv) {
             break;
         case 'p':
             prettyprint = atoi(optarg);
-			files[optind - 3] = 1;
+            files[optind - 3] = 1;
             files[optind - 2] = 1;
             break;
         case 'v':
@@ -90,6 +89,7 @@ int main(int argc, char **argv) {
             abort();
         }
     }
+
     if (helpflag) {
         system("man ./manual");
         return 0;
@@ -102,6 +102,7 @@ int main(int argc, char **argv) {
                 if (ends_with(argv[i], ".src")) {
                     filename = get_filename(argv[i], ".src");
                     freopen(argv[i], "r", stdin);
+                    break;
                 }
             }
         }
@@ -147,7 +148,7 @@ int main(int argc, char **argv) {
         if (verbose) {
             printf("Printing asm without peep\n");
         }
-        print_asm(program, concat_string(filename, "_nopeep.s"));
+        print_asm(program, concat_string(directory, concat_string(filename, "_nopeep.s")));
     }
 
     if (verbose) {
@@ -160,7 +161,7 @@ int main(int argc, char **argv) {
         if (verbose) {
             printf("Printing asm with peep\n");
         }
-        print_asm(program, concat_string(filename, "_peep.s"));
+        print_asm(program, concat_string(directory, concat_string(filename, "_peep.s")));
     }
 
     if (verbose) {
@@ -179,7 +180,7 @@ int main(int argc, char **argv) {
         printf("Outputting final program\n");
     }
 
-    print_asm(program, concat_string(filename, ".s"));
+    print_asm(program, concat_string(directory, concat_string(filename, ".s")));
 
     if (assemble_flag == 1) {
         // int len = strlen("gcc -o ");
@@ -187,10 +188,13 @@ int main(int argc, char **argv) {
         // snprintf(compile_string, 1024, "gcc -o %s %s%s_a2.s",filename,directory,filename);
 
         // printf("%s\n",compile_string);
-
-        system(concat_string("gcc -o ", concat_string(filename, concat_string(" ",
-                                                                              concat_string(filename, ".s")))));
-        //system(compile_string);
+		char* compile_string = concat_string("gcc -shared -fPIC -o ", filename);
+		compile_string = concat_string(compile_string, " ");
+		compile_string = concat_string(compile_string, directory);
+		compile_string = concat_string(compile_string, filename);
+		compile_string = concat_string(compile_string, ".s");
+		printf("\n%s\n",compile_string);
+		system(compile_string);
     }
 
     printf("\n");
