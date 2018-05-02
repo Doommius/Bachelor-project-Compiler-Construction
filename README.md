@@ -48,12 +48,12 @@ For compiler:
 Ideal run:
 
 ```bash
-./compiler -c <filename> -o <output-directory | ./out/ > -a
+./compiler <filename> 
 ```
 
-or
+Compile program and create executable:
 ```bash
-./compiler <filename> -o <output-directory | ./out/ > -a
+./compiler -a <filename>
 ```
 
 For tests:
