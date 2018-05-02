@@ -153,7 +153,7 @@ int main(int argc, char **argv)
 
 	if (printpeep){
 		if (verbose){	
-			printf("Printing asm without peep\n");
+			printf("Printing asm before first peephole\n");
 		}
 		print_asm(program, concat_string(filename, "_nopeep.s"));
 
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 
 	if (printpeep){
 		if (verbose){	
-			printf("Printing asm with peep\n");
+			printf("Printing asm after first peephole\n");
 		}
 		print_asm(program, concat_string(filename, "_peep.s"));
 
@@ -181,9 +181,19 @@ int main(int argc, char **argv)
 	
 	program = reg_alloc(program);
 
+	
+	if (printpeep){
+		if (verbose){	
+			printf("Printing asm after Resiter allocation, but before second peephole\n");
+		}
+		print_asm(program, concat_string(filename, "_alloc_nopeep.s"));
+
+	}
+
 	if (verbose){
 		printf("Second peephole\n");
 	}
+
 
 	peephole(program);
 

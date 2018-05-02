@@ -114,7 +114,7 @@ void init_regs(){
 
 	op_STATIC_LINK = NEW(asm_op);
 	op_STATIC_LINK->type = op_LABEL;
-	op_STATIC_LINK->val.label_id = "8(%rbp)";
+	op_STATIC_LINK->val.label_id = "16(%rbp)";
 
 	
 
@@ -258,10 +258,12 @@ a_asm *generate_vdl(var_decl_list *vdl, int *offset, int args){
 		add_2_ins(&head, &tail, MOVQ, target, s->op, "Move parameter to register in function");
 
 	} else {
-		s->offset = -8*(*offset);
+		//Have to add 2, since one place is for static link, and one is for pushing of base pointer in new function
+		s->offset = ((*offset) +2 ) * -1;
 	}
-
+	
 	(*offset)++;
+	
 	printf("Offset of var: %s = %d\n", s->name, s->offset);
 	if ( vdl->kind == vdl_LIST && vdl->list != NULL){
 		l = generate_vdl(vdl->list, offset, args);
@@ -569,7 +571,7 @@ a_asm *generate_var(variable *var){
 					depth--;
 
 				}
-				v = make_op_stack_loc((s->offset), &static_link);
+				v = make_op_stack_loc(1+(s->offset), &static_link);
 
 				add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
 
@@ -850,7 +852,7 @@ a_asm *generate_term(term *term){
 		case (term_VAR):
 			v = generate_var(term->val.variable);
 			asm_insert(&head, &tail, &v);
-			target = v->val.two_op.op2;
+			target = get_return_reg(tail);
 			add_2_ins(&head, &tail, MOVQ, target, make_op_temp(), "Copy val to new temp, to not harm it");
 			break;
 
@@ -1084,7 +1086,7 @@ void asm_insert_one(a_asm **head, a_asm **tail, a_asm **next){
 
 	} else {
 		(*next)->prev = *tail;
-		(*tail)->new = *next;
+		(*tail)->next = *next;
 		(*tail) = *next;
 	}
 }
@@ -1363,16 +1365,3 @@ asm_op *make_op_stack_loc(int offset, asm_op **reg){
 
 }
 
-
-void add_simple_start(a_asm **head, a_asm **tail){
-	add_1_ins(head, tail, PUSH, reg_RBP, "Pushing base pointer");
-	add_2_ins(head, tail, MOVQ, reg_RSP, reg_RBP, "Making stack pointer new base pointer");
-
-}
-
-void add_simple_end(a_asm **head, a_asm **tail){
-
-	add_2_ins(head, tail, MOVQ, reg_RBP, reg_RSP, "Restoring stack pointer");
-	add_1_ins(head, tail, POP, reg_RBP, "Restoring base pointer");
-
-}

@@ -6,6 +6,13 @@
     Mark Jervelund          (mjerv15)
     Morten Kristian Jæger   (mojae15)
 
+##TODO
+
+Properly resolve recursive static link
+Create code generation for lists, records and allocate statement
+Fix conflicts in parser
+Implement "for" loop in grammar
+
 ## How to run
 
 ### Compile entire project

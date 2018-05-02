@@ -57,6 +57,7 @@ void create_asm(a_asm *head){
 
             case (RET):
                 create_ins("ret", "", head->comment);
+                fprintf(out, "\n");
                 break;
 
             case (LABEL):
@@ -216,7 +217,7 @@ void get_opt(asm_op *op, char *dest){
 
         case (op_STACK_LOC):
             get_opt(op->val.stack.reg, reg);
-            sprintf(dest, "-%d(%s)", 8 * op->val.stack.offset, reg);
+            sprintf(dest, "%d(%s)", -8 * op->val.stack.offset, reg);
             break;
         
 
