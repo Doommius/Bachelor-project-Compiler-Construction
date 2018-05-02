@@ -6,7 +6,7 @@
     Mark Jervelund          (mjerv15)
     Morten Kristian Jæger   (mojae15)
 
-##TODO
+## TODO
 
 Properly resolve recursive static link
 Create code generation for lists, records and allocate statement
