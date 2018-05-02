@@ -6,6 +6,15 @@
     Mark Jervelund          (mjerv15)
     Morten Kristian Jæger   (mojae15)
 
+## TODO
+
+Properly resolve recursive static link
+Create code generation for lists, records and allocate statement
+Fix conflicts in parser
+Implement "for" loop in grammar
+Runtime error checks
+More peephole optimization
+
 ## How to run
 
 ### Compile entire project
@@ -41,12 +50,12 @@ For compiler:
 Ideal run:
 
 ```bash
-./compiler -c <filename> -o <output-directory | ./out/ > -a
+./compiler <filename> 
 ```
 
-or
+Compile program and create executable:
 ```bash
-./compiler <filename> -o <output-directory | ./out/ > -a
+./compiler -a <filename>
 ```
 
 For tests:

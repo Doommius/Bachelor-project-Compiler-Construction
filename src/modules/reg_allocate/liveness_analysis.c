@@ -104,6 +104,19 @@ void set_use_def(a_asm *op){
             //CALL defines RAX, since thats where the return value will be placed
             set_bit(def, 0);
             
+
+            //Special case for "printf"
+            if (strcmp(op->val.one_op.op->val.label_id, "printf") == 0){
+                set_bit(use, 0);
+                set_bit(use, 4);
+                set_bit(use, 5);
+
+                set_bit(def, 0);
+                set_bit(def, 2);
+                set_bit(def, 3);
+                break;
+            }
+
             //If passing less than PLACE_IN_REGS arguments, define those registers as used
             if (op->func_args <= PLACE_IN_REGS){
                 for (int i = 0; i < op->func_args; i++){
