@@ -9,8 +9,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include "error.h"
+#include "auxiliary.h"
 
 void print_error(char *error, int code, int line){
     fprintf(stderr, "%s at line %d\n", error, line);
     exit(code);
+}
+
+char* long_error(char* front, char* middle, char* back) {
+	front = concat_string(front, middle);
+	return concat_string(front, back);
 }

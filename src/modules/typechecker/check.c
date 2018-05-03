@@ -6,6 +6,7 @@
 #include "error.h"
 #include "symbol.h"
 #include "pickup.h"
+#include "auxiliary.h"
 
 
 void check_body(body *body){
@@ -135,14 +136,14 @@ void check_var(variable *var){
 #if debugflag > 2
     printf("Checking variable, kind: %d\n", var->kind);
 #endif
-
     SYMBOL *s;
     switch (var->kind){
 
         case (var_ID):
             s = get_symbol(var->table, var  ->id);
             if (s == NULL){
-                print_error("Symbol not defined", 0, var->lineno);
+				error_msg = long_error("Symbol '", var->id, "' not defined");
+                print_error(error_msg, 0, var->lineno);
             }
             var->stype = s->stype;
             break;
@@ -162,7 +163,8 @@ void check_var(variable *var){
         case (var_RECORD):
             check_var(var->val.record.var);
             if (var->val.record.var->stype->type != symbol_RECORD){
-                print_error("Variable is not an record", 0, var->lineno);
+				error_msg = long_error("Variable '", var->id, "' is not a record");
+                print_error(error_msg, 0, var->lineno);
             }
             s = get_symbol(var->val.record.var->stype->val.record_type->table, var->val.record.id);
             if (s == NULL){
@@ -328,7 +330,8 @@ void check_term(term *term){
             check_alist(term->val.list.list);
             s = get_symbol(term->table, term->val.list.id);
             if (s == NULL || s->stype->type != symbol_FUNCTION){
-                print_error("Reference to function that does not exists", 0, term->lineno);
+				error_msg = long_error("Reference to function '", term->val.list.id, "', which does not exist");
+                print_error(error_msg, 0, term->lineno);
             }
             check_function_args(s->stype->val.func_type.pdl, term->val.list.list);
             term->stype = s->stype->val.func_type.ret_type->stype;

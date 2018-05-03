@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 
 	int files[argc];
 
-	while ((c = getopt(argc, argv, "ho:av:mp:")) != -1) {
+	while ((c = getopt(argc, argv, "ho:avmp:")) != -1) {
 		switch (c) {
 		case 'h':
 			helpflag = 1;
