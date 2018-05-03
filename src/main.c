@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 
 	int files[argc];
 
-	while ((c = getopt(argc, argv, "ho:avmp:")) != -1) {
+	while ((c = getopt(argc, argv, "ho:av:mp:")) != -1) {
 		switch (c) {
 		case 'h':
 			helpflag = 1;
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 			break;
 		case 'o':
 			directory = optarg;
-			files[optind - 3] = 1;
+			files[optind - 1] = 1;
 			files[optind - 2] = 1;
 			break;
 		case 'm':
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 			break;
 		case 'p':
 			prettyprint = atoi(optarg);
-			files[optind - 3] = 1;
+			files[optind - 1] = 1;
 			files[optind - 2] = 1;
 			break;
 		case 'v':
@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
 	printf("Num opts: %i, Num args: %i\n", optind, argc);
 	if (optind < argc) {
 		for (int i = 1; i < argc; ++i) {
-			if (files[i] == 0) {
+			if (files[i] != 1) {
 				if (ends_with(argv[i], ".src")) {
 					filename = get_filename(argv[i], ".src");
 					freopen(argv[i], "r", stdin);
