@@ -2,17 +2,20 @@
 # multiple static links must be followed in sequence
 func func1() : int
   func func2() : int
-    write i;
-    return n*2;
+    func func3() : int
+    {
+      i = 10;
+      return 5;
+    }
+    end func3
+  return func3();
   end func2
-  
-  var n : int;
-  n = 2;
-  return func2();
-
+return func2();
 end func1
 
 var i : int;
 
 i = 0;
+write i;
 write func1();
+write i;
