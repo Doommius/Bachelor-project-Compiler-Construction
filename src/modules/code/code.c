@@ -370,6 +370,24 @@ a_asm *generate_stmt(statement *stmt){
 
 	switch (stmt->kind){
 
+		//Records
+		case (statement_ALLOCATE):
+
+
+
+			break;
+			
+		//Arrays
+		case (statement_ALLOCATE_LENGTH):
+			expr = generate_exp(stmt->val.allocate.length);
+			asm_insert(&head, &tail, &expr);
+			ret = get_return_reg(tail);
+
+			//Insert RTC failure label to check if length <= 0
+
+
+			break;
+
 		case (statement_RETURN):
 			expr = generate_exp(stmt->val.ret);
 			asm_insert(&head, &tail, &expr);
@@ -498,12 +516,6 @@ a_asm *generate_stmt(statement *stmt){
 			asm_insert(&head, &tail, &s1);
 			add_1_ins(&head, &tail, JMP, make_op_label(label_loop_start), "Jump to start of while");
 			add_label(&head, &tail, label_loop_end, "End of while");
-			break;
-
-		case (statement_ALLOCATE):
-			break;
-
-		case (statement_ALLOCATE_LENGTH):
 			break;
 
 		case (statement_LIST):
@@ -711,7 +723,6 @@ a_asm *generate_exp(expression *exp){
 			add_2_ins(&head, &tail, ADDQ, left_target, right_target, "Addition");
 			break;
 		
-		//Should probably be changed
 		case (exp_MIN):
 			add_2_ins(&head, &tail, SUBQ, right_target, left_target, "Subtraction");
 			break;
