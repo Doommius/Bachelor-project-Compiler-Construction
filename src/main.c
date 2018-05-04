@@ -50,37 +50,50 @@ int main(int argc, char **argv) {
 
 	int files[argc];
 
-	while ((c = getopt(argc, argv, "ho:avmp:")) != -1) {
+	while ((c = getopt(argc, argv, "ho:avnp:m:")) != -1) {
 		switch (c) {
 		case 'h':
 			helpflag = 1;
 			files[optind - 2] = 1;
 			break;
+
 		case 'a':
 			assemble_flag = 1;
 			files[optind - 2] = 1;
 			break;
+
 		case 'o':
 			directory = optarg;
 			files[optind - 1] = 1;
 			files[optind - 2] = 1;
 			break;
-		case 'm':
+
+        case 'm':
+			memSize = atoi(optarg);
+			files[optind - 1] = 1;
+			files[optind - 2] = 1;
+			break;
+
+		case 'n':
 			printpeep = 1;
 			files[optind - 2] = 1;
 			break;
+
 		case 'p':
 			prettyprint = atoi(optarg);
 			files[optind - 1] = 1;
 			files[optind - 2] = 1;
 			break;
+
 		case 'v':
 			verbose = 1;
 			files[optind - 2] = 1;
 			break;
+
 		case '?':
 			printf("Unknown option, try again.\n");
 			return 1;
+            
 		default:
 			abort();
 		}

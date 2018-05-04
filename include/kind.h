@@ -99,7 +99,7 @@ typedef enum {
 typedef enum { op_INTCONST,
                op_REGISTER,
                op_STACK_LOC,
-               op_HEAP_LOC,
+               op_MEM_LOC,
                op_LABEL,
                op_CONST,
 

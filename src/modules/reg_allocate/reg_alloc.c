@@ -259,6 +259,9 @@ int get_reg(asm_op *op){
     if (op->type == op_STACK_LOC){
         return get_reg(op->val.stack.reg);
     }
+    if (op->type == op_MEM_LOC){
+        return get_reg(op->val.mem_index_reg);
+    }
     //Would be nice with a switch, but you can't switch on a pointer
     if (op->type == op_REGISTER){
 
@@ -895,6 +898,9 @@ a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp){
                 target = &(*op)->val.stack.reg;
                 break;
 
+            case (op_MEM_LOC):
+                target = &(*op)->val.mem_index_reg;
+                break;
 
             case (op_TEMP):
                 target = op;
@@ -934,6 +940,9 @@ a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp){
 
 void replace_temp_op(asm_op **op, asm_op *replacer){
     switch ((*op)->type){
+
+        case (op_STACK_LOC):
+            
 
         case (op_TEMP):
             (*op) = replacer;

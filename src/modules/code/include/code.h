@@ -7,6 +7,7 @@
 
 
 extern int temps;
+extern int memSize; 
 
 //Abstract assembly node, with a build in linked list.
 //To be expanded
@@ -65,6 +66,7 @@ typedef struct asm_op {
 			struct asm_op *reg;
 			int offset;
 		} stack;
+		struct asm_op *mem_index_reg;
 		int intconst;
 	} val;
 	
@@ -125,6 +127,8 @@ asm_op *make_op_temp();
 asm_op *make_op_label(char *label);
 
 asm_op *make_op_stack_loc(int offset, asm_op **reg);
+
+asm_op *make_op_mem_loc(asm_op *index_reg);
 
 asm_op *make_op_spill();
 
@@ -195,6 +199,8 @@ struct asm_op *wrt_TRUE;
 struct asm_op *wrt_FALSE;
 
 struct asm_op *op_STATIC_LINK;
+
+struct asm_op *op_MEM;
 
 
 

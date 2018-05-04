@@ -83,6 +83,9 @@ int cmp_ops(asm_op *op1, asm_op *op2){
             return cmp_ops(op1->val.stack.reg, op2->val.stack.reg);
             break;
 
+        case (op_MEM_LOC):
+            return cmp_ops(op1->val.mem_index_reg, op2->val.mem_index_reg);
+
         case (op_SPILL):
             if (op1 == op2){
                 return 1;

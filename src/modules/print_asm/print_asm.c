@@ -24,13 +24,19 @@ int print_asm(a_asm *head, char *file){
 
 void create_asm(a_asm *head){
 
-    //Should probably make a check to see if we even use this label
+    char mem[24];
+    sprintf(mem, "MEM, %d", 8*memSize);
+
+    //TODO Insert check to see what labels we actually use, instead of including everything
     create_label(".wrt_INT", "Integer write label");
     create_ins(".string", "\"%d\\n\"", "String used for printing integers");
     create_label(".wrt_TRUE", "TRUE write label");
     create_ins(".string", "\"TRUE\\n\"", "String used to print TRUE");
     create_label(".wrt_FALSE", "FALSE write label");
     create_ins(".string", "\"FALSE\\n\"", "String used for printing FALSE");
+
+    create_ins(".comm", mem, "Available memory");
+
     fprintf(out, ".globl main\n");
     while (head != NULL){
         switch (head->ins){
@@ -218,6 +224,11 @@ void get_opt(asm_op *op, char *dest){
         case (op_STACK_LOC):
             get_opt(op->val.stack.reg, reg);
             sprintf(dest, "%d(%s)", -8 * op->val.stack.offset, reg);
+            break;
+
+        case (op_MEM_LOC):
+            get_opt(op->val.mem_index_reg, reg);
+            sprintf(dest, "MEM(%s)", reg);
             break;
         
 

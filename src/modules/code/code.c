@@ -19,6 +19,8 @@
 #include "rewriter.h"
 
 extern int temps = AVAIL_REGS; 					//The predefined registers will be the first values in the bitvectors
+extern int memSize = 1000;
+
 int cmps = 1;
 int ifs = 1;
 int loops = 1;
@@ -115,6 +117,10 @@ void init_regs(){
 	op_STATIC_LINK = NEW(asm_op);
 	op_STATIC_LINK->type = op_LABEL;
 	op_STATIC_LINK->val.label_id = "16(%rbp)";
+
+	op_MEM = NEW(asm_op);
+	op_MEM->type = op_LABEL;
+	op_MEM->val.label_id = "MEM";
 
 	
 
@@ -360,6 +366,7 @@ a_asm *generate_stmt(statement *stmt){
 	struct a_asm *s1;
 	struct a_asm *s2;
 	struct a_asm *v;
+	struct a_asm *mem_op;
 
 	struct asm_op *wrt;
 	struct asm_op *ret;
@@ -383,7 +390,26 @@ a_asm *generate_stmt(statement *stmt){
 			asm_insert(&head, &tail, &expr);
 			ret = get_return_reg(tail);
 
+
 			//Insert RTC failure label to check if length <= 0
+
+			mem_op = make_op_temp();
+			add_2_ins(&head, &tail, MOVQ, op_MEM, mem_op, "Move pointer to MEM to another register");
+			
+			add_2_ins(&head, &tail, MOVQ, ret, make_op_mem_loc(mem_op), "Move allocated length to mem location");
+
+			v = generate_var(stmt->val.allocate.variable);
+			var = get_return_reg(tail);
+
+			add_2_ins(&head, &tail, MOVQ, mem_op, var, "Move mem location to variable");
+			
+			add_2_ins(&head, &tail, ADDQ, mem_op, ret, "Add length of array to mem register");
+
+			//Insert RTC failure label to check if length if larger than memSize
+
+			add_2_ins(&head, &tail, MOVQ, ret, op_MEM, "Update mem pointer");
+
+			add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
 
 
 			break;
@@ -522,12 +548,6 @@ a_asm *generate_stmt(statement *stmt){
 			s1 = generate_slist(stmt->val.list);
 			asm_insert(&head, &tail, &s1);
 			break;
-		
-
-
-
-
-
 
 		default:
 			break;
@@ -542,9 +562,14 @@ a_asm *generate_var(variable *var){
 	struct a_asm *head;
     struct a_asm *tail;
 
+	struct a_asm *expr;
+	struct a_asm *variable;
+
 	struct asm_op *v;
 	struct asm_op *temp;
 	struct asm_op *static_link;
+	struct asm_op *ret;
+	struct asm_op *mem;
 
 	int depth;
 	head = NULL;
@@ -596,7 +621,22 @@ a_asm *generate_var(variable *var){
 			break;
 
 		case (var_EXP):
+			expr = generate_exp(var->val.exp.exp);
+			asm_insert(&head, &tail, &expr);
+			ret = get_return_reg(tail);
 
+			variable = generate_var(var->val.exp.var);
+			asm_insert(&head, &tail, &variable);
+			v = get_return_reg(tail);
+			
+			//Insert RTC failure label to check if array is initialized, if index is larger than the array's size, and if index is smaller than 0
+			temp = make_op_temp();
+			add_2_ins(&head, &tail, MOVQ, ret, temp, "Copy val to new temp to not harm it");
+
+			add_2_ins(&head, &tail, ADDQ, var, temp, "Adding index to start of array");
+
+			mem = make_op_mem_loc(temp);
+			add_2_ins(&head, &tail, MOVQ, mem, mem, "Used to get target for next instruction");
 			break;
 
 		case (var_RECORD):
@@ -1357,6 +1397,15 @@ void make_loop_start_label(char *buffer){
 void make_loop_end_label(char *buffer){
 	sprintf(buffer, "loop_end_%d", loops-1);
 
+}
+
+asm_op *make_op_mem_loc(asm_op *index_reg){
+
+	struct asm_op *op;
+	op = NEW(asm_op);
+
+	op->type = op_MEM_LOC;
+	op->val.mem_index_reg = index_reg;
 }
 
 asm_op *make_op_stack_loc(int offset, asm_op **reg){

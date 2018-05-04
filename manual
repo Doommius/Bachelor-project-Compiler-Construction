@@ -26,7 +26,7 @@ file to compile
 [@output directory | ./ ]
 .br
 .br
-.B -m
+.B -n
 output file before peephole optimizaion and after peephole optimization
 .br
 .br
@@ -36,6 +36,10 @@ verbose, outputs statements when starting different modules of the compiler. Als
 .br
 .B -p
 [ 1 | 2 ] pretty prints the program, 1 for just pretty printing, 2 for types aswell
+.br
+.br
+.B -m
+set amount of memory the program is allowed to use. The value given will be multiplied with 8 when allocating the storage
 .br
 .br
 .B @file
