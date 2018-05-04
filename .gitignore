@@ -8,6 +8,7 @@ compiler
 symboltable
 programtest
 exp
+link
 *.o
 
 *.tab.c

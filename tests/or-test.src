@@ -1,0 +1,10 @@
+# or test
+
+func test(n : int) : int
+	if (n == 0 || n == 1 || ||a+b|+c| == n) then
+		return -1;
+	else
+		return n;
+	end test
+
+write test(1);

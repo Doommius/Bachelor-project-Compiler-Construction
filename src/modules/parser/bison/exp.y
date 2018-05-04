@@ -52,8 +52,6 @@ void yyerror() {
 %token WHILE
 %token RETURN
 %token AND
-%token OR
-%token ASSIGN
 %token TRUE
 %token FALSE
 %token _NULL
@@ -239,8 +237,6 @@ expression:expression '+' expression
 
 term:       tINTCONST
         {$$ = make_Term_num($1);}
-            | '(' expression ')'
-        {$$ = make_Term_par($2);}
             | '!' term
         {$$ = make_Term_not($2);}
             | '|' expression '|'

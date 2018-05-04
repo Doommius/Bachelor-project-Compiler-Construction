@@ -11,7 +11,7 @@ do
 	echo "+--------------------"
 	echo "| TEST: "$file
 	echo "+--------------------"
-	./compiler $file
+	./compiler -p 1 $file
 	echo " "
 done
 
