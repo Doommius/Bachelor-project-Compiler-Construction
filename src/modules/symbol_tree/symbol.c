@@ -207,3 +207,37 @@ int get_symbol_depth(symbol_table *t, char *name){
     return depth;
     
 }
+
+//Returns size of symboltable - used when allocating memory for records
+int table_size(symbol_table *t){
+    int size;
+    SYMBOL *s;
+    size = 0;
+
+    for (int i = 0; i < HashSize; i++){
+        s = t->table[i];
+        while (s != NULL){
+            size++;
+            s = s->next;
+        }
+    }
+
+    return size;
+}
+
+//Adds a offset to the symbols in the symmbol table - used in records
+void create_offset(symbol_table *t){
+    int offset;
+    SYMBOL *s;
+    offset = 0;
+
+    for (int i = 0; i < HashSize; i++){
+        s = t->table[i];
+        while (s != NULL){
+            s->offset = offset;
+            s = s->next;
+            offset++;
+        }
+    }
+
+}

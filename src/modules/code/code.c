@@ -374,13 +374,35 @@ a_asm *generate_stmt(statement *stmt){
 	struct asm_op *var;
 	struct asm_op *assignexp;
 
+	int size;
+
 
 	switch (stmt->kind){
 
 		//Records
 		case (statement_ALLOCATE):
+			size = table_size(stmt->val.allocate.variable->stype->val.record_type->table)*8;
+			ret = make_op_temp();
+
+			add_2_ins(&head, &tail, MOVQ, make_op_const(size), ret, "Move size of record to register");
 
 
+			mem_op = make_op_temp();
+			add_2_ins(&head, &tail, MOVQ, op_MEM, mem_op, "Move pointer to MEM to another register");
+
+			v = generate_var(stmt->val.allocate.variable);
+			asm_insert(&head, &tail, &v);
+			var = get_return_reg(tail);
+
+			add_2_ins(&head, &tail, MOVQ, mem_op, var, "Move mem location to variable");
+
+			add_2_ins(&head, &tail, ADDQ, mem_op, ret, "Add size of record to mem pointer");
+
+			//Insert RTC failure label to check if length if larger than memSize
+
+			add_2_ins(&head, &tail, MOVQ, ret, op_MEM, "Update mem pointer");
+
+			add_2_ins(&head, &tail, MOVQ, var, var, "Used to get target for next instruction");
 
 			break;
 			
@@ -409,9 +431,6 @@ a_asm *generate_stmt(statement *stmt){
 			add_2_ins(&head, &tail, ADDQ, mem_op, ret, "Add length of array to mem register");
 
 			//Insert RTC failure label to check if length if larger than memSize
-			
-			
-
 
 			add_2_ins(&head, &tail, MOVQ, ret, op_MEM, "Update mem pointer");
 
@@ -646,6 +665,22 @@ a_asm *generate_var(variable *var){
 			break;
 
 		case (var_RECORD):
+			s = get_symbol(var->val.record.var->stype->val.record_type->table, var->val.record.id);
+
+			variable = generate_var(var->val.record.var);
+			asm_insert(&head, &tail, &variable);
+			v = get_return_reg(tail);
+
+			//Insert RTC failure label to check if record is initialized
+			temp = make_op_temp();
+			add_2_ins(&head, &tail, MOVQ, make_op_const(s->offset),  temp, "Move offset to register");
+
+			add_2_ins(&head, &tail, ADDQ, v,  temp, "Adding index to start of record");
+
+			mem = make_op_mem_loc(temp);
+			add_2_ins(&head, &tail, MOVQ, mem, mem, "Used to get target for next instruction");
+
+
 			break;
 
 
@@ -1283,6 +1318,8 @@ int local_init(decl_list *dlist){
 			v_temp = d_temp->decl->val.list;
 			while (v_temp != NULL){
 				s = get_symbol(dlist->table, v_temp->vartype->id);
+
+				//For some reason memory location for an array to a register did not work, so force arrays onto stack
 				if (s->stype->type == symbol_ARRAY){
 					s->offset = offset;
 					s->is_on_stack = 1;

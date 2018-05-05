@@ -106,7 +106,7 @@ void setup_type(type *type, symbol_table*table){
         case (type_RECORD):
             st->type = symbol_RECORD;
             type->stype =  st;
-            setup_vdl(type->val.list, scope_symbol_table(table));
+            setup_vdl(type->val.list, scope_symbol_table(table), 1);
             break;
     }
 
@@ -119,12 +119,12 @@ int setup_pdl(par_decl_list *pdl, symbol_table*table){
     int args;
     args = 0;
     if (pdl->kind != pdl_EMPTY){
-        args = args + setup_vdl(pdl->list, table);
+        args = args + setup_vdl(pdl->list, table, 0);
     }
     return args;
 }
 
-int setup_vdl(var_decl_list *vdl, symbol_table *table){
+int setup_vdl(var_decl_list *vdl, symbol_table *table, int record){
     
     //printf("Setting up vdl\n");
     vdl->table = table;
@@ -132,7 +132,10 @@ int setup_vdl(var_decl_list *vdl, symbol_table *table){
     args = 1;
     setup_vtype(vdl->vartype, table);
     if (vdl->kind == vdl_LIST){
-        args = args + setup_vdl(vdl->list, table);
+        args = args + setup_vdl(vdl->list, table, 0);
+    }
+    if (record){
+        create_offset(table);
     }
     return args;
 }
@@ -186,7 +189,7 @@ void setup_decl(declaration *decl, symbol_table *table){
             break;
 
         case (decl_VAR):
-            setup_vdl(decl->val.list, table);
+            setup_vdl(decl->val.list, table, 0);
             break;
 
     }

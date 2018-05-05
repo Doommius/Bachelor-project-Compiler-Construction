@@ -67,4 +67,10 @@ void print_symbol(SYMBOL *symbol);
 
 int get_symbol_depth(symbol_table *t, char *name);
 
+//Returns size of symboltable - used when allocating memory for records
+int table_size(symbol_table *t);
+
+//Adds a offset to the symbols in the symmbol table - used in records
+void create_offset(symbol_table *t);
+
 #endif

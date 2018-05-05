@@ -13,7 +13,7 @@ void setup_type(type *type, symbol_table *table);
 
 int setup_pdl(par_decl_list *pdl, symbol_table *table);
 
-int setup_vdl(var_decl_list *vdl, symbol_table *table);
+int setup_vdl(var_decl_list *vdl, symbol_table *table, int record);
 
 void setup_vtype(var_type *vtype, symbol_table*table);
 

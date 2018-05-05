@@ -129,9 +129,8 @@ void pickup_type(type *type){
             break;
 
         case (type_ID):
-#if debugflag > 3
-            printf("ID we are looking for: %s, in table: %p\n", type->val.id, type->table);
-#endif
+            //printf("ID we are looking for: %s, in table: %p\n", type->val.id, type->table);
+
             s = get_symbol(type->table, type->val.id);
             if (s == NULL || s->stype->type != symbol_ID){
                 if (s == NULL){
@@ -144,33 +143,32 @@ void pickup_type(type *type){
             }
             struct type *temp;
             temp = resolve_recursive_type(s->stype->val.id_type);
-#if debugflag > 3
+
             printf("After recursive check\n");
-#endif
+            
             type->stype = temp->stype;
-#if debugflag > 3
-            printf("After assignment\n");
-#endif
+
+            //printf("After assignment\n");
     }
-#if debugflag > 3
-    printf("After switch\n");
-#endif
+
+    //printf("After switch\n");
+
 
 }
 
 type *resolve_recursive_type(type *type){
-#if debugflag > 2
-    printf("Resolving recursive conflict\n");
-#endif
+
+    //printf("Resolving recursive conflict\n");
+
     struct type *temp;
     temp = type;
     if (type->recursive_type == 1){
         print_error("Recursive type definition", 0, type->lineno);
     }
     type->recursive_type = 1;
-#if debugflag > 3
-    printf("Type kind: %d\n", type->kind);
-#endif
+
+    //printf("Type kind: %d\n", type->kind);
+
     if (type->kind == type_ID){
         printf("Checking symbol table for symbol\n");
         SYMBOL *s;
@@ -180,9 +178,9 @@ type *resolve_recursive_type(type *type){
         }
         temp = resolve_recursive_type(s->stype->val.id_type);
     }
-#if debugflag > 3
-    printf("Checked recursively\n");
-#endif
+
+    //printf("Checked recursively\n");
+
     type->recursive_type = 0;
     return temp;
 }
