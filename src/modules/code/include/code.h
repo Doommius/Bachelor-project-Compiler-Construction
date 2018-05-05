@@ -146,7 +146,7 @@ void make_loop_start_label(char *buffer);
 
 void make_loop_end_label(char *buffer);
 
-a_asm *get_return_reg(a_asm *tail);
+asm_op *get_return_reg(a_asm *tail);
 
 void init_regs();
 

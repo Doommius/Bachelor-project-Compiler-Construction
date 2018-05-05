@@ -938,11 +938,27 @@ a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp){
 
 }
 
+//Replace a given op with a replacement op. Copy if stack or memory
 void replace_temp_op(asm_op **op, asm_op *replacer){
+    struct asm_op *rep;
+
     switch ((*op)->type){
 
+        case (op_MEM_LOC):
+            rep = NEW(asm_op);
+            rep->type = op_MEM_LOC;
+            rep->val.mem_index_reg = replacer;
+            (*op) = rep;
+            break;
+
         case (op_STACK_LOC):
-            
+            rep = NEW(asm_op);
+            rep->type = op_STACK_LOC;
+            rep->val.stack.reg = replacer;
+            rep->val.stack.offset = (*op)->val.stack.offset;
+            (*op) = rep;
+            break;
+
 
         case (op_TEMP):
             (*op) = replacer;

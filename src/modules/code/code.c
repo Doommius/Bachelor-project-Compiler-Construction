@@ -398,18 +398,24 @@ a_asm *generate_stmt(statement *stmt){
 			
 			add_2_ins(&head, &tail, MOVQ, ret, make_op_mem_loc(mem_op), "Move allocated length to mem location");
 
-			v = generate_var(stmt->val.allocate.variable);
-			var = get_return_reg(tail);
+			//add_2_ins(&head, &tail, ADDQ, make_op_const(1), mem_op, "Test");
 
+			v = generate_var(stmt->val.allocate.variable);
+			asm_insert(&head, &tail, &v);
+			var = get_return_reg(tail);
+			
 			add_2_ins(&head, &tail, MOVQ, mem_op, var, "Move mem location to variable");
 			
 			add_2_ins(&head, &tail, ADDQ, mem_op, ret, "Add length of array to mem register");
 
 			//Insert RTC failure label to check if length if larger than memSize
+			
+			
+
 
 			add_2_ins(&head, &tail, MOVQ, ret, op_MEM, "Update mem pointer");
 
-			add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
+			add_2_ins(&head, &tail, MOVQ, var, var, "Used to get target for next instruction");
 
 
 			break;
@@ -589,10 +595,10 @@ a_asm *generate_var(variable *var){
 			if (depth == 0){
 				if (!s->is_on_stack){
 					v = s->op;
-					add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
+					add_2_ins(&head, &tail, MOVQ, v, v, "Var is in this register");
 				} else {
 					v = make_op_stack_loc(s->offset, &reg_RBP);
-					add_2_ins(&head, &tail, MOVQ, v, v, "Used to get target for next instruction");
+					add_2_ins(&head, &tail, MOVQ, v, v, "Var is on stack");
 
 				}	
 			} else {
@@ -633,7 +639,7 @@ a_asm *generate_var(variable *var){
 			temp = make_op_temp();
 			add_2_ins(&head, &tail, MOVQ, ret, temp, "Copy val to new temp to not harm it");
 
-			add_2_ins(&head, &tail, ADDQ, var, temp, "Adding index to start of array");
+			add_2_ins(&head, &tail, ADDQ, v, temp, "Adding index to start of array");
 
 			mem = make_op_mem_loc(temp);
 			add_2_ins(&head, &tail, MOVQ, mem, mem, "Used to get target for next instruction");
@@ -1219,7 +1225,7 @@ void get_next(a_asm **head1, a_asm **tail1){
 
 }
 
-a_asm *get_return_reg(a_asm *tail){
+asm_op *get_return_reg(a_asm *tail){
 	if (tail->ins == END_CALL){
 		return tail->prev->val.two_op.op2;
 	}
@@ -1277,8 +1283,15 @@ int local_init(decl_list *dlist){
 			v_temp = d_temp->decl->val.list;
 			while (v_temp != NULL){
 				s = get_symbol(dlist->table, v_temp->vartype->id);
-				s->op = make_op_temp();
-				s->is_on_stack = 0;
+				if (s->stype->type == symbol_ARRAY){
+					s->offset = offset;
+					s->is_on_stack = 1;
+					offset++;
+				} else {
+
+					s->op = make_op_temp();
+					s->is_on_stack = 0;
+				}
 				
 				v_temp = v_temp->list;
 				vars++;

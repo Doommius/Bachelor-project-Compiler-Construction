@@ -228,7 +228,7 @@ void get_opt(asm_op *op, char *dest){
 
         case (op_MEM_LOC):
             get_opt(op->val.mem_index_reg, reg);
-            sprintf(dest, "MEM(%s)", reg);
+            sprintf(dest, "MEM(,%s,8)", reg);
             break;
         
 

@@ -31,6 +31,10 @@ void set_op_bit(asm_op *op, BITVECTOR use, BITVECTOR def, int used, int defined)
             set_op_bit(op->val.stack.reg, use, def, 1, 0);
             break;
 
+        case (op_MEM_LOC):
+            set_op_bit(op->val.mem_index_reg, use, def, 1, 0);
+            break;
+
         default:
             break;
 

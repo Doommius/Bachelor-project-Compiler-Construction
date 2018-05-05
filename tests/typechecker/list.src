@@ -1,8 +1,11 @@
 # Code generation for arrays, indexing
 type intArray = array of int;
+
 var a : intArray;
+var b : intArray;
 
 allocate a of length 7;
+allocate b of length 5;
 
 a[0] = 4;
 a[1] = 5;
@@ -12,5 +15,6 @@ a[4] = 8;
 a[5] = 9;
 a[6] = 10;
 
+b[0] = 59;
+
 write a[0];
-write a[6];

@@ -122,32 +122,12 @@ void rewrite_op(int *colors, asm_op **op, int *stack_offset){
         if (temp != -1){    
             if (!is_precolored(temp)){
                 new_reg = get_corresponding_reg(colors[temp]);
-                replace_temp(op, new_reg);
+                replace_temp_op(op, new_reg);
             }
         }
     }
 
     
-
-}
-
-//Replace a temp with a new op
-void replace_temp(asm_op **op, asm_op *replacement){
-    struct asm_op *new;
-
-    switch ((*op)->type){
-        case (op_TEMP):
-            (*op) = replacement;
-            break;
-
-        case (op_STACK_LOC):
-            new = NEW(asm_op);
-            new->type = op_STACK_LOC;
-            new->val.stack.reg = replacement;
-            new->val.stack.offset = (*op)->val.stack.offset;
-            (*op) = new;
-            break;
-    }
 
 }
 
