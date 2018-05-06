@@ -125,6 +125,9 @@ void create_asm(a_asm *head){
             case (CDQ):
                 create_ins("cdq", "", head->comment);
                 break;
+            case (LEAQ):
+                create_2_op("leaq", head->val.two_op.op1, head->val.two_op.op2, head->comment);
+                break;
              
             case (ANDQ):
                 create_2_op("andq", head->val.two_op.op1, head->val.two_op.op2, head->comment);
@@ -230,7 +233,12 @@ void get_opt(asm_op *op, char *dest){
             get_opt(op->val.mem_index_reg, reg);
             sprintf(dest, "MEM(,%s,8)", reg);
             break;
-        
+
+        case (op_LEA):
+            get_opt(op->val.lea.reg, reg);
+            sprintf(dest, "%d(%s)", op->val.lea.offset, reg);
+            break;
+
 
     }
 }

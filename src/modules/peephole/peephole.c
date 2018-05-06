@@ -23,6 +23,7 @@ void peephole(a_asm *h){
     //For now we just remove MOV temp, temp instructions, where the two temps are the same
     
     h = remove_move_to_self(h);
+    h = remove_mem_moves(h);
 
 }
 
@@ -58,6 +59,62 @@ a_asm *remove_move_to_self(a_asm *head){
     return h;
 }
 
+/**
+ * 
+ * Removing the following patterns:
+ * MOVQ MEM(something), MEM(something)
+ * 
+ * Replace with:
+ * MOVQ MEM(something), temp1
+ * MOVQ temp1, MEM(something)
+ * 
+ */
+a_asm *remove_mem_moves(a_asm *head){
+
+    struct a_asm *h;
+    struct a_asm *replacer;
+    struct asm_op *intermediate;
+    struct asm_op *old_MEM;
+
+
+    h = head;
+    while (head != NULL){
+        if (head->ins == MOVQ){
+            if ((head->val.two_op.op1->type == op_MEM_LOC || head->val.two_op.op1->type == op_MEM_LOC)
+                && (head->val.two_op.op1->type == op_MEM_LOC || head->val.two_op.op1->type == op_MEM_LOC)){
+                
+                replacer = NEW(a_asm);
+                replacer->ins = MOVQ;
+
+                intermediate = make_op_temp();
+                old_MEM = head->val.two_op.op2;
+
+                head->val.two_op.op2 = intermediate;
+                
+                replacer->ops = 2;
+                replacer->val.two_op.op1 = intermediate;
+                replacer->val.two_op.op2 = old_MEM;
+
+                replacer->prev = head;
+                replacer->next = head->next;
+
+                head->next->prev = replacer;
+                head->next = replacer; 
+
+
+
+            }
+        }
+
+        head = head->next;
+
+        
+    }
+
+    return h;
+
+}
+
 int cmp_ops(asm_op *op1, asm_op *op2){
 
     //No need to go through switch if they are not the same type
@@ -85,6 +142,9 @@ int cmp_ops(asm_op *op1, asm_op *op2){
 
         case (op_MEM_LOC):
             return cmp_ops(op1->val.mem_index_reg, op2->val.mem_index_reg);
+
+        case (op_LEA):
+            return cmp_ops(op1->val.lea.reg, op2->val.lea.reg);
 
         case (op_SPILL):
             if (op1 == op2){

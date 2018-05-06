@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "bit_vector.h"
 #include "code.h"
 #include "memory.h"
@@ -37,7 +38,6 @@ void set_bit(BITVECTOR bv, int bit){
     i = bit/32;
     pos = bit%32;
     flag = 1;
-
 
     flag = flag << pos;
 
@@ -186,14 +186,13 @@ char *vector_as_text(BITVECTOR bv, char *buffer){
 //"Rounds up" to a multiple of 32
 int round_up(int v){
 
+    double res;
     int min;
-    min = 32;
 
-    while (v >= min){
-        //We smart
-        min = min + 32;
-        
-    }
+    res = v / 32.;
+    min = 32 * ceil(res);
+    
+    printf("Setting vector size to %d\n", min);
     return min;
 
 }

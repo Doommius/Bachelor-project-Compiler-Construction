@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 	
-	weeder_init(theprogram);
+	//weeder_init(theprogram);
 
 	if (prettyprint == 1) {
 
@@ -179,6 +179,7 @@ int main(int argc, char **argv) {
 	}
 
 	program = reg_alloc(program);
+
 
 	if (verbose) {
 		printf("Second peephole\n");

@@ -35,6 +35,11 @@ void set_op_bit(asm_op *op, BITVECTOR use, BITVECTOR def, int used, int defined)
             set_op_bit(op->val.mem_index_reg, use, def, 1, 0);
             break;
 
+        case (op_LEA):
+            set_op_bit(op->val.lea.reg, use, def, 1, 0);
+            break;
+
+
         default:
             break;
 
@@ -69,6 +74,7 @@ void set_use_def(a_asm *op){
         case (ADDQ):
         case (XORQ):
         case (SARQ):
+        case (LEAQ):
             set_op_bit(op->val.two_op.op1, use, def, 1, 0);
             set_op_bit(op->val.two_op.op2, use, def, 1, 1);
             break;

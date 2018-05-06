@@ -67,6 +67,12 @@ typedef struct asm_op {
 			int offset;
 		} stack;
 		struct asm_op *mem_index_reg;
+
+		//LEA could be expanded to use more than one register
+		struct {
+			int offset;
+			struct asm_op *reg;
+		} lea;
 		int intconst;
 	} val;
 	
@@ -128,9 +134,11 @@ asm_op *make_op_label(char *label);
 
 asm_op *make_op_stack_loc(int offset, asm_op **reg);
 
-asm_op *make_op_mem_loc(asm_op *index_reg);
+asm_op *make_op_mem_loc(asm_op **index_reg);
 
 asm_op *make_op_spill();
+
+asm_op *make_op_lea(int offset, asm_op **reg);
 
 void make_cmp_label(char *buffer);
 

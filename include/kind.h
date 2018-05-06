@@ -85,6 +85,7 @@ typedef enum {
                SARQ,
                CALL,
                RET,
+               LEAQ,
 
                PUSH,                //One op
                POP,                 //One op
@@ -102,6 +103,7 @@ typedef enum { op_INTCONST,
                op_MEM_LOC,
                op_LABEL,
                op_CONST,
+               op_LEA,
 
                op_TEMP, //Temporary until we find out what register/stack location it should be in, atleast i hope so.
                op_SPILL

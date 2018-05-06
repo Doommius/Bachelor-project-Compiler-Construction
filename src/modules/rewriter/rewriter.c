@@ -58,6 +58,7 @@ a_asm *final_rewrite(int *colors, a_asm *program){
 
             case (MOVQ):
             case (ADDQ):
+            case (LEAQ):
             case (SUBQ):
             case (XORQ):
             case (SARQ):

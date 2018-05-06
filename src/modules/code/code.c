@@ -175,6 +175,9 @@ a_asm *generate_body(body *body, char *start_label, char *end_label, head *h){
 	if (h != NULL){
 		func_head = generate_head(h);
 		asm_insert(&head, &tail, &func_head);
+	} else {
+		//Init MEM in main
+		add_2_ins(&head, &tail, MOVQ, make_op_const(1), op_MEM, "Init MEM");
 	}
 	
 	sl = generate_slist(body->s_list);
@@ -370,25 +373,34 @@ a_asm *generate_stmt(statement *stmt){
 
 	struct asm_op *wrt;
 	struct asm_op *ret;
+	struct asm_op *length;
 	struct asm_op *ifexp;
 	struct asm_op *var;
 	struct asm_op *assignexp;
+	struct asm_op *temp;
 
 	int size;
 
 
 	switch (stmt->kind){
 
-		//Records
+		//Records - Implementation of record is the excact same as lists, except we don't keep the size of the record at index 0
 		case (statement_ALLOCATE):
-			size = table_size(stmt->val.allocate.variable->stype->val.record_type->table)*8;
+			size = table_size(stmt->val.allocate.variable->stype->val.record_type->table);
 			ret = make_op_temp();
+			length = make_op_temp();
 
-			add_2_ins(&head, &tail, MOVQ, make_op_const(size), ret, "Move size of record to register");
+			add_2_ins(&head, &tail, MOVQ, make_op_const(size), length, "Move size of record to register");
 
 
 			mem_op = make_op_temp();
 			add_2_ins(&head, &tail, MOVQ, op_MEM, mem_op, "Move pointer to MEM to another register");
+
+			add_2_ins(&head, &tail, MOVQ, length, ret, "Moving length of array to new reg");
+
+			add_2_ins(&head, &tail, ADDQ, make_op_const(1), ret, "Add 1 to array length");
+			
+			add_2_ins(&head, &tail, MOVQ, ret, make_op_mem_loc(&mem_op), "Move allocated length to mem location");
 
 			v = generate_var(stmt->val.allocate.variable);
 			asm_insert(&head, &tail, &v);
@@ -401,6 +413,14 @@ a_asm *generate_stmt(statement *stmt){
 			//Insert RTC failure label to check if length if larger than memSize
 
 			add_2_ins(&head, &tail, MOVQ, ret, op_MEM, "Update mem pointer");
+			
+			//Put size of array into index 0
+			temp = make_op_temp();
+			add_2_ins(&head, &tail, MOVQ, make_op_const(0), temp, "Moving index 0 to register");
+
+			add_2_ins(&head, &tail, ADDQ, var, temp, "Adding index to start of array");
+
+			add_2_ins(&head, &tail, MOVQ, length, make_op_mem_loc(&temp), "Assigning length of array to index 0");
 
 			add_2_ins(&head, &tail, MOVQ, var, var, "Used to get target for next instruction");
 
@@ -410,7 +430,8 @@ a_asm *generate_stmt(statement *stmt){
 		case (statement_ALLOCATE_LENGTH):
 			expr = generate_exp(stmt->val.allocate.length);
 			asm_insert(&head, &tail, &expr);
-			ret = get_return_reg(tail);
+			length = get_return_reg(tail);
+			ret = make_op_temp();
 
 
 			//Insert RTC failure label to check if length <= 0
@@ -418,9 +439,11 @@ a_asm *generate_stmt(statement *stmt){
 			mem_op = make_op_temp();
 			add_2_ins(&head, &tail, MOVQ, op_MEM, mem_op, "Move pointer to MEM to another register");
 			
-			add_2_ins(&head, &tail, MOVQ, ret, make_op_mem_loc(mem_op), "Move allocated length to mem location");
+			add_2_ins(&head, &tail, MOVQ, length, ret, "Moving length of array to new reg");
 
-			//add_2_ins(&head, &tail, ADDQ, make_op_const(1), mem_op, "Test");
+			add_2_ins(&head, &tail, ADDQ, make_op_const(1), ret, "Add 1 to array length");
+			
+			add_2_ins(&head, &tail, MOVQ, ret, make_op_mem_loc(&mem_op), "Move allocated length to mem location");
 
 			v = generate_var(stmt->val.allocate.variable);
 			asm_insert(&head, &tail, &v);
@@ -434,8 +457,15 @@ a_asm *generate_stmt(statement *stmt){
 
 			add_2_ins(&head, &tail, MOVQ, ret, op_MEM, "Update mem pointer");
 
-			add_2_ins(&head, &tail, MOVQ, var, var, "Used to get target for next instruction");
+			//Put size of array into index 0
+			temp = make_op_temp();
+			add_2_ins(&head, &tail, MOVQ, make_op_const(0), temp, "Moving index 0 to register");
 
+			add_2_ins(&head, &tail, ADDQ, var, temp, "Adding index to start of array");
+
+			add_2_ins(&head, &tail, MOVQ, length, make_op_mem_loc(&temp), "Assigning length of array to index 0");
+
+			add_2_ins(&head, &tail, MOVQ, var, var, "Used to get target for next instruction");
 
 			break;
 
@@ -608,7 +638,7 @@ a_asm *generate_var(variable *var){
 		case (var_ID):
 			s = get_symbol(var->table, var->id);
 			depth = get_symbol_depth(var->table, var->id);
-			printf("Depth of symbol %s: %d\n", var->id, depth);
+			//printf("Depth of symbol %s: %d\n", var->id, depth);
 			
 			//If depth == 0, local variable, no need to check the static link
 			if (depth == 0){
@@ -656,16 +686,20 @@ a_asm *generate_var(variable *var){
 			
 			//Insert RTC failure label to check if array is initialized, if index is larger than the array's size, and if index is smaller than 0
 			temp = make_op_temp();
-			add_2_ins(&head, &tail, MOVQ, ret, temp, "Copy val to new temp to not harm it");
+		
+			add_2_ins(&head, &tail, LEAQ, make_op_lea(1, &ret), temp, "Copy val to new temp to not harm it, also add 1 to get correct index");
 
 			add_2_ins(&head, &tail, ADDQ, v, temp, "Adding index to start of array");
 
-			mem = make_op_mem_loc(temp);
+			mem = make_op_mem_loc(&temp);
 			add_2_ins(&head, &tail, MOVQ, mem, mem, "Used to get target for next instruction");
 			break;
 
 		case (var_RECORD):
 			s = get_symbol(var->val.record.var->stype->val.record_type->table, var->val.record.id);
+
+			ret = make_op_temp();
+			add_2_ins(&head, &tail, MOVQ, make_op_const(s->offset), ret, "Copy index to new reg");
 
 			variable = generate_var(var->val.record.var);
 			asm_insert(&head, &tail, &variable);
@@ -673,11 +707,13 @@ a_asm *generate_var(variable *var){
 
 			//Insert RTC failure label to check if record is initialized
 			temp = make_op_temp();
-			add_2_ins(&head, &tail, MOVQ, make_op_const(s->offset),  temp, "Move offset to register");
+			
+			add_2_ins(&head, &tail, LEAQ, make_op_lea(1, &ret),  temp, "Copy val to new temp to not harm it, also add 1 to get correct index");
+			//printf("Using record var: %s, offset: %d\n", s->name, s->offset);
 
 			add_2_ins(&head, &tail, ADDQ, v,  temp, "Adding index to start of record");
 
-			mem = make_op_mem_loc(temp);
+			mem = make_op_mem_loc(&temp);
 			add_2_ins(&head, &tail, MOVQ, mem, mem, "Used to get target for next instruction");
 
 
@@ -931,6 +967,7 @@ a_asm *generate_term(term *term){
 	struct asm_op *temp;
 	struct asm_op *temp2;
 	struct asm_op *res;
+	struct asm_op *mem;
 
 	struct a_asm *t;
 	struct a_asm *el;
@@ -1064,6 +1101,18 @@ a_asm *generate_term(term *term){
 
 				add_2_ins(&head, &tail, MOVQ, res, res, "Used to get target for next instruction");
 
+			}
+			if (term->val.expression->stype->type == symbol_ARRAY){
+				target = get_return_reg(tail);
+				
+				temp = make_op_temp();
+				add_2_ins(&head, &tail, MOVQ, make_op_const(0), temp, "Want to get value at index 0 of array");
+
+				add_2_ins(&head, &tail, ADDQ, target, temp, "Get value at index 0");
+				
+
+				mem = make_op_mem_loc(&temp);
+				add_2_ins(&head, &tail, MOVQ, mem, mem, "Used to get target for next instruction");
 			}
 
 			break;
@@ -1319,8 +1368,8 @@ int local_init(decl_list *dlist){
 			while (v_temp != NULL){
 				s = get_symbol(dlist->table, v_temp->vartype->id);
 
-				//For some reason memory location for an array to a register did not work, so force arrays onto stack
-				if (s->stype->type == symbol_ARRAY){
+				//For some reason memory location using registers did not work, so force it to use stack
+				if (s->stype->type == symbol_ARRAY || s->stype->type == symbol_RECORD){
 					s->offset = offset;
 					s->is_on_stack = 1;
 					offset++;
@@ -1449,13 +1498,15 @@ void make_loop_end_label(char *buffer){
 
 }
 
-asm_op *make_op_mem_loc(asm_op *index_reg){
+asm_op *make_op_mem_loc(asm_op **index_reg){
 
 	struct asm_op *op;
 	op = NEW(asm_op);
 
 	op->type = op_MEM_LOC;
-	op->val.mem_index_reg = index_reg;
+	op->val.mem_index_reg = (*index_reg);
+
+	return op;
 }
 
 asm_op *make_op_stack_loc(int offset, asm_op **reg){
@@ -1477,5 +1528,18 @@ asm_op *make_op_stack_loc(int offset, asm_op **reg){
 
 	return op;
 
+}
+
+//LEA op with one register
+asm_op *make_op_lea(int offset, asm_op **reg){
+
+	struct asm_op *op;
+	op = NEW(asm_op);
+
+	op->type = op_LEA;
+	op->val.lea.reg = (*reg);
+	op->val.lea.offset = offset;
+
+	return op;
 }
 

@@ -126,6 +126,8 @@ a_asm *reg_alloc(a_asm *h){
         result = check_invariants();
         if (result != 1){
             printf("Invariants after build did not hold\n");
+            exit(0);
+            
             return NULL;
         }
         
@@ -261,6 +263,9 @@ int get_reg(asm_op *op){
     }
     if (op->type == op_MEM_LOC){
         return get_reg(op->val.mem_index_reg);
+    }
+    if (op->type == op_LEA){
+        return get_reg(op->val.lea.reg);
     }
     //Would be nice with a switch, but you can't switch on a pointer
     if (op->type == op_REGISTER){
@@ -783,15 +788,21 @@ a_asm *rewrite_program(a_asm *theprogram){
     
     struct a_asm *head;
     struct a_asm *tail;
+    struct a_asm *next;
 
     struct a_asm *left;
     struct a_asm *right;
+    
+    struct asm_op *new_temp;
+
     head = NULL;
     tail = NULL;
     while (theprogram != NULL){
+        //Have to save next, since we the spill nodes don't have a next when we insert them
+        next = theprogram->next;
 
         //new_temp is used if we need to create a new temporary and use it later
-        struct asm_op *new_temp;
+        
         new_temp = NULL;
         switch (theprogram->ins){
             case (LABEL):
@@ -817,24 +828,31 @@ a_asm *rewrite_program(a_asm *theprogram){
                 //Fetch op1 if it's spilled, store op2 if it's spilled
                 left = rewrite_spill_reg(&theprogram->val.two_op.op1, 1, NULL);
                 asm_insert(&head, &tail, &left);
+               
 
                 asm_insert_one(&head, &tail, &theprogram);
 
                 right = rewrite_spill_reg(&theprogram->val.two_op.op2, 0, NULL);
                 asm_insert(&head, &tail, &right);
+
+            
                 break;
 
             case (ADDQ):
             case (SUBQ):
             case (XORQ):
             case (SARQ):
+            case (LEAQ):
                 //Fetch op1 if it's spilled, fetch op2 into a new temp, 
                 left = rewrite_spill_reg(&theprogram->val.two_op.op1, 1, NULL);
                 asm_insert(&head, &tail, &left);
 
+                
+
                 right = rewrite_spill_reg(&theprogram->val.two_op.op2, 1, &new_temp);
                 asm_insert(&head, &tail, &right);
-                
+
+                                
                 asm_insert_one(&head, &tail, &theprogram);
 
                 free(right);
@@ -842,6 +860,7 @@ a_asm *rewrite_program(a_asm *theprogram){
                 right = rewrite_spill_reg(&theprogram->val.two_op.op2, 0, &new_temp);
                 
                 asm_insert(&head, &tail, &right);
+
                 
                 break;
 
@@ -849,6 +868,7 @@ a_asm *rewrite_program(a_asm *theprogram){
                 left = rewrite_spill_reg(&theprogram->val.one_op.op, 1, NULL);
 
                 asm_insert(&head, &tail, &left);
+
                 break;
 
             case (POP):
@@ -856,6 +876,7 @@ a_asm *rewrite_program(a_asm *theprogram){
                 left = rewrite_spill_reg(&theprogram->val.one_op.op, 0, NULL);
 
                 asm_insert(&head, &tail, &left);
+
                 break;
 
 
@@ -863,7 +884,7 @@ a_asm *rewrite_program(a_asm *theprogram){
                 break;
         }
 
-        theprogram = theprogram->next;
+        theprogram = next;
         
     }
     return head;
@@ -902,6 +923,10 @@ a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp){
                 target = &(*op)->val.mem_index_reg;
                 break;
 
+            case (op_LEA):
+                target = &(*op)->val.lea.reg;
+                break;
+
             case (op_TEMP):
                 target = op;
                 break;
@@ -935,6 +960,7 @@ a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp){
         return head;
 
     }
+    return NULL;
 
 }
 
@@ -948,6 +974,14 @@ void replace_temp_op(asm_op **op, asm_op *replacer){
             rep = NEW(asm_op);
             rep->type = op_MEM_LOC;
             rep->val.mem_index_reg = replacer;
+            (*op) = rep;
+            break;
+
+        case (op_LEA):
+            rep = NEW(asm_op);
+            rep->type = op_LEA;
+            rep->val.lea.reg = replacer;
+            rep->val.lea.offset = (*op)->val.lea.offset;
             (*op) = rep;
             break;
 
