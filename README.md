@@ -77,3 +77,31 @@ Clean build files and compiled programs
 ```bash
 make clean-all
 ```
+
+---
+
+## Git
+
+How to create branch of old commit
+
+```bash
+git branch <branchname> <hash value of commit>
+```
+
+How to switch to branch 
+
+```bash
+git checkout <branchname>
+```
+
+How to delete branch
+
+```bash
+git branch -d <branchname>
+```
+
+How to list branches
+
+```bash
+git branch
+```
