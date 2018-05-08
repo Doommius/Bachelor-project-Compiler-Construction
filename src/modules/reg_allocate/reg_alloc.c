@@ -160,8 +160,14 @@ a_asm *reg_alloc(a_asm *h){
                     vector_empty(worklist_moves) && 
                     vector_empty(freeze_worklist) && 
                     vector_empty(spill_worklist)));
+
         assign_colors();
         if (!vector_empty(spilled_nodes)){
+           
+            printf("Spilled nodes: ");
+            vector_print(spilled_nodes);
+            printf("\n");
+            
             h = rewrite_program(h);
         }
         
@@ -846,7 +852,6 @@ a_asm *rewrite_program(a_asm *theprogram){
                 //Fetch op1 if it's spilled, fetch op2 into a new temp, 
                 left = rewrite_spill_reg(&theprogram->val.two_op.op1, 1, NULL);
                 asm_insert(&head, &tail, &left);
-
                 
 
                 right = rewrite_spill_reg(&theprogram->val.two_op.op2, 1, &new_temp);
@@ -907,13 +912,10 @@ a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp){
         return NULL;
     }
 
-    if (verbose){
-        printf("Spilled nodes: ");
-        vector_print(spilled_nodes);
-        printf("\n");
-    }
+    
 
     if (get_bit(spilled_nodes, reg)){
+
         switch ((*op)->type){
             case (op_STACK_LOC):
                 target = &(*op)->val.stack.reg;
@@ -937,6 +939,7 @@ a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp){
             (*target)->val.temp.spill = make_op_spill();
         }
         spill = (*target)->val.temp.spill;
+       
 
         if (new_temp == NULL){
             temp = make_op_temp();
@@ -953,7 +956,6 @@ a_asm *rewrite_spill_reg(asm_op **op, int fetch, asm_op **new_temp){
 
         if (fetch){
             add_2_ins(&head, &tail, MOVQ, spill, temp, "Fetch spilled temp from stack");
-
         } else {
             add_2_ins(&head, &tail, MOVQ, temp, spill, "Store spilled temp to stack");
         }

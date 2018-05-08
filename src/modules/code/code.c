@@ -175,10 +175,10 @@ a_asm *generate_body(body *body, char *start_label, char *end_label, head *h){
 	if (h != NULL){
 		func_head = generate_head(h);
 		asm_insert(&head, &tail, &func_head);
-	} else {
-		//Init MEM in main
-		add_2_ins(&head, &tail, MOVQ, make_op_const(1), op_MEM, "Init MEM");
-	}
+	} //else {
+	// 	//Init MEM in main
+	// 	add_2_ins(&head, &tail, MOVQ, make_op_const(1), op_MEM, "Init MEM");
+	// }
 	
 	sl = generate_slist(body->s_list);
 	asm_insert(&head2, &tail2, &sl);
