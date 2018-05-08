@@ -8,8 +8,6 @@
 
 ## TODO
 
-* Create code generation for lists, records and allocate statement
-* Fix conflicts in parser
 * Implement "for" loop in grammar
 * Runtime error checks
 * More peephole optimization
