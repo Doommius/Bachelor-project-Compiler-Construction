@@ -8,6 +8,7 @@
 
 ## TODO
 
+* Fix typechecker/weeder errors
 * Runtime error checks
 * More peephole optimization
 
