@@ -19,7 +19,7 @@
 #include "rewriter.h"
 
 extern int temps = AVAIL_REGS; 					//The predefined registers will be the first values in the bitvectors
-extern int memSize = 1000;
+extern int memSize = 4000;
 
 int cmps = 1;
 int ifs = 1;
@@ -370,6 +370,7 @@ a_asm *generate_stmt(statement *stmt){
 	struct a_asm *s2;
 	struct a_asm *v;
 	struct a_asm *mem_op;
+	struct a_asm *iter;
 
 	struct asm_op *wrt;
 	struct asm_op *ret;
@@ -586,18 +587,48 @@ a_asm *generate_stmt(statement *stmt){
 			
 			make_loop_start_label(label_loop_start);
 			make_loop_end_label(label_loop_end);
+
 			add_label(&head, &tail, label_loop_start, "Start of while");
-			expr = generate_exp(stmt->val.loop.expression);
+			expr = generate_exp(stmt->val.w_loop.expression);
 			asm_insert(&head, &tail, &expr);
 			ifexp = get_return_reg(tail);
 
 			add_2_ins(&head, &tail, CMP, make_op_const(1), ifexp, "Check if condition in while is true");
 			add_1_ins(&head, &tail, JNE, make_op_label(label_loop_end), "If condition is false, jump to end");
-			s1 = generate_stmt(stmt->val.loop.statement);
+			s1 = generate_stmt(stmt->val.w_loop.statement);
 			asm_insert(&head, &tail, &s1);
 			add_1_ins(&head, &tail, JMP, make_op_label(label_loop_start), "Jump to start of while");
 			add_label(&head, &tail, label_loop_end, "End of while");
 			break;
+
+		case (statement_FOR):
+
+			make_loop_start_label(label_loop_start);
+			make_loop_end_label(label_loop_end);
+			
+			s1 = generate_stmt(stmt->val.f_loop.assign);
+			asm_insert(&head, &tail, &s1);
+
+			add_label(&head, &tail, label_loop_start, "Start of for");
+			expr = generate_exp(stmt->val.f_loop.cond);
+			asm_insert(&head, &tail, &expr);
+			ifexp = get_return_reg(tail);
+
+			add_2_ins(&head, &tail, CMP, make_op_const(1), ifexp, "Check if condition in while is true");
+			add_1_ins(&head, &tail, JNE, make_op_label(label_loop_end), "If condition is false, jump to end");
+
+			s2 = generate_stmt(stmt->val.f_loop.body);
+			asm_insert(&head, &tail, &s2);
+
+			iter = generate_stmt(stmt->val.f_loop.iter);
+			asm_insert(&head, &tail, &iter);
+
+
+			add_1_ins(&head, &tail, JMP, make_op_label(label_loop_start), "Jump to start of while");
+			add_label(&head, &tail, label_loop_end, "End of for");
+			break;
+
+
 
 		case (statement_LIST):
 			s1 = generate_slist(stmt->val.list);
@@ -845,7 +876,7 @@ a_asm *generate_exp(expression *exp){
 			break;
 
 		case (exp_EQ):
-			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, EQ");
+			add_2_ins(&head, &tail, CMP, right_target, left_target, "Compare, EQ");
 			//Will hold either 1 or 0, depending on if the expression was true of false
 			temp = make_op_temp();
 			make_cmp_label(label_true);
@@ -861,7 +892,7 @@ a_asm *generate_exp(expression *exp){
 			break;
 
 		case (exp_NEQ):
-			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, NEQ");
+			add_2_ins(&head, &tail, CMP, right_target, left_target, "Compare, NEQ");
 			//Will hold either 1 or 0, depending on if the expression was true of false
 			temp = make_op_temp();
 			make_cmp_label(label_true);
@@ -877,7 +908,7 @@ a_asm *generate_exp(expression *exp){
 			break;
 
 		case (exp_GT):
-			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, GT");
+			add_2_ins(&head, &tail, CMP, right_target, left_target, "Compare, GT");
 			//Will hold either 1 or 0, depending on if the expression was true of false
 			temp = make_op_temp();
 			make_cmp_label(label_true);
@@ -893,7 +924,7 @@ a_asm *generate_exp(expression *exp){
 			break;
 
 		case (exp_LT):
-			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, LT");
+			add_2_ins(&head, &tail, CMP, right_target, left_target, "Compare, LT");
 			//Will hold either 1 or 0, depending on if the expression was true of false
 			temp = make_op_temp();
 			make_cmp_label(label_true);
@@ -909,7 +940,7 @@ a_asm *generate_exp(expression *exp){
 			break;
 
 		case (exp_GEQ):
-			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, GEQ");
+			add_2_ins(&head, &tail, CMP, right_target, left_target, "Compare, GEQ");
 			//Will hold either 1 or 0, depending on if the expression was true of false
 			temp = make_op_temp();
 			make_cmp_label(label_true);
@@ -925,7 +956,7 @@ a_asm *generate_exp(expression *exp){
 			break;
 		
 		case (exp_LEQ):
-			add_2_ins(&head, &tail, CMP, left_target, right_target, "Compare, LEQ");
+			add_2_ins(&head, &tail, CMP, right_target, left_target, "Compare, LEQ");
 			//Will hold either 1 or 0, depending on if the expression was true of false
 			temp = make_op_temp();
 			make_cmp_label(label_true);

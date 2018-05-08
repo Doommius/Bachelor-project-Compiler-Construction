@@ -143,15 +143,24 @@ void prettyDecl(declaration *d) {
 }
 
 void prettySL(statement_list *sl) {
+    STATEMENT_kind k;
     if (sl != NULL){
         switch (sl->kind) {
             
             case (sl_STATEMENT):
                 prettySTMT(sl->statement);
+                k =sl->statement->kind;
+                if (k != statement_IF && k != statement_IF_ELSE && k != statement_WHILE && k != statement_FOR){
+                    printf("\n");
+                }
                 break;
 
             case (sl_LIST):
                 prettySTMT(sl->statement);
+                k =sl->statement->kind;
+                if (k != statement_IF && k != statement_IF_ELSE && k != statement_WHILE && k != statement_FOR){
+                    printf("\n");
+                }
                 prettySL(sl->list);
                 break;
                 
@@ -173,19 +182,19 @@ void prettySTMT(statement *s) {
     case (statement_RETURN):
         printf("return ");
         prettyEXP(s->val.ret);
-        printf(";\n");
+        printf(";");
         break;
 
     case (statement_WRITE):
         printf("write ");
         prettyEXP(s->val.wrt);
-        printf(";\n");
+        printf(";");
         break;
 
     case (statement_ALLOCATE):
         printf("allocate ");
         prettyVar(s->val.allocate.variable);
-        printf(";\n");
+        printf(";");
         break;
 
     case (statement_ALLOCATE_LENGTH):
@@ -193,14 +202,14 @@ void prettySTMT(statement *s) {
         prettyVar(s->val.allocate.variable);
         printf(" of length ");
         prettyEXP(s->val.allocate.length);
-        printf(";\n");
+        printf(";");
         break;
 
     case (statement_ASSIGNMENT):
         prettyVar(s->val.assignment.variable);
         printf(" = ");
         prettyEXP(s->val.assignment.expression);
-        printf(";\n");
+        printf(";");
         break;
 
     case (statement_IF):
@@ -228,9 +237,19 @@ void prettySTMT(statement *s) {
 
     case (statement_WHILE):
         printf("while (");
-        prettyEXP(s->val.loop.expression);
+        prettyEXP(s->val.w_loop.expression);
         printf(") do\n");
-        prettySTMT(s->val.loop.statement);
+        prettySTMT(s->val.w_loop.statement);
+        break;
+
+    case (statement_FOR):
+        printf("for (");
+        prettySTMT(s->val.f_loop.assign);
+        prettyEXP(s->val.f_loop.cond);
+        printf(" ; ");
+        prettySTMT(s->val.f_loop.iter);
+        printf(")\n");
+        prettySTMT(s->val.f_loop.body);
         break;
 
     case (statement_LIST):
@@ -240,7 +259,7 @@ void prettySTMT(statement *s) {
         prettySL(s->val.list);
         indent_depth--;
         indent();
-        printf("}\n");
+        printf("}");
         break;
     }
 }

@@ -256,8 +256,15 @@ void setup_stmt(statement *stmt, symbol_table*table){
 
         case (statement_WHILE):
             //printf("\tStatement while\n");
-            setup_exp(stmt->val.loop.expression, table);
-            setup_stmt(stmt->val.loop.statement, table);
+            setup_exp(stmt->val.w_loop.expression, table);
+            setup_stmt(stmt->val.w_loop.statement, table);
+            break;
+
+        case (statement_FOR):
+            setup_stmt(stmt->val.f_loop.assign, table);
+            setup_exp(stmt->val.f_loop.cond, table);
+            setup_stmt(stmt->val.f_loop.iter, table);
+            setup_stmt(stmt->val.f_loop.body, table);
             break;
 
         case (statement_LIST):

@@ -1,7 +1,5 @@
 var a : int;
-var b : int;
 
-a = 2;
-b = 3;
-
-write b;
+for (a = 1; a < 10 ; a = a+1;){
+    write a;
+}

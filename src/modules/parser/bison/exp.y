@@ -68,6 +68,7 @@ void yyerror() {
 %token WRITE
 %token ALLOCATE
 %token DO
+%token FOR
 
 
 
@@ -191,6 +192,12 @@ statement:RETURN expression ';'
         {$$ = make_STMT_if_else($2, $4, $6);}
             | WHILE expression DO statement
         {$$ = make_STMT_while($2, $4);}
+            | FOR '(' statement expression ';' statement ')' statement
+        {$$ = make_STMT_for($3, $4, $6, $8);
+            if ($3->kind != statement_ASSIGNMENT){
+                fprintf(stderr, "First statement in for loop is not an assignment, at line:", $3->lineno);
+            YYABORT;
+            }}
             | '{' statement_list '}'
         {$$ = make_STMT_list($2);}
 ;

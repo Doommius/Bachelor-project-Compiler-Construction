@@ -300,9 +300,19 @@ statement *weed_stmt(statement *stmt){
 
         case (statement_WHILE):
             //printf("Statement while\n");
-            stmt->val.loop.expression = weed_expression(stmt->val.loop.expression);
-            stmt->val.loop.statement = weed_stmt(stmt->val.loop.statement);
-            if (stmt->val.loop.statement == NULL){
+            stmt->val.w_loop.expression = weed_expression(stmt->val.w_loop.expression);
+            stmt->val.w_loop.statement = weed_stmt(stmt->val.w_loop.statement);
+            if (stmt->val.w_loop.statement == NULL){
+                return NULL;
+            }
+            break;
+
+        case (statement_FOR):
+            stmt->val.f_loop.assign = weed_stmt(stmt->val.f_loop.assign);
+            stmt->val.f_loop.cond = weed_expression(stmt->val.f_loop.cond);
+            stmt->val.f_loop.iter = weed_stmt(stmt->val.f_loop.iter);
+            stmt->val.f_loop.body = weed_stmt(stmt->val.f_loop.body);
+            if (stmt->val.f_loop.body == NULL){
                 return NULL;
             }
             break;

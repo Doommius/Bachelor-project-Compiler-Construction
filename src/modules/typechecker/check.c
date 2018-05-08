@@ -120,8 +120,15 @@ void check_stmt(statement *stmt){
             break;
         
         case (statement_WHILE):
-            check_exp(stmt->val.loop.expression);
-            check_stmt(stmt->val.loop.statement);
+            check_exp(stmt->val.w_loop.expression);
+            check_stmt(stmt->val.w_loop.statement);
+            break;
+
+        case (statement_FOR):
+            check_stmt(stmt->val.f_loop.assign);
+            check_exp(stmt->val.f_loop.cond);
+            check_stmt(stmt->val.f_loop.iter);
+            check_stmt(stmt->val.f_loop.body);
             break;
 
         case (statement_LIST):

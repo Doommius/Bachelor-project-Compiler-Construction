@@ -8,7 +8,6 @@
 
 ## TODO
 
-* Implement "for" loop in grammar
 * Runtime error checks
 * More peephole optimization
 

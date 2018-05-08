@@ -137,7 +137,14 @@ typedef struct statement {
         struct {
             struct expression *expression;
             struct statement *statement;
-        } loop;
+        } w_loop;
+
+        struct {
+            struct statement *assign;
+            struct expression *cond;
+            struct statement *iter;
+            struct statement *body;
+        } f_loop;
 
         struct statement_list *list;
     } val;
@@ -251,6 +258,7 @@ statement *make_STMT_if(expression *e, statement *s);
 statement *make_STMT_if_else(expression *e, statement *s1, statement *s2);
 statement *make_STMT_while(expression *e, statement *s);
 statement *make_STMT_list(statement_list *sl);
+statement *make_STMT_for(statement *assignment, expression *cond, statement *iterator, statement *body);
 
 variable *make_Var_id(char *id);
 variable *make_Var_exp(variable *var, expression *expression);

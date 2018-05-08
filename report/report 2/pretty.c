@@ -195,9 +195,9 @@ void prettySTMT(statement *s){
 
         case statement_WHILE:
             printf("while (");
-            prettyEXP(s->val.loop.expression);
+            prettyEXP(s->val.w_loop.expression);
             printf(") do\n");
-            prettySTMT(s->val.loop.statement);
+            prettySTMT(s->val.w_loop.statement);
             break;
 
         case statement_LIST:

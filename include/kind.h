@@ -55,6 +55,7 @@ typedef enum { statement_RETURN,
                statement_IF,
                statement_IF_ELSE,
                statement_WHILE,
+               statement_FOR,
                statement_LIST } STATEMENT_kind;
 
 typedef enum { var_ID,

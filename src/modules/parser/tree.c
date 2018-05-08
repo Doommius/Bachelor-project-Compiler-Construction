@@ -287,8 +287,20 @@ statement *make_STMT_while(expression *e, statement *s1) {
     s = NEW(statement);
     s->lineno = lineno;
     s->kind = statement_WHILE;
-    s->val.loop.expression = e;
-    s->val.loop.statement = s1;
+    s->val.w_loop.expression = e;
+    s->val.w_loop.statement = s1;
+    return s;
+}
+
+statement *make_STMT_for(statement *assignment, expression *cond, statement *iterator, statement *body){
+    statement *s;
+    s = NEW(statement);
+    s->lineno = lineno;
+    s->kind = statement_FOR;
+    s->val.f_loop.assign = assignment;
+    s->val.f_loop.cond = cond;
+    s->val.f_loop.iter = iterator;
+    s->val.f_loop.body = body;
     return s;
 }
 
