@@ -163,10 +163,11 @@ a_asm *reg_alloc(a_asm *h){
 
         assign_colors();
         if (!vector_empty(spilled_nodes)){
-           
-            printf("Spilled nodes: ");
-            vector_print(spilled_nodes);
-            printf("\n");
+            if (verbose){
+                printf("Spilled nodes: ");
+                vector_print(spilled_nodes);
+                printf("\n");
+            }
             
             h = rewrite_program(h);
         }

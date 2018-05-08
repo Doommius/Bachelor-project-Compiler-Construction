@@ -38,6 +38,7 @@ int main(int argc, char **argv) {
 	int bflag = 0;
 	int printpeep = 0;
 	int prettyprint = 0;
+    int exec = 0;
 
 	char *cvalue = NULL;
 	char *directory = "./";
@@ -50,7 +51,7 @@ int main(int argc, char **argv) {
 
 	int files[argc];
 
-	while ((c = getopt(argc, argv, "ho:avnp:m:")) != -1) {
+	while ((c = getopt(argc, argv, "ho:avnp:m:e")) != -1) {
 		switch (c) {
 		case 'h':
 			helpflag = 1;
@@ -79,6 +80,11 @@ int main(int argc, char **argv) {
 			files[optind - 2] = 1;
 			break;
 
+        case 'e':
+			exec = 1;
+			files[optind - 2] = 1;
+			break;
+
 		case 'p':
 			prettyprint = atoi(optarg);
 			files[optind - 1] = 1;
@@ -104,7 +110,7 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
-	printf("Num opts: %i, Num args: %i\n", optind, argc);
+	//printf("Num opts: %i, Num args: %i\n", optind, argc);
 	if (optind < argc) {
 		for (int i = 1; i < argc; ++i) {
 			if (files[i] != 1) {
@@ -200,9 +206,18 @@ int main(int argc, char **argv) {
 		compile_string = concat_string(compile_string, filename);
 		compile_string = concat_string(compile_string, ".s");
 
-		printf("\n%s\n", compile_string);
+		//printf("\n%s\n", compile_string);
 		system(compile_string);
 	}
+
+    if (exec){
+        char *exec_string = concat_string("./", filename);
+		exec_string = concat_string(exec_string, ".out ");
+
+		//printf("\n%s\n", exec_string);
+        printf("\n");
+		system(exec_string);
+    }
 
 	printf("\n");
 	return 1;

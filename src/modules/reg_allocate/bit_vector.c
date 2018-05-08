@@ -13,13 +13,13 @@
     int B_VECTOR_INDECES = 0;
 
 BITVECTOR init_vector(int size){
-    if (!defined){
+    //if (!defined){
         B_VECTOR_SIZE = round_up(temps);
         B_VECTOR_TYPE_SIZE =  sizeof(unsigned);
         B_VECTOR_BYTES = (B_VECTOR_SIZE / 8);
         B_VECTOR_INDECES  = (B_VECTOR_BYTES / B_VECTOR_TYPE_SIZE);
-        defined++;
-    }
+    //     defined++;
+    // }
     
     BITVECTOR bv = malloc(B_VECTOR_BYTES);
     
@@ -192,7 +192,7 @@ int round_up(int v){
     res = v / 32.;
     min = 32 * ceil(res);
     
-    printf("Setting vector size to %d\n", min);
+    //printf("Setting vector size to %d\n", min);
     return min;
 
 }
