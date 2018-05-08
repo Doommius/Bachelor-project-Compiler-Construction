@@ -1114,23 +1114,21 @@ a_asm *generate_term(term *term){
 			asm_insert(&head, &tail, &expr);
 			if (term->val.expression->stype->type == symbol_INT){
 
-				//ABS implementation is based on the C library version
 				target = get_return_reg(tail);
 				temp = make_op_temp();
 				add_2_ins(&head, &tail, MOVQ, target, temp, "Moving argument to new reg");
-				add_2_ins(&head, &tail, SARQ, make_op_const(31), temp, "Shift arithmetic right");
+				add_2_ins(&head, &tail, MOVQ, temp, reg_RAX, "Move val into RAX before CDQ");
+
+				add_ins(&head, &tail, CDQ, "Sign-extend RAX into RDX");
+
 				temp2 = make_op_temp();
-				add_2_ins(&head, &tail, MOVQ, temp, temp2, "Copying shifted value");
+				add_2_ins(&head, &tail, MOVQ, reg_RDX, temp2, "Move val to new reg");
+				
+				add_2_ins(&head, &tail, XORQ, temp, temp2, "XOR vals");
 
-				add_2_ins(&head, &tail, XORQ,  target, temp2, "XOR'ing the two values");
+				add_2_ins(&head, &tail, SUBQ, reg_RDX, temp2, "Subtraction");
 
-				res = make_op_temp();
-				add_2_ins(&head, &tail, MOVQ, temp2, res, "Moving value to reg");
-
-
-				add_2_ins(&head, &tail, SUBQ, temp,  res, "Subtracting the last value");
-
-				add_2_ins(&head, &tail, MOVQ, res, res, "Used to get target for next instruction");
+				add_2_ins(&head, &tail, MOVQ, temp2, temp2, "Used to get target for next instruction");
 
 			}
 			if (term->val.expression->stype->type == symbol_ARRAY){

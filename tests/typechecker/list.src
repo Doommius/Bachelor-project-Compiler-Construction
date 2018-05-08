@@ -1,5 +1,5 @@
 var a : int;
 
-for (a = 1; a < 10 ; a = a+1;){
-    write a;
-}
+a = -16;
+
+write a;
