@@ -118,3 +118,23 @@ Go back n commits
 ```bash
 git checkout HEAD-n
 ```
+
+Git Bisectb
+
+```bash
+git bisect start
+
+# Current head / commit
+git bisect bad
+
+# Last known good coomit
+git bisect good <commit hash>
+
+---->
+# Tell bisect if the commit is good or bad.
+git bisect good/bad
+
+---->
+# Create branch from bad commit or reset.
+git bisect reset / git branch <branchname> 
+```
