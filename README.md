@@ -105,3 +105,16 @@ How to list branches
 ```bash
 git branch
 ```
+
+Show previous commits in terminal
+
+```bash
+git log --stat
+```
+
+Go back n commits
+
+
+```bash
+git checkout HEAD-n
+```
