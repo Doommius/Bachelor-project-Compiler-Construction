@@ -50,6 +50,10 @@ set amount of memory the program is allowed to use. The value given will be mult
 Disable runtime checks
 .br
 .br
+.B -f
+outputs to a file instead of stdout.
+.br
+.br
 .B @file
 input file to compile
 .br

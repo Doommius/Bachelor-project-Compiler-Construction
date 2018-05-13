@@ -6,6 +6,12 @@
 
 FILE *out;
 
+int stdout_asm(a_asm *head) {
+	out = stdout;
+	create_asm(head);
+
+	return 1;
+}
 
 int print_asm(a_asm *head, char *file){
 
@@ -238,7 +244,5 @@ void get_opt(asm_op *op, char *dest){
             get_opt(op->val.lea.reg, reg);
             sprintf(dest, "%d(%s)", op->val.lea.offset, reg);
             break;
-
-
     }
 }
