@@ -17,6 +17,7 @@
 #include "symbol.h"
 #include "reg_alloc.h"
 #include "rewriter.h"
+#include "main.h"
 
 extern int temps = AVAIL_REGS; 					//The predefined registers will be the first values in the bitvectors
 extern int memSize = 4000;
@@ -126,6 +127,10 @@ void init_regs(){
 
 }
 
+void init_flags() {
+	div_zero_flag = 0;
+}
+
 a_asm *generate_program(body *body){
 	struct a_asm *b;
 	struct a_asm *head;
@@ -136,12 +141,19 @@ a_asm *generate_program(body *body){
 
 	init_regs();
 
+	if(runtime_checks) {
+		init_flags();
+	}
+
 	b = generate_body(body, "main", "main_end", NULL);
 
 	asm_insert(&head, &tail, &b);
 	add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RAX, "Return \"no error\" exit code");
 	add_ins(&head, &tail, RET, "Program return");
 
+	if(div_zero_flag) {
+		add_zero_div_runtime_error(&head, &tail);
+	}
 
 	return head;
    
@@ -859,10 +871,17 @@ a_asm *generate_exp(expression *exp){
 
 			add_2_ins(&head, &tail, MOVQ, left_target, reg_RAX, "Using RAX for division");
 			add_ins(&head, &tail, CDQ, "Sign-extend RAX into RDX");
-
-			//Need to add a check to see if this value is 0 or not
+			
+			//Check to see if this value is 0 or not
 			add_2_ins(&head, &tail, MOVQ, right_target, reg_RBX, "Using RBX for division");
-			add_1_ins(&head, &tail, IDIV, reg_RBX, "Division using RAX and RBX");
+			if(runtime_checks) {
+				div_zero_flag = 1;
+				add_2_ins(&head, &tail, CMP, make_op_const(0), reg_RBX, "Checking if value is 0");
+				make_div_zero_label(label_true);
+				add_1_ins(&head, &tail, JE, make_op_label(label_true), "");
+			}
+
+			add_1_ins(&head, &tail, IDIV, reg_RBX, "Dividing RAX with RBX");
 			add_1_ins(&head, &tail, POP, reg_RDX, "Restoring RDX");
 			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp(), "Storing result here (temp)");
 			break;
@@ -1527,6 +1546,10 @@ void make_loop_end_label(char *buffer){
 
 }
 
+void make_div_zero_label(char *buffer) {
+	sprintf(buffer, "div_zero");
+}
+
 asm_op *make_op_mem_loc(asm_op **index_reg){
 
 	struct asm_op *op;
@@ -1572,3 +1595,12 @@ asm_op *make_op_lea(int offset, asm_op **reg){
 	return op;
 }
 
+// Runtime errors
+
+void add_zero_div_runtime_error(a_asm *head, a_asm *tail) {
+	add_label(&head, &tail, "div_zero", "Add division by zero runtime check");
+	add_2_ins(&head, &tail, MOVQ, reg_RBP, reg_RSP, "Retore old stack pointer");
+	add_1_ins(&head, &tail, POP, reg_RBP, "Restore old base pointer");
+	add_2_ins(&head, &tail, MOVQ, make_op_const(-1), reg_RAX, "Return \"error\" exit code");
+	add_ins(&head, &tail, RET, "Program return");
+}

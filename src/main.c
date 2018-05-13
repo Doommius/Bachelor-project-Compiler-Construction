@@ -29,6 +29,7 @@
 
 int lineno;
 extern int verbose = 0;
+extern int runtime_checks = 1;
 
 body *theprogram;
 
@@ -51,7 +52,7 @@ int main(int argc, char **argv) {
 
 	int files[argc];
 
-	while ((c = getopt(argc, argv, "ho:avnp:m:e")) != -1) {
+	while ((c = getopt(argc, argv, "ho:avnp:m:er")) != -1) {
 		switch (c) {
 		case 'h':
 			helpflag = 1;
@@ -93,6 +94,11 @@ int main(int argc, char **argv) {
 
 		case 'v':
 			verbose = 1;
+			files[optind - 2] = 1;
+			break;
+
+		case 'r':
+			runtime_checks = 0;
 			files[optind - 2] = 1;
 			break;
 
@@ -206,7 +212,7 @@ int main(int argc, char **argv) {
 		compile_string = concat_string(compile_string, filename);
 		compile_string = concat_string(compile_string, ".s");
 
-		//printf("\n%s\n", compile_string);
+		printf("\n%s\n", compile_string);
 		system(compile_string);
 	}
 

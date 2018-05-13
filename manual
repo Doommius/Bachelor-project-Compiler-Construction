@@ -46,6 +46,10 @@ verbose, outputs statements when starting different modules of the compiler. Als
 set amount of memory the program is allowed to use. The value given will be multiplied with 8 when allocating the storage
 .br
 .br
+.B -r
+Disable runtime checks
+.br
+.br
 .B @file
 input file to compile
 .br
