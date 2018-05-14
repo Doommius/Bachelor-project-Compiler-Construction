@@ -19,11 +19,11 @@
 #include "rewriter.h"
 
 extern int temps = AVAIL_REGS; 					//The predefined registers will be the first values in the bitvectors
-extern int memSize = 4000;
+extern int memSize = 10000;
 
-int cmps = 1;
-int ifs = 1;
-int loops = 1;
+int cmps = 0;
+int ifs = 0;
+int loops = 0;
 int nullInserts = 0;
 int nonNullInserts = 0; 
 
@@ -175,10 +175,10 @@ a_asm *generate_body(body *body, char *start_label, char *end_label, head *h){
 	if (h != NULL){
 		func_head = generate_head(h);
 		asm_insert(&head, &tail, &func_head);
-	} //else {
-	// 	//Init MEM in main
-	// 	add_2_ins(&head, &tail, MOVQ, make_op_const(1), op_MEM, "Init MEM");
-	// }
+	} else {
+		//Init MEM in main
+		add_2_ins(&head, &tail, MOVQ, make_op_const(1), op_MEM, "Init MEM");
+	}
 	
 	sl = generate_slist(body->s_list);
 	asm_insert(&head2, &tail2, &sl);
@@ -541,7 +541,10 @@ a_asm *generate_stmt(statement *stmt){
 			expr = generate_exp(stmt->val.ifthen.expression);
 			asm_insert(&head, &tail, &expr);
 			ifexp = get_return_reg(tail);
+
+			ifs++;
 			make_if_label(label_ifend);
+			
 			add_2_ins(&head, &tail, CMP, make_op_const(1), ifexp, "Check if IF expression is true");
 			add_1_ins(&head, &tail, JNE, make_op_label(label_ifend), "Expression is false, skip IF part");
 
@@ -554,6 +557,7 @@ a_asm *generate_stmt(statement *stmt){
 			expr = generate_exp(stmt->val.ifthen.expression);
 			asm_insert(&head, &tail, &expr);
 			ifexp = get_return_reg(tail);
+
 			make_else_label(label_else);
 			make_if_label(label_ifend);
 			add_2_ins(&head, &tail, CMP, make_op_const(1), ifexp, "Check if IF expression is true");
@@ -855,7 +859,7 @@ a_asm *generate_exp(expression *exp){
 		case (exp_DIV):
 			//IDIV uses the %rax register, so we must move one of the values to this register
 			//Should be change to a multiplication when optimizing, since that is faster than division
-			add_1_ins(&head, &tail, PUSH, reg_RDX, "Push RDX, since it will be overwritten from division");
+			//add_1_ins(&head, &tail, PUSH, reg_RDX, "Push RDX, since it will be overwritten from division");
 
 			add_2_ins(&head, &tail, MOVQ, left_target, reg_RAX, "Using RAX for division");
 			add_ins(&head, &tail, CDQ, "Sign-extend RAX into RDX");
@@ -863,7 +867,7 @@ a_asm *generate_exp(expression *exp){
 			//Need to add a check to see if this value is 0 or not
 			add_2_ins(&head, &tail, MOVQ, right_target, reg_RBX, "Using RBX for division");
 			add_1_ins(&head, &tail, IDIV, reg_RBX, "Division using RAX and RBX");
-			add_1_ins(&head, &tail, POP, reg_RDX, "Restoring RDX");
+			//add_1_ins(&head, &tail, POP, reg_RDX, "Restoring RDX");
 			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp(), "Storing result here (temp)");
 			break;
 
@@ -1481,49 +1485,52 @@ asm_op *make_op_spill(){
 
 
 void make_cmp_label(char *buffer){
-
-	sprintf(buffer, "cmpTrue_%d", cmps);
+	
 	cmps++;
+	sprintf(buffer, "cmpTrue_%d", cmps);
+	
 
 }
 
 
 void make_end_cmp_label(char *buffer){
 
-	sprintf(buffer, "endCMP_%d", cmps-1);
+	sprintf(buffer, "endCMP_%d", cmps);
 	
 }
 
 void make_bool_label(char *buffer){
 
-	sprintf(buffer, "endBoolCMP_%d", cmps);
 	cmps++;
+	sprintf(buffer, "endBoolCMP_%d", cmps);
+	
 }
 
 
 void make_else_label(char *buffer){
-
-	sprintf(buffer, "else_%d", ifs);
+	
 	ifs++;
+	sprintf(buffer, "else_%d", ifs);
 
 }
 
 
 void make_if_label(char *buffer){
+	
 
-	sprintf(buffer, "if_end_%d", ifs-1);
+	sprintf(buffer, "if_end_%d", ifs);
 
 }
 
 void make_loop_start_label(char *buffer){
-
-	sprintf(buffer, "loop_start_%d", loops);
 	loops++;
+	sprintf(buffer, "loop_start_%d", loops);
+
 
 }
 
 void make_loop_end_label(char *buffer){
-	sprintf(buffer, "loop_end_%d", loops-1);
+	sprintf(buffer, "loop_end_%d", loops);
 
 }
 

@@ -1,5 +1,21 @@
-var a : int;
+(* Funktion til at partitionere omkring et element (Anvendes af quicksort) *)
+func partition(f : int, l : int) : int
+var p_elem : int, w_elem : int, i : int, j : int, dummy : bool;
+{
+  p_elem = 10;
+  w_elem = 5;  
+  i = f-1;
+  j = f;
+  while (j <= l-1) do
+  {
+    if (p_elem > w_elem) then
+    {
+      i = i+1;
+    }
+    j = j+1;
+  }
+  return i+1;
+}
+end partition
 
-a = -16;
-
-write a;
+write partition(17, 3);

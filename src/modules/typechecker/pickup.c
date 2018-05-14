@@ -105,9 +105,8 @@ void pickup_declaration(declaration *decl){
 }
 
 void pickup_type(type *type){
-#if debugflag > 2
-    printf("Picking up type, kind: %d\n", type->kind);
-#endif
+
+    //printf("Picking up type, kind: %d\n", type->kind);
 
     SYMBOL *s;
     switch (type->kind){

@@ -23,7 +23,7 @@ void peephole(a_asm *h){
     //For now we just remove MOV temp, temp instructions, where the two temps are the same
     
     h = remove_move_to_self(h);
-    h = remove_mem_moves(h);
+    //h = remove_mem_moves(h);
 
 }
 

@@ -167,35 +167,37 @@ statement_list *weed_slist(statement_list *slist){
         slist->contains_ret = slist->list->contains_ret;
     }
 
-    
+    //Ignore NULL statements
     if (slist->statement == NULL){
         return slist->list;
     }
 
+    
+
     f = stack_read(function_stack);
 
-    if (f != NULL){
-        if (slist->statement->kind == statement_IF_ELSE){
-            if (slist->statement->contains_ret == 0){
-                // prettySTMT(slist->statement);
-                print_error("If-else does not contain enough returns", 0, slist->statement->lineno);
-            }
-        }
+    // if (f != NULL){
+    //     if (slist->statement->kind == statement_IF_ELSE){
+    //         if (slist->statement->contains_ret == 0){
+    //             // prettySTMT(slist->statement);
+    //             print_error("If-else does not contain enough returns", 0, slist->statement->lineno);
+    //         }
+    //     }
         
-        //We need to check if there is a return after the if
-        if (slist->statement->kind == statement_IF){
-            if (slist->list->contains_ret == 0){
-                print_error("No return after IF", 0, slist->statement->lineno);
+    //     //We need to check if there is a return after the if
+    //     if (slist->statement->kind == statement_IF){
+    //         if (slist->list->contains_ret == 0){
+    //             print_error("No return after IF", 0, slist->statement->lineno);
                 
-            }
+    //         }
             
-        }
-        // printf("Slist's statement contains a ret? %d\n", slist->statement->contains_ret);
+    //     }
+    //     // printf("Slist's statement contains a ret? %d\n", slist->statement->contains_ret);
 
-        // prettySTMT(slist->statement);
-        // slist->contains_ret = slist->statement->contains_ret;
-        f->body->s_list->contains_ret = 1;
-    }
+    //     // prettySTMT(slist->statement);
+    //     // slist->contains_ret = slist->statement->contains_ret;
+    //     f->body->s_list->contains_ret = 1;
+    // }
 
     
 
@@ -257,9 +259,9 @@ statement *weed_stmt(statement *stmt){
             stmt->val.ifthen.statement1 = weed_stmt(stmt->val.ifthen.statement1);
 
             //Check for return in if
-            if (stmt->val.ifthen.statement1->contains_ret == 1){
-                stmt->contains_ret = 1;
-            }
+            // if (stmt->val.ifthen.statement1->contains_ret == 1){
+            //     stmt->contains_ret = 1;
+            // }
 
             // Check if expression is always true/false
             if (stmt->val.ifthen.expression->kind == exp_TERM){

@@ -138,7 +138,7 @@ a = 40;
 b = 3641;
 modulo = 729;
 
-(* Læg pseudorandom data i arrays *)
+(* Lï¿½g pseudorandom data i arrays *)
 counter = 0;
 while(counter < n) do
 {
