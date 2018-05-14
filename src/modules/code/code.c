@@ -878,10 +878,7 @@ a_asm *generate_exp(expression *exp){
 			
 			//Check to see if this value is 0 or not
 			add_2_ins(&head, &tail, MOVQ, right_target, reg_RBX, "Using RBX for division");
-<<<<<<< HEAD
-			add_1_ins(&head, &tail, IDIV, reg_RBX, "Division using RAX and RBX");
-			//add_1_ins(&head, &tail, POP, reg_RDX, "Restoring RDX");
-=======
+
 			if(runtime_checks) {
 				div_zero_flag = 1;
 				add_2_ins(&head, &tail, CMP, make_op_const(0), reg_RBX, "Checking if value is 0");
@@ -891,7 +888,6 @@ a_asm *generate_exp(expression *exp){
 
 			add_1_ins(&head, &tail, IDIV, reg_RBX, "Dividing RAX with RBX");
 			add_1_ins(&head, &tail, POP, reg_RDX, "Restoring RDX");
->>>>>>> 49968db6b3e03a96dd3fafaea8d957ff0f2319b4
 			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp(), "Storing result here (temp)");
 			break;
 
