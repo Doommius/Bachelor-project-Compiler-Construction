@@ -187,7 +187,7 @@ a_asm *add_postfix(int offset){
         add_2_ins(&head, &tail, ADDQ, make_op_const(offset * 8), reg_RSP, "Remove space for variables and spills");
     }
 
-    add_2_ins(&head, &tail, MOVQ, reg_RBP, reg_RSP, "Retore old stack pointer");
+    add_2_ins(&head, &tail, MOVQ, reg_RBP, reg_RSP, "Restore old stack pointer");
     add_1_ins(&head, &tail, POP, reg_RBP, "Restore old base pointer");
 
     return head;

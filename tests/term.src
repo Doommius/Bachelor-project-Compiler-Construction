@@ -1,0 +1,27 @@
+
+
+func aa():int 
+	var n : int;
+	n = 1;
+
+	n = n-1;
+
+	n = 1/n;
+
+	return n;
+
+end aa
+
+func bb():int 
+	var n : int;
+	n = 1;
+
+	n = n-1;
+
+	n = 1/n;
+
+	return n;
+end bb
+
+write aa();
+write bb();

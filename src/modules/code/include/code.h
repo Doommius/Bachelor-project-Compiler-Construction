@@ -9,6 +9,8 @@
 extern int temps;
 extern int memSize; 
 
+int div_zero_flag;
+
 //Abstract assembly node, with a build in linked list.
 //To be expanded
 typedef struct a_asm {
@@ -158,6 +160,8 @@ asm_op *get_return_reg(a_asm *tail);
 
 void init_regs();
 
+void init_flags();
+
 void get_next(a_asm **head, a_asm **tail);
 
 void add_simple_start(a_asm **head, a_asm **tail);
@@ -210,7 +214,9 @@ struct asm_op *op_STATIC_LINK;
 
 struct asm_op *op_MEM;
 
+// Runtime errors
 
+void add_zero_div_runtime_error(a_asm *head, a_asm *tail);
 
 
 #endif

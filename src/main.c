@@ -29,6 +29,7 @@
 
 int lineno;
 extern int verbose = 0;
+extern int runtime_checks = 1;
 
 body *theprogram;
 
@@ -38,6 +39,7 @@ int main(int argc, char **argv) {
 	int bflag = 0;
 	int printpeep = 0;
 	int prettyprint = 0;
+	int createfile = 0;
     int exec = 0;
 
 	char *cvalue = NULL;
@@ -51,7 +53,7 @@ int main(int argc, char **argv) {
 
 	int files[argc];
 
-	while ((c = getopt(argc, argv, "ho:avnp:m:e")) != -1) {
+	while ((c = getopt(argc, argv, "ho:avnp:m:erf")) != -1) {
 		switch (c) {
 		case 'h':
 			helpflag = 1;
@@ -93,6 +95,16 @@ int main(int argc, char **argv) {
 
 		case 'v':
 			verbose = 1;
+			files[optind - 2] = 1;
+			break;
+
+		case 'r':
+			runtime_checks = 0;
+			files[optind - 2] = 1;
+			break;
+
+		case 'f':
+			createfile = 1;
 			files[optind - 2] = 1;
 			break;
 
@@ -197,7 +209,11 @@ int main(int argc, char **argv) {
 		printf("Outputting final program\n");
 	}
 
-	print_asm(program, concat_string(directory, concat_string(filename, ".s")));
+	if(createfile) {
+		print_asm(program, concat_string(directory, concat_string(filename, ".s")));
+	} else {
+		stdout_asm(program);
+	}
 
 	if (assemble_flag == 1) {
 		char *compile_string = concat_string("gcc -no-pie -o ", filename);
@@ -206,7 +222,7 @@ int main(int argc, char **argv) {
 		compile_string = concat_string(compile_string, filename);
 		compile_string = concat_string(compile_string, ".s");
 
-		//printf("\n%s\n", compile_string);
+		printf("\n%s\n", compile_string);
 		system(compile_string);
 	}
 
