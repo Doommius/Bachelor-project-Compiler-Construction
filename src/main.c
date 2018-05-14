@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 	int printpeep = 0;
 	int prettyprint = 0;
 	int createfile = 0;
-    int exec = 0;
+	int exec = 0;
 
 	char *cvalue = NULL;
 	char *directory = "./";
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 			files[optind - 2] = 1;
 			break;
 
-        case 'm':
+		case 'm':
 			memSize = atoi(optarg);
 			files[optind - 1] = 1;
 			files[optind - 2] = 1;
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 			files[optind - 2] = 1;
 			break;
 
-        case 'e':
+		case 'e':
 			exec = 1;
 			files[optind - 2] = 1;
 			break;
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
 		case '?':
 			printf("Unknown option, try again.\n");
 			return 1;
-            
+
 		default:
 			abort();
 		}
@@ -146,7 +146,7 @@ int main(int argc, char **argv) {
 		printf("You appear to be missing any function calls\n");
 		return 0;
 	}
-	
+
 	weeder_init(theprogram);
 
 	if (prettyprint == 1) {
@@ -198,7 +198,6 @@ int main(int argc, char **argv) {
 
 	program = reg_alloc(program);
 
-
 	if (verbose) {
 		printf("Second peephole\n");
 	}
@@ -209,31 +208,33 @@ int main(int argc, char **argv) {
 		printf("Outputting final program\n");
 	}
 
-	if(createfile) {
+	if (createfile) {
 		print_asm(program, concat_string(directory, concat_string(filename, ".s")));
 	} else {
 		stdout_asm(program);
 	}
 
 	if (assemble_flag == 1) {
-		char *compile_string = concat_string("gcc -no-pie -o ", filename);
+		char *compile_string = concat_string("gcc -no-pie -o ", directory);
+		compile_string = concat_string(compile_string, filename);
 		compile_string = concat_string(compile_string, ".out ");
 		compile_string = concat_string(compile_string, directory);
 		compile_string = concat_string(compile_string, filename);
 		compile_string = concat_string(compile_string, ".s");
 
-		printf("\n%s\n", compile_string);
+		//printf("\n%s\n", compile_string);
 		system(compile_string);
+
+		if (exec) {
+			char *exec_string = concat_string("./", directory);
+			exec_string = concat_string(exec_string, filename);
+			exec_string = concat_string(exec_string, ".out ");
+
+			//printf("\n%s\n", exec_string);
+			printf("\n");
+			system(exec_string);
+		}
 	}
-
-    if (exec){
-        char *exec_string = concat_string("./", filename);
-		exec_string = concat_string(exec_string, ".out ");
-
-		//printf("\n%s\n", exec_string);
-        printf("\n");
-		system(exec_string);
-    }
 
 	printf("\n");
 	return 1;
