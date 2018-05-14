@@ -242,5 +242,7 @@ void add_out_of_mem_runtime_error(a_asm **head, a_asm **tail);
 
 void add_runtime_checks(a_asm **head, a_asm **tail);
 
+struct a_asm *add_zero_init(decl_list *dlist);
+
 
 #endif

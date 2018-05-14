@@ -173,6 +173,7 @@ a_asm *generate_body(body *body, char *start_label, char *end_label, head *h){
 	struct a_asm *head2;
 	struct a_asm *tail2;
 	struct a_asm *func_head;
+	struct a_asm *zero_init;
 	head = NULL;
 	tail = NULL;
 	head2 = NULL;
@@ -194,6 +195,10 @@ a_asm *generate_body(body *body, char *start_label, char *end_label, head *h){
 		//Init MEM in main
 		add_2_ins(&head, &tail, MOVQ, make_op_const(1), op_MEM, "Init MEM");
 	}
+
+	zero_init = add_zero_init(body->d_list);
+	asm_insert(&head, &tail, &zero_init);
+
 	
 	sl = generate_slist(body->s_list);
 	asm_insert(&head2, &tail2, &sl);
@@ -1741,5 +1746,44 @@ void add_runtime_checks(a_asm **head, a_asm **tail){
 	if (out_of_mem_flag){
 		add_out_of_mem_runtime_error(head, tail);
 	}
+
+}
+
+a_asm *add_zero_init(decl_list *dlist){
+	struct a_asm *head;
+	struct a_asm *tail;
+
+	struct decl_list *d_temp;
+	struct var_decl_list *v_temp;
+
+	struct SYMBOL *s;
+
+	head = NULL;
+	tail = NULL;
+
+	d_temp = dlist;
+
+	
+
+	while (d_temp->kind != dl_EMPTY){
+		if (d_temp->decl->kind == decl_VAR){
+			v_temp = d_temp->decl->val.list;
+			while (v_temp != NULL){
+				s = get_symbol(dlist->table, v_temp->vartype->id);
+
+				if (s->is_on_stack){
+					add_2_ins(&head, &tail, MOVQ, make_op_const(0), make_op_stack_loc(s->offset, reg_RBP), "Init to zero");
+				} else {
+					add_2_ins(&head, &tail, MOVQ, make_op_const(0), s->op, "Init to zero");
+				}
+				
+				v_temp = v_temp->list;
+				
+			}
+		}
+		d_temp = d_temp->list;
+	}
+
+	return head;
 
 }

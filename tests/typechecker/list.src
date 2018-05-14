@@ -1,54 +1,37 @@
-type z = array of int;
-var w:z, p:z, x:z, y:z;
-var a : int;
+# Code generation for arrays and records, nesting
+type arrContent = record of {a : int, b : int, c : int};
+type myArr1 = array of arrContent;
+type myArr2 = array of myArr1;
+
+
+var a : myArr2;
 var b : int;
+var t1 : int, t2 : int, t3 : int;
+var p1 : arrContent;
+var p2 : myArr1;
 
-var dummy:int, counter:int, m:int, n:int, fp:int, fw:int, fe:int, mybool:bool;
 
-var rand:int, a:int, b:int, modulo:int; 
+allocate a of length 5;
 
-func NextRand(number:int, mult:int, incr:int, modulo:int) : int
-var temp:int;
+t1 = 0;
+while ( t1 < |a| ) do
 {
-  temp = number*mult+incr;
+  allocate a[t1] of length 6;
+  t2 = 0;
+  while ( t2 < |a[t1]| ) do
+  {
+    allocate a[t1][t2];
+    b = t1*2+t2;
 
-  write modulo;
-  return temp - (temp/modulo)*modulo;
-}
-end NextRand
+    a[t1][t2].a = b;
+    write b;
+    
 
-allocate w of length 1000;
-allocate p of length 1000;
-allocate x of length 1000;
-allocate y of length 1000;
+    t2 = t2 + 1;
+  }
+  t1 = t1 + 1; 
+} 
 
-n = 1000;
-m = 600;
-fp = 0-1;
-fw = 0;
-fe = 0;
-
-rand = 1;
-a = 40;
-b = 3641;
-modulo = 729;
-
-counter = 0;
-while(counter < n) do
-{
-  rand = NextRand(rand, a, b, modulo);
-  w[counter] = rand/20+10;
-  rand = NextRand(rand, a, b, modulo);
-  p[counter] = rand/90+1; 
-  x[counter] = 0;
-  y[counter] = 0;
-  counter = counter+1;
-}
-
-a = 100;
-b = 20;
-write a / b;
-
-
-
+p1 = a[3][1];
+write p1.a;
 

@@ -113,6 +113,14 @@ void set_use_def(a_asm *op){
         case (CALL):
             //CALL defines RAX, since thats where the return value will be placed
             set_bit(def, 0);
+            set_bit(def, 2);
+            set_bit(def, 4);
+            set_bit(def, 5);
+            set_bit(def, 6);
+            set_bit(def, 7);
+            set_bit(def, 8);
+            set_bit(def, 9);
+            
             
 
             //Special case for "printf"

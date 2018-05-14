@@ -237,7 +237,7 @@ void get_opt(asm_op *op, char *dest){
             break;
 
         case (op_SPILL):
-            sprintf(dest, "%d(%%rbp)", op->stack_offset *8 +8);
+            sprintf(dest, "%d(%%rbp)", op->stack_offset *-8 +8);
             break;
 
         case (op_STACK_LOC):
