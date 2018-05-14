@@ -29,7 +29,7 @@ do
 	./compiler -o out/ -a -f $file
 	y=${file%.*}
 	if [ -f $y.out ]; then
-		diff <(./out/${y##*/}.out) $y.out
+		diff <(timeout 10s ./out/${y##*/}.out) $y.out
 		let "eq = $(echo $?)"
 		#echo "eq: $(echo $?)" 
 		if [ $eq = "0" ]; then
