@@ -6,6 +6,6 @@ var d : int;
 a = 2;
 b = 3;
 c = 5;
-d = (a*b)+c;
+d = (a*b)/c;
 
 write d;

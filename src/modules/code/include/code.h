@@ -10,6 +10,10 @@ extern int temps;
 extern int memSize; 
 
 int div_zero_flag;
+int positive_allocate_flag;
+int array_index_flag;
+int uninit_var_flag;
+int out_of_mem_flag;
 
 //Abstract assembly node, with a build in linked list.
 //To be expanded
@@ -156,6 +160,16 @@ void make_loop_start_label(char *buffer);
 
 void make_loop_end_label(char *buffer);
 
+void make_div_zero_label(char *buffer);
+
+void make_array_index_label(char *buffer);
+
+void make_positive_allocate_label(char *buffer);
+
+void make_uninitialized_var_label(char *buffer);
+
+void make_out_of_mem_label(char *buffer);
+
 asm_op *get_return_reg(a_asm *tail);
 
 void init_regs();
@@ -216,7 +230,17 @@ struct asm_op *op_MEM;
 
 // Runtime errors
 
-void add_zero_div_runtime_error(a_asm *head, a_asm *tail);
+void add_array_index_runtime_error(a_asm **head, a_asm **tail);
+
+void add_zero_div_runtime_error(a_asm **head, a_asm **tail);
+
+void add_positive_allocate_runtime_error(a_asm **head, a_asm **tail);
+
+void add_uninitialized_var_runtime_error(a_asm **head, a_asm **tail);
+
+void add_out_of_mem_runtime_error(a_asm **head, a_asm **tail);
+
+void add_runtime_checks(a_asm **head, a_asm **tail);
 
 
 #endif

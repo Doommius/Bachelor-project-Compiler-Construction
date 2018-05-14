@@ -96,6 +96,9 @@ a_asm *final_rewrite(int *colors, a_asm *program){
                 call = NULL;
                 break;
 
+            default:
+                break;
+
         }
 
 

@@ -827,6 +827,8 @@ a_asm *rewrite_program(a_asm *theprogram){
             case (IMUL):
             case (BEGIN_CALL):
             case (END_CALL):
+            case (SYSCALL):
+            case (INT_):
                 //Nothing to be stored or fetched
                 asm_insert_one(&head, &tail, &theprogram);
                 break;
@@ -843,6 +845,17 @@ a_asm *rewrite_program(a_asm *theprogram){
                 asm_insert(&head, &tail, &right);
 
             
+                break;
+
+            case (CMP):
+                left = rewrite_spill_reg(&theprogram->val.two_op.op1, 1, NULL);
+                asm_insert(&head, &tail, &left);
+
+                right = rewrite_spill_reg(&theprogram->val.two_op.op2, 1, NULL);
+                asm_insert(&head, &tail, &right);
+
+                asm_insert_one(&head, &tail, &theprogram);
+
                 break;
 
             case (ADDQ):
@@ -874,6 +887,7 @@ a_asm *rewrite_program(a_asm *theprogram){
                 left = rewrite_spill_reg(&theprogram->val.one_op.op, 1, NULL);
 
                 asm_insert(&head, &tail, &left);
+                asm_insert_one(&head, &tail, &theprogram);
 
                 break;
 

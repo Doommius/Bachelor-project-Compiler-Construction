@@ -87,6 +87,8 @@ typedef enum {
                CALL,
                RET,
                LEAQ,
+               SYSCALL,
+               INT_,
 
                PUSH,                //One op
                POP,                 //One op

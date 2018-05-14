@@ -43,7 +43,7 @@ verbose, outputs statements when starting different modules of the compiler. Als
 .br
 .br
 .B -m
-set amount of memory the program is allowed to use. The value given will be multiplied with 8 when allocating the storage
+set amount of memory the program is allowed to use.
 .br
 .br
 .B -r

@@ -20,7 +20,7 @@
 #include "main.h"
 
 extern int temps = AVAIL_REGS; 					//The predefined registers will be the first values in the bitvectors
-extern int memSize = 10000;
+extern int memSize = 80000;
 
 int cmps = 0;
 int ifs = 0;
@@ -129,6 +129,10 @@ void init_regs(){
 
 void init_flags() {
 	div_zero_flag = 0;
+	array_index_flag = 0;
+	out_of_mem_flag = 0;
+	positive_allocate_flag = 0;
+	uninit_var_flag = 0;
 }
 
 a_asm *generate_program(body *body){
@@ -151,9 +155,8 @@ a_asm *generate_program(body *body){
 	add_2_ins(&head, &tail, MOVQ, make_op_const(0), reg_RAX, "Return \"no error\" exit code");
 	add_ins(&head, &tail, RET, "Program return");
 
-	if(div_zero_flag) {
-		add_zero_div_runtime_error(&head, &tail);
-	}
+	add_runtime_checks(&head, &tail);
+
 
 	return head;
    
@@ -374,6 +377,8 @@ a_asm *generate_stmt(statement *stmt){
 	char label_loop_end[20];
 	char label_wrt_true[20];
 	char label_wrt_end[20];
+	char label_allocate_length[20];
+	char label_out_of_mem[20];
 
 	head = NULL;
 	tail = NULL;
@@ -424,6 +429,12 @@ a_asm *generate_stmt(statement *stmt){
 			add_2_ins(&head, &tail, ADDQ, mem_op, ret, "Add size of record to mem pointer");
 
 			//Insert RTC failure label to check if length if larger than memSize
+			if (runtime_checks){
+				out_of_mem_flag = 1;
+				make_out_of_mem_label(label_out_of_mem);
+				add_2_ins(&head, &tail, CMP, make_op_const(memSize), length, "Check if out of memory");
+				add_1_ins(&head, &tail, JGE, make_op_label(label_out_of_mem), "Jump to error label");
+			}
 
 			add_2_ins(&head, &tail, MOVQ, ret, op_MEM, "Update mem pointer");
 			
@@ -445,9 +456,17 @@ a_asm *generate_stmt(statement *stmt){
 			asm_insert(&head, &tail, &expr);
 			length = get_return_reg(tail);
 			ret = make_op_temp();
+			
 
 
 			//Insert RTC failure label to check if length <= 0
+
+			if (runtime_checks){
+				positive_allocate_flag = 1;
+				make_positive_allocate_label(label_allocate_length);
+				add_2_ins(&head, &tail, CMP, make_op_const(0), length, "Check if allocated length is positive");
+				add_1_ins(&head, &tail, JLE, make_op_label(label_allocate_length), "Jump to error label");
+			}
 
 			mem_op = make_op_temp();
 			add_2_ins(&head, &tail, MOVQ, op_MEM, mem_op, "Move pointer to MEM to another register");
@@ -467,6 +486,13 @@ a_asm *generate_stmt(statement *stmt){
 			add_2_ins(&head, &tail, ADDQ, mem_op, ret, "Add length of array to mem register");
 
 			//Insert RTC failure label to check if length if larger than memSize
+
+			if (runtime_checks){
+				out_of_mem_flag = 1;
+				make_out_of_mem_label(label_out_of_mem);
+				add_2_ins(&head, &tail, CMP, make_op_const(memSize), length, "Check if out of memory");
+				add_1_ins(&head, &tail, JGE, make_op_label(label_out_of_mem), "Jump to error label");
+			}
 
 			add_2_ins(&head, &tail, MOVQ, ret, op_MEM, "Update mem pointer");
 
@@ -672,6 +698,10 @@ a_asm *generate_var(variable *var){
 	struct asm_op *static_link;
 	struct asm_op *ret;
 	struct asm_op *mem;
+	struct asm_op *array_length;
+
+	char label_uninit[20];
+	char label_index[20];
 
 	int depth;
 	head = NULL;
@@ -732,6 +762,33 @@ a_asm *generate_var(variable *var){
 			v = get_return_reg(tail);
 			
 			//Insert RTC failure label to check if array is initialized, if index is larger than the array's size, and if index is smaller than 0
+			
+			if (runtime_checks){
+				uninit_var_flag = 1;
+				array_index_flag = 1;
+				make_array_index_label(label_index);
+				make_uninitialized_var_label(label_uninit);
+
+				add_2_ins(&head, &tail, CMP, make_op_const(0), v, "Check if variable is initialized");
+				add_1_ins(&head, &tail, JE, make_op_label(label_uninit), "Jump to error label");
+				
+				temp = make_op_temp();
+				add_2_ins(&head, &tail, MOVQ, make_op_const(0), temp, "Want to get value at index 0 of array");
+
+				add_2_ins(&head, &tail, ADDQ, v, temp, "Get value at index 0");
+			
+				mem = make_op_mem_loc(&temp);
+				array_length = make_op_temp();
+				add_2_ins(&head, &tail, MOVQ, mem, array_length, "Copy length of array to reg");
+
+				add_2_ins(&head, &tail, CMP, array_length, ret, "Compare index to size");
+				add_1_ins(&head, &tail, JGE, make_op_label(label_index), "Jump to error label");
+
+				add_2_ins(&head, &tail, CMP, make_op_const(0), ret, "Compare index to 0");
+				add_1_ins(&head, &tail, JL, make_op_label(label_index), "Jump to error label");
+
+			}
+
 			temp = make_op_temp();
 		
 			add_2_ins(&head, &tail, LEAQ, make_op_lea(1, &ret), temp, "Copy val to new temp to not harm it, also add 1 to get correct index");
@@ -753,6 +810,13 @@ a_asm *generate_var(variable *var){
 			v = get_return_reg(tail);
 
 			//Insert RTC failure label to check if record is initialized
+			if (runtime_checks){
+				uninit_var_flag = 1;
+				make_uninitialized_var_label(label_uninit);
+				add_2_ins(&head, &tail, CMP, make_op_const(0), v, "Check if variable is initialized");
+				add_1_ins(&head, &tail, JE, make_op_label(label_uninit), "Jump to error label");
+			}
+
 			temp = make_op_temp();
 			
 			add_2_ins(&head, &tail, LEAQ, make_op_lea(1, &ret),  temp, "Copy val to new temp to not harm it, also add 1 to get correct index");
@@ -878,20 +942,14 @@ a_asm *generate_exp(expression *exp){
 			
 			//Check to see if this value is 0 or not
 			add_2_ins(&head, &tail, MOVQ, right_target, reg_RBX, "Using RBX for division");
-<<<<<<< HEAD
-			add_1_ins(&head, &tail, IDIV, reg_RBX, "Division using RAX and RBX");
-			//add_1_ins(&head, &tail, POP, reg_RDX, "Restoring RDX");
-=======
 			if(runtime_checks) {
 				div_zero_flag = 1;
-				add_2_ins(&head, &tail, CMP, make_op_const(0), reg_RBX, "Checking if value is 0");
 				make_div_zero_label(label_true);
-				add_1_ins(&head, &tail, JE, make_op_label(label_true), "");
+				add_2_ins(&head, &tail, CMP, make_op_const(0), reg_RBX, "Checking if value is 0");
+				add_1_ins(&head, &tail, JE, make_op_label(label_true), "Jump to error label");
 			}
 
 			add_1_ins(&head, &tail, IDIV, reg_RBX, "Dividing RAX with RBX");
-			add_1_ins(&head, &tail, POP, reg_RDX, "Restoring RDX");
->>>>>>> 49968db6b3e03a96dd3fafaea8d957ff0f2319b4
 			add_2_ins(&head, &tail, MOVQ, reg_RAX, make_op_temp(), "Storing result here (temp)");
 			break;
 
@@ -1451,9 +1509,12 @@ a_asm *find_tail(a_asm *node){
 
 	struct a_asm *temp;
 	temp = node;
+	int i = 0;
 
 	while (temp->next != NULL){
+		
 		temp = temp->next;
+		
 	}
 
 	return temp;
@@ -1561,6 +1622,21 @@ void make_loop_end_label(char *buffer){
 void make_div_zero_label(char *buffer) {
 	sprintf(buffer, "div_zero");
 }
+void make_array_index_label(char *buffer){
+	sprintf(buffer, "array_index");
+}
+
+void make_positive_allocate_label(char *buffer){
+	sprintf(buffer, "positive_allocate");
+}
+
+void make_uninitialized_var_label(char *buffer){
+	sprintf(buffer, "uninit_var");
+}
+
+void make_out_of_mem_label(char *buffer){
+	sprintf(buffer, "out_of_mem");
+}
 
 asm_op *make_op_mem_loc(asm_op **index_reg){
 
@@ -1609,10 +1685,61 @@ asm_op *make_op_lea(int offset, asm_op **reg){
 
 // Runtime errors
 
-void add_zero_div_runtime_error(a_asm *head, a_asm *tail) {
-	add_label(&head, &tail, "div_zero", "Add division by zero runtime check");
-	add_2_ins(&head, &tail, MOVQ, reg_RBP, reg_RSP, "Retore old stack pointer");
-	add_1_ins(&head, &tail, POP, reg_RBP, "Restore old base pointer");
-	add_2_ins(&head, &tail, MOVQ, make_op_const(-1), reg_RAX, "Return \"error\" exit code");
-	add_ins(&head, &tail, RET, "Program return");
+
+void add_array_index_runtime_error(a_asm **head, a_asm **tail) {
+	add_label(head, tail, "array_index", "Add array index runtime check");
+	add_2_ins(head, tail, MOVQ, make_op_const(1), reg_RAX, "Interrupt code");
+	add_2_ins(head, tail, MOVQ, make_op_const(2), reg_RBX, "Set return code");
+	add_1_ins(head, tail, INT_, make_op_label("$0x80"), "Call exit");
+}
+
+void add_zero_div_runtime_error(a_asm **head, a_asm **tail) {
+	add_label(head, tail, "div_zero", "Add division by zero runtime check");
+	add_2_ins(head, tail, MOVQ, make_op_const(1), reg_RAX, "Interrupt code");
+	add_2_ins(head, tail, MOVQ, make_op_const(3), reg_RBX, "Set return code");
+	add_1_ins(head, tail, INT_, make_op_label("$0x80"), "Call exit");
+}
+
+void add_positive_allocate_runtime_error(a_asm **head, a_asm **tail) {
+	add_label(head, tail, "positive_allocate", "Add positive allocate runtime check");
+	add_2_ins(head, tail, MOVQ, make_op_const(1), reg_RAX, "Interrupt code");
+	add_2_ins(head, tail, MOVQ, make_op_const(4), reg_RBX, "Set return code");
+	add_1_ins(head, tail, INT_, make_op_label("$0x80"), "Call exit");
+}
+
+void add_uninitialized_var_runtime_error(a_asm **head, a_asm **tail) {
+	add_label(head, tail, "uninit_var", "Add uninitialized variable runtime check");
+	add_2_ins(head, tail, MOVQ, make_op_const(1), reg_RAX, "Interrupt code");
+	add_2_ins(head, tail, MOVQ, make_op_const(5), reg_RBX, "Set return code");
+	add_1_ins(head, tail, INT_, make_op_label("$0x80"), "Call exit");
+}
+
+void add_out_of_mem_runtime_error(a_asm **head, a_asm **tail) {
+	add_label(head, tail, "out_of_mem", "Add out of memory runtime check");
+	add_2_ins(head, tail, MOVQ, make_op_const(1), reg_RAX, "Interrupt code");
+	add_2_ins(head, tail, MOVQ, make_op_const(6), reg_RBX, "Set return code");
+	add_1_ins(head, tail, INT_, make_op_label("$0x80"), "Call exit");
+}
+
+void add_runtime_checks(a_asm **head, a_asm **tail){
+	if (array_index_flag){
+		add_array_index_runtime_error(head, tail);
+	}
+
+	if (div_zero_flag){
+		add_zero_div_runtime_error(head, tail);
+	}
+
+	if (positive_allocate_flag){
+		add_positive_allocate_runtime_error(head, tail);
+	}
+
+	if (uninit_var_flag){
+		add_uninitialized_var_runtime_error(head, tail);
+	}
+
+	if (out_of_mem_flag){
+		add_out_of_mem_runtime_error(head, tail);
+	}
+
 }

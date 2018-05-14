@@ -1,21 +1,54 @@
-(* Funktion til at partitionere omkring et element (Anvendes af quicksort) *)
-func partition(f : int, l : int) : int
-var p_elem : int, w_elem : int, i : int, j : int, dummy : bool;
-{
-  p_elem = 10;
-  w_elem = 5;  
-  i = f-1;
-  j = f;
-  while (j <= l-1) do
-  {
-    if (p_elem > w_elem) then
-    {
-      i = i+1;
-    }
-    j = j+1;
-  }
-  return i+1;
-}
-end partition
+type z = array of int;
+var w:z, p:z, x:z, y:z;
+var a : int;
+var b : int;
 
-write partition(17, 3);
+var dummy:int, counter:int, m:int, n:int, fp:int, fw:int, fe:int, mybool:bool;
+
+var rand:int, a:int, b:int, modulo:int; 
+
+func NextRand(number:int, mult:int, incr:int, modulo:int) : int
+var temp:int;
+{
+  temp = number*mult+incr;
+
+  write modulo;
+  return temp - (temp/modulo)*modulo;
+}
+end NextRand
+
+allocate w of length 1000;
+allocate p of length 1000;
+allocate x of length 1000;
+allocate y of length 1000;
+
+n = 1000;
+m = 600;
+fp = 0-1;
+fw = 0;
+fe = 0;
+
+rand = 1;
+a = 40;
+b = 3641;
+modulo = 729;
+
+counter = 0;
+while(counter < n) do
+{
+  rand = NextRand(rand, a, b, modulo);
+  w[counter] = rand/20+10;
+  rand = NextRand(rand, a, b, modulo);
+  p[counter] = rand/90+1; 
+  x[counter] = 0;
+  y[counter] = 0;
+  counter = counter+1;
+}
+
+a = 100;
+b = 20;
+write a / b;
+
+
+
+

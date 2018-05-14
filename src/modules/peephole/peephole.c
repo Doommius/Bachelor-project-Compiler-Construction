@@ -142,9 +142,11 @@ int cmp_ops(asm_op *op1, asm_op *op2){
 
         case (op_MEM_LOC):
             return cmp_ops(op1->val.mem_index_reg, op2->val.mem_index_reg);
+            break;
 
         case (op_LEA):
             return cmp_ops(op1->val.lea.reg, op2->val.lea.reg);
+            break;
 
         case (op_SPILL):
             if (op1 == op2){

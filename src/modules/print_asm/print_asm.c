@@ -31,7 +31,7 @@ int print_asm(a_asm *head, char *file){
 void create_asm(a_asm *head){
 
     char mem[24];
-    sprintf(mem, "MEM, %d", 8*memSize);
+    sprintf(mem, "MEM, %d", memSize);
 
     //TODO Insert check to see what labels we actually use, instead of including everything
     create_label(".wrt_INT", "Integer write label");
@@ -137,6 +137,16 @@ void create_asm(a_asm *head){
              
             case (ANDQ):
                 create_2_op("andq", head->val.two_op.op1, head->val.two_op.op2, head->comment);
+                break;
+
+            case (SYSCALL):
+                create_ins("syscall", "",head->comment);
+                fprintf(out, "\n");
+                break;
+
+            case (INT_):
+                create_1_op("int", head->val.one_op.op, head->comment);
+                fprintf(out, "\n");
                 break;
             
 
