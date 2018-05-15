@@ -43,7 +43,6 @@ void set_op_bit(asm_op *op, BITVECTOR use, BITVECTOR def, int used, int defined)
 	}
 }
 
-<<<<<<< HEAD
 
 void set_use_def(a_asm *op){
     
@@ -160,110 +159,6 @@ void set_use_def(a_asm *op){
     // op->comment = strcpy(comment, comment);
     
 
-=======
-void set_use_def(a_asm *op) {
-
-	char comment[256] = "";
-	char buffer[128] = "";
-	BITVECTOR use;
-	BITVECTOR def;
-	use = init_vector();
-	def = init_vector();
-	switch (op->ins) {
-
-	case (MOVQ):
-		set_op_bit(op->val.two_op.op1, use, def, 1, 0);
-		set_op_bit(op->val.two_op.op2, use, def, 0, 1);
-		break;
-
-	case (IMUL):
-	case (IDIV):
-		set_op_bit(reg_RAX, use, def, 1, 1);
-		set_op_bit(op->val.one_op.op, use, def, 1, 0);
-		break;
-
-	case (ADDQ):
-	case (XORQ):
-	case (SARQ):
-	case (LEAQ):
-		set_op_bit(op->val.two_op.op1, use, def, 1, 0);
-		set_op_bit(op->val.two_op.op2, use, def, 1, 1);
-		break;
-
-	case (SUBQ):
-		set_op_bit(op->val.two_op.op1, use, def, 1, 1);
-		set_op_bit(op->val.two_op.op2, use, def, 1, 0);
-		break;
-
-	case (CMP):
-		set_op_bit(op->val.two_op.op1, use, def, 1, 0);
-		set_op_bit(op->val.two_op.op2, use, def, 1, 0);
-		break;
-
-	case (PUSH):
-		set_op_bit(op->val.one_op.op, use, def, 1, 0);
-		break;
-
-	case (POP):
-		set_op_bit(op->val.one_op.op, use, def, 0, 1);
-		break;
-
-	case (CDQ):
-		//Manually set the registers used and defined by CDQ, since CDQ has no register arguments
-		set_bit(use, 0);
-		set_bit(def, 0);
-		set_bit(def, 3);
-		break;
-
-	case (RET):
-		//RET uses RAX when storing the return value
-		set_bit(use, 0);
-		break;
-
-	case (CALL):
-		//CALL defines RAX, since thats where the return value will be placed
-		set_bit(def, 0);
-		set_bit(def, 2);
-		set_bit(def, 4);
-		set_bit(def, 5);
-		set_bit(def, 6);
-		set_bit(def, 7);
-		set_bit(def, 8);
-		set_bit(def, 9);
-
-		//Special case for "printf"
-		if (strcmp(op->val.one_op.op->val.label_id, "printf") == 0) {
-			set_bit(use, 0);
-			set_bit(use, 4);
-			set_bit(use, 5);
-
-			set_bit(def, 0);
-			set_bit(def, 2);
-			set_bit(def, 3);
-			break;
-		}
-
-		//If passing less than PLACE_IN_REGS arguments, define those registers as used
-		if (op->func_args <= PLACE_IN_REGS) {
-			for (int i = 0; i < op->func_args; i++) {
-				set_bit(use, AVAIL_REGS - i - 1);
-			}
-		}
-		break;
-
-	//Used in test, not actually an instruction we use
-	case (ANDQ):
-		set_op_bit(op->val.two_op.op1, use, def, 1, 0);
-		set_op_bit(op->val.two_op.op2, use, def, 0, 1);
-		break;
-
-	default:
-		break;
-	}
-
-	op->use = use;
-	op->def = def;
->>>>>>> 1d9ffb764104c258051f080d3e8ca92f32f22730
 }
 
 void liveness_analysis(a_asm *program) {
