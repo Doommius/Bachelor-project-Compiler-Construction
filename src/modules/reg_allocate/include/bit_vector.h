@@ -4,8 +4,6 @@
 //Theory behind the bit vector is from: http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/bit-array.html
 //Bit vector set operations from: https://en.wikipedia.org/wiki/Bit_array#Basic_operations
 
-
-
 typedef unsigned *BITVECTOR;
 
 BITVECTOR init_vector();

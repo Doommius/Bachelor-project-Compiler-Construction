@@ -23,7 +23,7 @@
 #define testString3 "tets"
 
 int main(int argc, char **argv) {
-    //symboltable_test();
+	//symboltable_test();
 	linked_list *list = init_linked_list("Hej");
 
 	linked_list *head;
@@ -31,8 +31,7 @@ int main(int argc, char **argv) {
 	// printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
 	// linked_list_insert_head(&list, "Hoved 1");
 
-
-	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
+	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data);
 	// printf("- -%s\n", list->meta->head->data);
 	// printf("- -%s\n", list->meta->tail->data);
 
@@ -41,15 +40,13 @@ int main(int argc, char **argv) {
 	// printf("Loop start\n");
 	linked_list_insert_tail(list, "Hale 1");
 
-
-
 	// printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
 
 	// head = linked_list_insert_head(&list, "Hoved 2");
 
-	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
+	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data);
 
-	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data );
+	printf("HEAD: %s  TAIL: %s\n", list->meta->head->data, list->meta->tail->data);
 	linked_list_insert_tail(list, "Hale 2");
 	linked_list_insert_tail(list, "Hale 3");
 	linked_list_insert_tail(list, "Hale 4");
@@ -61,16 +58,15 @@ int main(int argc, char **argv) {
 
 	// printf("---%s\n", list->meta->head->data);
 	// printf("---%s\n", list->meta->tail->data);
-	
+
 	// printf("--%s\n", list->data);
 	// printf("--%s\n", list->next->data);
 	// printf("--%s\n", list->next->next->data);
 	// printf("--%s\n", list->next->next->next->data);
 	// printf("--%s\n", list->next->next->next->next->data);
 	// printf("--%s\n", list->next->next->next->next->next->data);
-	
+
 	// printf("---%s\n", list->next->next->next->next->prev->data);
-	
 
 	printf("\nLoop start\n");
 	// while(list->next != list->meta->head) {
@@ -78,7 +74,7 @@ int main(int argc, char **argv) {
 	// 	list = list->next;
 	// }
 	// list = head;
-	for(int i = 0; i < 20; ++i) {
+	for (int i = 0; i < 20; ++i) {
 		printf("%s\n\n", list->data);
 		list = list->next;
 	}
@@ -86,15 +82,13 @@ int main(int argc, char **argv) {
 	printf("Length: %i\n\n", list->meta->length);
 
 	printf("GET 8: %s\n\n", linked_list_get(list, 8)->data);
-	for(int i = 9; i >= 0; --i) {
+	for (int i = 9; i >= 0; --i) {
 		printf("GET %i: %s\n\n", i, linked_list_get(list, i)->data);
 	}
 	printf("GET 6: %s\n\n", linked_list_get(list, 6)->data);
 	printf("GET 1: %s\n\n", linked_list_get(list, 1)->data);
 
-
 	printf("GET 1: %s\n\n", linked_list_get(list, 1)->data);
-
 
 	printf("GET 7: %s\n\n", linked_list_get(list, 7)->data);
 

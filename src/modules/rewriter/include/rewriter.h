@@ -22,5 +22,4 @@ a_asm *add_push_of_live(a_asm *program, int *colors, a_asm *call);
 
 int *get_used_regs(a_asm *program, char *function, int *colors);
 
-
 #endif

@@ -13,16 +13,16 @@
 
 #define TABSIZE 127
 
-typedef struct binder{
-    void *key;
-    void *value;
-    struct binder *next;
-    void *prevtop;
+typedef struct binder {
+	void *key;
+	void *value;
+	struct binder *next;
+	void *prevtop;
 } binder;
 
-typedef struct table{
-    binder *table[TABSIZE];
-    void *top;
+typedef struct table {
+	binder *table[TABSIZE];
+	void *top;
 } table;
 
 //Make new table
@@ -39,7 +39,5 @@ void *table_look(table *t, void *key);
 
 //Pop most recent binding, and return its key
 void *table_pop(table *t);
-
-
 
 #endif
