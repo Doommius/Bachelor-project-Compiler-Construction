@@ -143,7 +143,7 @@ void pickup_type(type *type){
             struct type *temp;
             temp = resolve_recursive_type(s->stype->val.id_type);
 
-            printf("After recursive check\n");
+            //printf("After recursive check\n");
             
             type->stype = temp->stype;
 
@@ -169,7 +169,7 @@ type *resolve_recursive_type(type *type){
     //printf("Type kind: %d\n", type->kind);
 
     if (type->kind == type_ID){
-        printf("Checking symbol table for symbol\n");
+        //printf("Checking symbol table for symbol\n");
         SYMBOL *s;
         s = get_symbol(type->table, type->val.id);
         if (s == NULL || s->stype->type != symbol_ID){
