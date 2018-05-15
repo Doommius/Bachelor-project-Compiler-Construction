@@ -19,19 +19,19 @@
  * @return int 
  */
 int hash(char *str) {
-    int length;
-    length = (unsigned)strlen(str);
-    int k = (int)str[0];
-    int i;
-    int pointer = 1;
+	int length;
+	length = (unsigned)strlen(str);
+	int k = (int)str[0];
+	int i;
+	int pointer = 1;
 
-    while (pointer < length) {
-        k = k << 1;
-        i = (int)str[pointer];
-        k = i + k;
-        pointer++;
-    }
-    return (k % HashSize);
+	while (pointer < length) {
+		k = k << 1;
+		i = (int)str[pointer];
+		k = i + k;
+		pointer++;
+	}
+	return (k % HashSize);
 }
 
 /**
@@ -42,14 +42,14 @@ int hash(char *str) {
  */
 symbol_table *init_symbol_table() {
 
-    int i = 0;
-    symbol_table *table = Malloc(sizeof(SYMBOL) * HashSize);
-    table->next = NULL;
-    while (i < HashSize) {
-        table->table[i] = NULL;
-        i++;
-    }
-    return table;
+	int i = 0;
+	symbol_table *table = Malloc(sizeof(SYMBOL) * HashSize);
+	table->next = NULL;
+	while (i < HashSize) {
+		table->table[i] = NULL;
+		i++;
+	}
+	return table;
 }
 
 /**
@@ -59,9 +59,9 @@ symbol_table *init_symbol_table() {
  * @return symbol_table* Returns a new hash table pointing to t.
  */
 symbol_table *scope_symbol_table(symbol_table *t) {
-    symbol_table *newTable = init_symbol_table();
-    newTable->next = t;
-    return newTable;
+	symbol_table *newTable = init_symbol_table();
+	newTable->next = t;
+	return newTable;
 }
 
 /**
@@ -76,28 +76,27 @@ symbol_table *scope_symbol_table(symbol_table *t) {
  * @return SYMBOL* 
  */
 SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st) {
-    if (t == NULL) {
-        return NULL;
-    }
-    SYMBOL *localCheck = check_local(t, name);
-    //Symbol already exists
-    if (localCheck != NULL) {
-        return localCheck;
-    } else {
-        int hashValue = hash(name);
-        //pretty("Putting symbol with name: %s, value: %d, type: %d, table: %p, hash: %d\n", name, value, st->type, t, hashValue);
+	if (t == NULL) {
+		return NULL;
+	}
+	SYMBOL *localCheck = check_local(t, name);
+	//Symbol already exists
+	if (localCheck != NULL) {
+		return localCheck;
+	} else {
+		int hashValue = hash(name);
+		
+		SYMBOL *symbol = Malloc(sizeof(SYMBOL));
+		symbol->name = name;
+		symbol->value = value;
+		symbol->stype = st;
+		symbol->next = Malloc(sizeof(SYMBOL));
 
-        SYMBOL *symbol = Malloc(sizeof(SYMBOL));
-        symbol->name = name;
-        symbol->value = value;
-        symbol->stype = st;
-        symbol->next = Malloc(sizeof(SYMBOL));
-
-        //Placed in front of the list
-        symbol->next = t->table[hashValue];
-        t->table[hashValue] = symbol;
-        return symbol;
-    }
+		//Placed in front of the list
+		symbol->next = t->table[hashValue];
+		t->table[hashValue] = symbol;
+		return symbol;
+	}
 }
 
 /*
@@ -110,28 +109,24 @@ SYMBOL *put_symbol(symbol_table *t, char *name, int value, symbol_type *st) {
     which name is stored
     */
 SYMBOL *get_symbol(symbol_table *t, char *name) {
-    //    First check if t is null
-    //pretty("Getting symbol %s, from table %p\n", name, t);
-    if (t == NULL) {
-        //pretty("Table is null\n");
-        return NULL;
-    }
+	//    First check if t is null
+	if (t == NULL) {
+		return NULL;
+	}
 
-    SYMBOL *localCheck = check_local(t, name);
+	SYMBOL *localCheck = check_local(t, name);
 
-    //Symbol in local table?
-    if (localCheck != NULL) {
-        //pretty("Trying local check, type: %d\n", localCheck->stype->type);
-        return localCheck;
-    }
+	//Symbol in local table?
+	if (localCheck != NULL) {
+		return localCheck;
+	}
 
-    if (t->next != NULL) {
-        //pretty("Checking next\n");
-        return get_symbol(t->next, name);
-    }
+	if (t->next != NULL) {
+		return get_symbol(t->next, name);
+	}
 
-    //Symbol does not exists
-    return NULL;
+	//Symbol does not exists
+	return NULL;
 }
 
 /*
@@ -141,103 +136,99 @@ SYMBOL *get_symbol(symbol_table *t, char *name) {
  * way and is intended to be used for debugging (of other parts of the compiler).
 */
 void dump_symbol_table(symbol_table *t) {
-    if (t == NULL) {
-        return;
-    }
+	if (t == NULL) {
+		return;
+	}
 
-    printf("Printing symbol table:\n\n");
+	printf("Printing symbol table:\n\n");
 
-    for (int i = 0; i < HashSize; i++) {
-        if (t->table[i] != NULL) {
-            print_symbol(t->table[i]);
-            printf("\n");
-        }
-    }
-    printf("\n");
+	for (int i = 0; i < HashSize; i++) {
+		if (t->table[i] != NULL) {
+			print_symbol(t->table[i]);
+			printf("\n");
+		}
+	}
+	printf("\n");
 
-    dump_symbol_table(t->next);
+	dump_symbol_table(t->next);
 }
 
 /*
  * Check the current table we are in for a value
  */
 SYMBOL *check_local(symbol_table *t, char *name) {
-    int hashValue = hash(name);
+	int hashValue = hash(name);
 
-    SYMBOL *symbol = t->table[hashValue];
-    if (symbol == NULL) {
-        //pretty("Local symbol is null\n");
-        return NULL;
-    } else {
-        while (symbol != NULL) {
-            if (strcmp(name, symbol->name) == 0) {
-                //pretty("Compared %s and %s, success\n", name, symbol->name);
-                return symbol;
-            }
-            symbol = symbol->next;
-        }
-    }
+	SYMBOL *symbol = t->table[hashValue];
+	if (symbol == NULL) {
+		return NULL;
+	} else {
+		while (symbol != NULL) {
+			if (strcmp(name, symbol->name) == 0) {
+				return symbol;
+			}
+			symbol = symbol->next;
+		}
+	}
 
-    //Hash value for the symbol exists, but the symbol is not in the table
-    return NULL;
+	//Hash value for the symbol exists, but the symbol is not in the table
+	return NULL;
 }
 
 void print_symbol(SYMBOL *symbol) {
-    printf("(%s, %i)", symbol->name, symbol->value);
+	printf("(%s, %i)", symbol->name, symbol->value);
 }
 
 /**
  * Calculate depth of a symbol, used for static linking
  */
-int get_symbol_depth(symbol_table *t, char *name){
-    struct symbol_table *temp;
-    struct SYMBOL *s;
-    int depth;
-    temp = t;
-    depth = 0;
+int get_symbol_depth(symbol_table *t, char *name) {
+	struct symbol_table *temp;
+	struct SYMBOL *s;
+	int depth;
+	temp = t;
+	depth = 0;
 
-    s = check_local(t, name);
+	s = check_local(t, name);
 
-    while (s == NULL){
-        temp = temp->next;
-        s = check_local(temp, name);
-        depth++;
-    }
+	while (s == NULL) {
+		temp = temp->next;
+		s = check_local(temp, name);
+		depth++;
+	}
 
-    return depth;
-    
+	return depth;
 }
 
 //Returns size of symboltable - used when allocating memory for records
-int table_size(symbol_table *t){
-    int size;
-    SYMBOL *s;
-    size = 0;
+int table_size(symbol_table *t) {
+	int size;
+	SYMBOL *s;
+	size = 0;
 
-    for (int i = 0; i < HashSize; i++){
-        s = t->table[i];
-        while (s != NULL){
-            size++;
-            s = s->next;
-        }
-    }
+	for (int i = 0; i < HashSize; i++) {
+		s = t->table[i];
+		while (s != NULL) {
+			size++;
+			s = s->next;
+		}
+	}
 
-    return size;
+	return size;
 }
 
 //Adds a offset to the symbols in the symmbol table - used in records
-void create_offset(symbol_table *t){
-    int offset;
-    SYMBOL *s;
-    offset = 0;
+void create_offset(symbol_table *t) {
+	int offset;
+	SYMBOL *s;
+	offset = 0;
 
-    for (int i = 0; i < HashSize; i++){
-        s = t->table[i];
-        while (s != NULL){
-            s->offset = offset;
-            s = s->next;
-            offset++;
-        }
-    }
-
+	for (int i = 0; i < HashSize; i++) {
+		s = t->table[i];
+		while (s != NULL) {
+			s->offset = offset;
+			s = s->next;
+			offset++;
+		}
+	}
 }

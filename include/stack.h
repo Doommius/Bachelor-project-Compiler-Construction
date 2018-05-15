@@ -1,13 +1,13 @@
 #ifndef __stack_h
 #define __stack_h
 
-typedef struct stack_node{
-    void *val;
-    struct stack_node *next;
+typedef struct stack_node {
+	void *val;
+	struct stack_node *next;
 } stack_node;
 
-typedef struct stack{
-    struct stack_node *top;
+typedef struct stack {
+	struct stack_node *top;
 } stack;
 
 stack *init_stack();

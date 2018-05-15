@@ -18,20 +18,20 @@
 
 int typecheck(body *program) {
 
-    symbol_table *table;
-    table = init_symbol_table();
+	symbol_table *table;
+	table = init_symbol_table();
 #if debugflag > 1
-    printf("Starting Setup\n");
+	printf("Starting Setup\n");
 #endif
-    setup_body(program, table);
+	setup_body(program, table);
 #if debugflag > 1
-    printf("Starting pickup\n");
+	printf("Starting pickup\n");
 #endif
-    pickup_body(program);
+	pickup_body(program);
 #if debugflag > 1
-    printf("Starting check\n");
+	printf("Starting check\n");
 #endif
-    check_body(program);
+	check_body(program);
 
-    return 0;
+	return 0;
 }

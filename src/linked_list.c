@@ -21,14 +21,14 @@
  * @return asm_node* Return the created node.
  */
 asm_node *new_asm_node(int linenumber, ASM_kind kind, char *arg1, char *arg2, char *arg3, char *comment) {
-    asm_node *node = malloc(sizeof(struct asm_node));
-    node->linenumber = linenumber;
-    node->kind = kind;
-    node->arg1 = arg1;
-    node->arg2 = arg2;
-    node->arg3 = arg3;
-    node->comment = comment;
-    return node;
+	asm_node *node = malloc(sizeof(struct asm_node));
+	node->linenumber = linenumber;
+	node->kind = kind;
+	node->arg1 = arg1;
+	node->arg2 = arg2;
+	node->arg3 = arg3;
+	node->comment = comment;
+	return node;
 }
 
 /**
@@ -38,20 +38,20 @@ asm_node *new_asm_node(int linenumber, ASM_kind kind, char *arg1, char *arg2, ch
  * @return linked_list* Returns a reference to the created linked list.
  */
 linked_list *init_linked_list(void *data) {
-    linked_list_meta *meta = malloc(sizeof(linked_list_meta));
-    linked_list *list = malloc(sizeof(linked_list));
+	linked_list_meta *meta = malloc(sizeof(linked_list_meta));
+	linked_list *list = malloc(sizeof(linked_list));
 
-    list->data = data;
-    list->meta = meta;
-    list->next = list;
-    list->prev = list;
+	list->data = data;
+	list->meta = meta;
+	list->next = list;
+	list->prev = list;
 
-    meta->length = 1;
-    meta->head = list;
-    meta->tail = list;
-    meta->current_pos = 0;
-    meta->current_element = list;
-    return list;
+	meta->length = 1;
+	meta->head = list;
+	meta->tail = list;
+	meta->current_pos = 0;
+	meta->current_element = list;
+	return list;
 }
 
 /**
@@ -63,24 +63,24 @@ linked_list *init_linked_list(void *data) {
  */
 linked_list *linked_list_insert_head(linked_list **list_ref, void *data) {
 
-    if (list_ref == NULL) {
-        return init_linked_list(data);
-    }
+	if (list_ref == NULL) {
+		return init_linked_list(data);
+	}
 
-    linked_list *new_element = malloc(sizeof(linked_list));
-    new_element->data = data;
+	linked_list *new_element = malloc(sizeof(linked_list));
+	new_element->data = data;
 
-    new_element->next = (*list_ref)->meta->head;
-    new_element->prev = (*list_ref)->meta->tail;
-    new_element->meta = (*list_ref)->meta;
+	new_element->next = (*list_ref)->meta->head;
+	new_element->prev = (*list_ref)->meta->tail;
+	new_element->meta = (*list_ref)->meta;
 
-    (*list_ref)->meta->tail->next = new_element;
-    (*list_ref)->meta->head = new_element;
-    new_element->prev->next = new_element;
+	(*list_ref)->meta->tail->next = new_element;
+	(*list_ref)->meta->head = new_element;
+	new_element->prev->next = new_element;
 
-    ++(*list_ref)->meta->length;
-    (*list_ref) = new_element;
-    return new_element;
+	++(*list_ref)->meta->length;
+	(*list_ref) = new_element;
+	return new_element;
 }
 
 /**
@@ -92,23 +92,23 @@ linked_list *linked_list_insert_head(linked_list **list_ref, void *data) {
  */
 linked_list *linked_list_insert_tail(linked_list *list, void *data) {
 
-    if (list == NULL) {
-        return init_linked_list(data);
-    }
+	if (list == NULL) {
+		return init_linked_list(data);
+	}
 
-    linked_list *new_element = malloc(sizeof(linked_list));
-    new_element->data = data;
+	linked_list *new_element = malloc(sizeof(linked_list));
+	new_element->data = data;
 
-    new_element->next = list->meta->head;
-    new_element->prev = list->meta->tail;
-    new_element->meta = list->meta;
+	new_element->next = list->meta->head;
+	new_element->prev = list->meta->tail;
+	new_element->meta = list->meta;
 
-    list->meta->head->prev = new_element;
-    list->meta->tail = new_element;
-    new_element->prev->next = new_element;
+	list->meta->head->prev = new_element;
+	list->meta->tail = new_element;
+	new_element->prev->next = new_element;
 
-    ++list->meta->length;
-    return list;
+	++list->meta->length;
+	return list;
 }
 
 /**
@@ -118,7 +118,7 @@ linked_list *linked_list_insert_tail(linked_list *list, void *data) {
  * @return linked_list* Returns the head of the list.
  */
 linked_list *linked_list_get_head(linked_list *list) {
-    return list->meta->head;
+	return list->meta->head;
 }
 
 /**
@@ -128,7 +128,7 @@ linked_list *linked_list_get_head(linked_list *list) {
  * @return linked_list* returns the tail of the list.
  */
 linked_list *linked_list_get_tail(linked_list *list) {
-    return list->meta->tail;
+	return list->meta->tail;
 }
 
 /**
@@ -143,7 +143,7 @@ linked_list *linked_list_remove_head(linked_list *list) {
 	list->meta->head->prev = list->meta->tail;
 	list->meta->tail->next = list->meta->head;
 	list->meta->length--;
-	if(list->meta->current_pos == 0) {
+	if (list->meta->current_pos == 0) {
 		list->meta->current_element = list->meta->head;
 	}
 	free(old_head);
@@ -161,9 +161,9 @@ linked_list *linked_list_remove_tail(linked_list *list) {
 	list->meta->tail = list->meta->tail->prev;
 	list->meta->tail->next = list->meta->head;
 	list->meta->head->prev = list->meta->tail;
-	if(list->meta->current_pos == list->meta->length-1) {
+	if (list->meta->current_pos == list->meta->length - 1) {
 		list->meta->current_element = list->meta->current_element->prev;
-		list->meta->current_pos = list->meta->length-2;
+		list->meta->current_pos = list->meta->length - 2;
 	}
 	list->meta->length--;
 	free(old_tail);
@@ -178,7 +178,7 @@ linked_list *linked_list_remove_tail(linked_list *list) {
  * @return linked_list* returns updated list.
  */
 linked_list *linked_list_remove_at_index(linked_list *list, unsigned i) {
-	if(i >= list->meta->length-1) {
+	if (i >= list->meta->length - 1) {
 		return 0;
 	}
 
@@ -186,7 +186,7 @@ linked_list *linked_list_remove_at_index(linked_list *list, unsigned i) {
 
 	item->prev->next = item->next;
 	item->next->prev = item->prev;
-	if(item == list->meta->head) {
+	if (item == list->meta->head) {
 		list->meta->head = item->next;
 	} else if (item == list->meta->tail) {
 		list->meta->tail = item->prev;
@@ -202,7 +202,7 @@ linked_list *linked_list_remove_at_index(linked_list *list, unsigned i) {
  * @return unsigned int Returns the length on the list.
  */
 unsigned int linked_list_length(linked_list *list) {
-    return list->meta->length;
+	return list->meta->length;
 }
 
 /**
@@ -214,53 +214,53 @@ unsigned int linked_list_length(linked_list *list) {
  * @return linked_list* Returns the ith element.
  */
 linked_list *linked_list_get(linked_list *list, int index) {
-    linked_list *pseudo_list = list;
-    int move;
-    int current_pos = list->meta->current_pos;
-    int length = list->meta->length;
+	linked_list *pseudo_list = list;
+	int move;
+	int current_pos = list->meta->current_pos;
+	int length = list->meta->length;
 	direction d;
 
 	if (index > length || index < 0) {
 		printf("Error: Out of bounds");
 		return -1;
 	} else if (index == 0) {
-        list->meta->current_element = list->meta->head;
-        list->meta->current_pos = 0;
-        printf("A move: 0\n");
-        return list->meta->current_element;
-    } else if (index == length) {
-        list->meta->current_element = list->meta->tail;
-        list->meta->current_pos = index;
-        printf("B move: 0\n");
-        return list->meta->current_element;
-    } else if (index == current_pos) {
-        printf("C move: 0\n");
-        return list->meta->current_element;
-    } else if (index > current_pos && length - index >= index - current_pos) {
-        move = abs(index - current_pos);
-        printf("D move: %i\n", move);
-        return linked_list_iterator(move, index, pseudo_list->meta->current_element, NEXT);
-    } else if (index <= current_pos && length - index <= index - current_pos) {
-        move = abs(index - current_pos);
-        printf("E move: %i\n", move);
-        return linked_list_iterator(move, index, pseudo_list->meta->current_element, PREV);
-    } else if (index <= current_pos / 2) {
-        move = abs(index);
-        printf("F move: %i\n", move);
-        return linked_list_iterator(move, index, pseudo_list->meta->head, NEXT);
-    } else if (index > current_pos / 2 && index < current_pos) {
-        move = abs(index - current_pos);
-        printf("G move: %i\n", move);
-        return linked_list_iterator(move, index, pseudo_list->meta->current_element, PREV);
-    } else if (index > current_pos && index <= length / 2 + current_pos / 2) {
-        move = abs(index - current_pos);
-        printf("H move: %i\n", move);
-        return linked_list_iterator(move, index, pseudo_list->meta->current_element, NEXT);
-    } else if (index > current_pos && index > length / 2 + current_pos / 2) {
-        move = abs(length - index);
-        printf("I move: %i\n", move);
-        return linked_list_iterator(move, index, pseudo_list->meta->head, PREV);
-    }
+		list->meta->current_element = list->meta->head;
+		list->meta->current_pos = 0;
+		printf("A move: 0\n");
+		return list->meta->current_element;
+	} else if (index == length) {
+		list->meta->current_element = list->meta->tail;
+		list->meta->current_pos = index;
+		printf("B move: 0\n");
+		return list->meta->current_element;
+	} else if (index == current_pos) {
+		printf("C move: 0\n");
+		return list->meta->current_element;
+	} else if (index > current_pos && length - index >= index - current_pos) {
+		move = abs(index - current_pos);
+		printf("D move: %i\n", move);
+		return linked_list_iterator(move, index, pseudo_list->meta->current_element, NEXT);
+	} else if (index <= current_pos && length - index <= index - current_pos) {
+		move = abs(index - current_pos);
+		printf("E move: %i\n", move);
+		return linked_list_iterator(move, index, pseudo_list->meta->current_element, PREV);
+	} else if (index <= current_pos / 2) {
+		move = abs(index);
+		printf("F move: %i\n", move);
+		return linked_list_iterator(move, index, pseudo_list->meta->head, NEXT);
+	} else if (index > current_pos / 2 && index < current_pos) {
+		move = abs(index - current_pos);
+		printf("G move: %i\n", move);
+		return linked_list_iterator(move, index, pseudo_list->meta->current_element, PREV);
+	} else if (index > current_pos && index <= length / 2 + current_pos / 2) {
+		move = abs(index - current_pos);
+		printf("H move: %i\n", move);
+		return linked_list_iterator(move, index, pseudo_list->meta->current_element, NEXT);
+	} else if (index > current_pos && index > length / 2 + current_pos / 2) {
+		move = abs(length - index);
+		printf("I move: %i\n", move);
+		return linked_list_iterator(move, index, pseudo_list->meta->head, PREV);
+	}
 }
 
 /**
@@ -273,20 +273,20 @@ linked_list *linked_list_get(linked_list *list, int index) {
  * @param d Direction to move. NEXT or PREV.
  * @return linked_list* Return the ith element
  */
-linked_list *linked_list_iterator(int move, int index,  linked_list *pseudo_list, direction d) {
-    switch (d) {
-    case NEXT:
-        for (int i = 0; i < move; ++i) {
-            pseudo_list = pseudo_list->next;
-        }
-        break;
-    case PREV:
-        for (int i = 0; i < move; ++i) {
-            pseudo_list = pseudo_list->prev;
-        }
-        break;
-    }
-    pseudo_list->meta->current_pos = index;
-    pseudo_list->meta->current_element = pseudo_list;
-    return pseudo_list;
+linked_list *linked_list_iterator(int move, int index, linked_list *pseudo_list, direction d) {
+	switch (d) {
+	case NEXT:
+		for (int i = 0; i < move; ++i) {
+			pseudo_list = pseudo_list->next;
+		}
+		break;
+	case PREV:
+		for (int i = 0; i < move; ++i) {
+			pseudo_list = pseudo_list->prev;
+		}
+		break;
+	}
+	pseudo_list->meta->current_pos = index;
+	pseudo_list->meta->current_element = pseudo_list;
+	return pseudo_list;
 }
