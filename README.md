@@ -6,12 +6,6 @@
     Mark Jervelund          (mjerv15)
     Morten Kristian Jæger   (mojae15)
 
-## TODO
-
-* Fix typechecker/weeder errors
-* Runtime error checks
-* More peephole optimization
-
 ## How to run
 
 ### Compile entire project
