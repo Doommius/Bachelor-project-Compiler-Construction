@@ -279,7 +279,7 @@ a_asm *generate_vdl(var_decl_list *vdl, int *offset, int args){
 	//If "PLACE_IN_REGS" or fewer parameters, we want to place it in regs, instead of stack
 	if (args <= PLACE_IN_REGS){
 		//Create a new temp for the corresponding symbol
-		printf("Args: %d, upper bound: %d\n", args, PLACE_IN_REGS);
+		//printf("Args: %d, upper bound: %d\n", args, PLACE_IN_REGS);
 		//Use "least used" reg to place parameter in
 		target = get_corresponding_reg(AVAIL_REGS - (*offset));
 		s->offset = 0;
@@ -295,7 +295,7 @@ a_asm *generate_vdl(var_decl_list *vdl, int *offset, int args){
 	
 	(*offset)++;
 	
-	printf("Offset of var: %s = %d\n", s->name, s->offset);
+	//printf("Offset of var: %s = %d\n", s->name, s->offset);
 	if ( vdl->kind == vdl_LIST && vdl->list != NULL){
 		l = generate_vdl(vdl->list, offset, args);
 		asm_insert(&head, &tail, &l);
@@ -1122,7 +1122,7 @@ a_asm *generate_term(term *term){
 					el = generate_elist(term->val.list.list->list, &arg_count);
 
 					asm_insert(&head, &tail, &el);
-					printf("Args pushed: %d\n", arg_count);
+					//printf("Args pushed: %d\n", arg_count);
 				} else {
 					elist = term->val.list.list->list;
 					used_reg = AVAIL_REGS-1;
@@ -1153,13 +1153,13 @@ a_asm *generate_term(term *term){
 			static_link = make_op_temp();
 			
 			if (depth == 0){
-				printf("Non-recursive function: %s, depth: %d\n", term->val.list.id, depth);
+				//printf("Non-recursive function: %s, depth: %d\n", term->val.list.id, depth);
 
 				add_2_ins(&head, &tail, MOVQ, reg_RBP, static_link, "Setting address wanted for static link");
 				add_1_ins(&head, &tail, PUSH, static_link, "Storing static link for function");
 
 			} else {
-				printf("Possibly recursive function: %s, depth: %d\n", term->val.list.id, depth);
+				//printf("Possibly recursive function: %s, depth: %d\n", term->val.list.id, depth);
 				
 				add_2_ins(&head, &tail, MOVQ, op_STATIC_LINK, static_link, "Retrieving static link");
 				
@@ -1452,7 +1452,7 @@ int local_init(decl_list *dlist){
 
 	while (d_temp->kind != dl_EMPTY){
 		if (d_temp->decl->kind == decl_FUNC){
-			printf("Declaration contains a function\n");
+			//printf("Declaration contains a function\n");
 			contains_function = 1;
 			break;
 		}
@@ -1469,7 +1469,7 @@ int local_init(decl_list *dlist){
 				v_temp = d_temp->decl->val.list;
 				while (v_temp != NULL){
 					s = get_symbol(dlist->table, v_temp->vartype->id);
-					printf("Setting offset of %s to %d\n", s->name, offset);
+					//printf("Setting offset of %s to %d\n", s->name, offset);
 					s->offset = offset;
 					s->is_on_stack = 1;
 					offset++;
