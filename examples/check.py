@@ -22,7 +22,7 @@ import os
 import time
 import getopt
 
-ProgAndSolDir = "/home/IMADA/courses/cc/"
+ProgAndSolDir = "./"
 
 def fileempty(filename):
    file = open(filename, "r")

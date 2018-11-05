@@ -14,9 +14,7 @@ echo "+-------------+"
 # 	./compiler -p 1 $file
 # 	echo " "
 # done
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NC='\033[0m'
+
 echo "+-------------+"
 echo "|  Examples   |"
 echo "+-------------+"
@@ -35,9 +33,9 @@ do
 		let "eq = $(echo $?)"
 		#echo "eq: $(echo $?)" 
 		if [ $eq = "0" ]; then
-			echo -e "${RED}+-----"
-			echo -e "| " $file " has passed!"
-			echo -e "+-----"
+			echo "+-----"
+			echo "| " $file " has passed!"
+			echo "+-----"
 			let "passed = passed + 1"
 		else 
 			echo "+-----"
