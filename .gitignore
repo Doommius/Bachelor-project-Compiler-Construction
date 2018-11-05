@@ -32,5 +32,4 @@ y.output
 *.aux
 *.toc
 *.synctex.gz
-*.pdf
 *.s
